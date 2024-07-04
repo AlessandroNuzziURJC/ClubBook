@@ -1,5 +1,6 @@
 package clubbook.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +28,7 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false, length = 20)
@@ -34,19 +36,19 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private LocalDate dateOfBirth;
+    private LocalDate birthday;
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
 
-    public User(String firstName, String lastName, String email, String password, String phoneNumber, LocalDate dateOfBirth, Role role) {
+    public User(String firstName, String lastName, String email, String password, String phoneNumber, LocalDate birthday, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.dateOfBirth = dateOfBirth;
+        this.birthday = birthday;
         this.role = role;
     }
 
@@ -108,8 +110,8 @@ public class User implements UserDetails {
         return phoneNumber;
     }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
+    public LocalDate getBirthday() {
+        return birthday;
     }
 
     public Role getRole() {
@@ -140,8 +142,8 @@ public class User implements UserDetails {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
     public void setRole(Role role) {

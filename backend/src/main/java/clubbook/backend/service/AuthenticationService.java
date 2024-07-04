@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class AuthenticationService {
     private final UserRepository userRepository;
 
-    @Autowired
+    //@Autowired
     private RoleService roleService;
 
     private final PasswordEncoder passwordEncoder;
@@ -28,11 +28,13 @@ public class AuthenticationService {
     public AuthenticationService(
             UserRepository userRepository,
             AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            RoleService roleService
     ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     public User signup(RegisterUserDto input) {
@@ -42,7 +44,7 @@ public class AuthenticationService {
         user.setEmail(input.getEmail());
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setRole(roleService.findByName(RoleEnum.valueOf(input.getRole().toUpperCase())));
-        user.setDateOfBirth(input.getBirthday());
+        user.setBirthday(input.getBirthday());
         user.setPhoneNumber(input.getPhoneNumber());
 
         return userRepository.save(user);

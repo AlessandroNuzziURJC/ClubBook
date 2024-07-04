@@ -22,7 +22,7 @@ class UserTest {
         assertEquals("john.doe@example.com", user.getEmail());
         assertEquals("password", user.getPassword());
         assertEquals("1234567890", user.getPhoneNumber());
-        assertEquals(dateOfBirth, user.getDateOfBirth());
+        assertEquals(dateOfBirth, user.getBirthday());
         assertEquals(role, user.getRole());
     }
 
@@ -37,7 +37,7 @@ class UserTest {
         user.setEmail("jane.smith@example.com");
         user.setPassword("newpassword");
         user.setPhoneNumber("9876543210");
-        user.setDateOfBirth(dateOfBirth);
+        user.setBirthday(dateOfBirth);
         user.setRole(role1);
 
         assertEquals("Jane", user.getFirstName());
@@ -45,7 +45,7 @@ class UserTest {
         assertEquals("jane.smith@example.com", user.getEmail());
         assertEquals("newpassword", user.getPassword());
         assertEquals("9876543210", user.getPhoneNumber());
-        assertEquals(dateOfBirth, user.getDateOfBirth());
+        assertEquals(dateOfBirth, user.getBirthday());
         assertEquals(role1, user.getRole());
     }
 
