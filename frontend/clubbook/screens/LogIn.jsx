@@ -3,12 +3,15 @@ import { View, Text, TextInput, StyleSheet, Button, Image, Alert } from 'react-n
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Configuration from './config/Configuration'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function LogIn() {
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isValidEmail, setIsValidEmail] = React.useState(true);
+    const navigation = useNavigation();
 
     const emailRegex = /\S+@\S+\.\S+/;
 
@@ -36,8 +39,24 @@ export default function LogIn() {
                 await AsyncStorage.setItem('userName', email);
                 await AsyncStorage.setItem('userPassword', password);
                 Alert.alert('Información', 'Se ha iniciado sesión correctamente.');
+
+                const role = result.user.role.name;
+
+                switch (role) {
+                    case 'ADMINISTRATOR':
+                        navigation.navigate('AdministratorMainScreen');
+                        break;
+                    case 'STUDENT':
+                        navigation.navigate('StudentMainScreen');
+                        break;
+                    case 'TEACHER':
+                        navigation.navigate('TeacherMainScreen');
+                        break;
+                    default:
+                        break;
+                }
+
                 // Do something with the result if needed
-                // Save token auth
                 //Alert.alert('Información', 'El usuario es: ' + await AsyncStorage.getItem('userName'));
             }
 
@@ -62,7 +81,7 @@ export default function LogIn() {
     };
 
     return (
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={styles.container}>
             <View>
                 <Text style={styles.welcome}>¡Bienvenido!</Text>
                 <Image source={require('./images/ClubBook_logo.png')}
@@ -104,7 +123,8 @@ export default function LogIn() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: '#fff'
     },
     welcome: {
         marginTop: 80,
