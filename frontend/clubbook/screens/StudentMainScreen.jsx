@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import Profile from '../components/Profile'
 
 const HomeStackScreen = () => {
     return (
@@ -25,6 +25,7 @@ const StudentMainScreen = () => {
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
             <Tab.Screen name="SettingsMenu" component={SettingsStackScreen} />
+            <Tab.Screen name="Perfil" component={Profile} />
         </Tab.Navigator>
     );
 };

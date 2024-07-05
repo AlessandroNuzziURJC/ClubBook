@@ -10,12 +10,6 @@ import TeacherMainScreen from './screens/TeacherMainScreen';
 export default function App() {
 
   const Stack = createNativeStackNavigator();
-  /*return (
-    <View style={styles.container}>
-      <View style={{height:35}}></View>
-      <LogIn/>
-    </View>
-  );*/
   return (
     <View style={styles.container}>
       <View style={{ height: 35 }}></View>
