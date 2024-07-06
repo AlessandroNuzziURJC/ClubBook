@@ -1,9 +1,11 @@
 package clubbook.backend.model;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.Collection;
 
@@ -12,10 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserTest {
 
     @Test
-    public void testConstructorAndGetters() {
+    public void testConstructorAndGetters() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role);
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
+        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
 
         assertEquals("John", user.getFirstName());
         assertEquals("Doe", user.getLastName());
@@ -50,9 +54,12 @@ class UserTest {
     }
 
     @Test
-    public void testGetAuthoritiesStudent() {
+    public void testGetAuthoritiesStudent() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
-        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", LocalDate.of(1990, 1, 1), role);
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
+        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
 
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
 
@@ -61,10 +68,12 @@ class UserTest {
     }
 
     @Test
-    public void testGetAuthoritiesTeacher() {
+    public void testGetAuthoritiesTeacher() throws Exception {
         Role role = new Role(RoleEnum.TEACHER);
-        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", LocalDate.of(1990, 1, 1), role);
-
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
+        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
 
         assertEquals(1, authorities.size());
@@ -72,10 +81,12 @@ class UserTest {
     }
 
     @Test
-    public void testGetAuthoritiesAdministrator() {
+    public void testGetAuthoritiesAdministrator() throws Exception {
         Role role = new Role(RoleEnum.ADMINISTRATOR);
-        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", LocalDate.of(1990, 1, 1), role);
-
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
+        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
 
         assertEquals(1, authorities.size());

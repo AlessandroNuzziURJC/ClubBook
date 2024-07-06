@@ -7,12 +7,18 @@ import clubbook.backend.model.User;
 import clubbook.backend.repository.RoleRepository;
 import clubbook.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 @Service
 public class AuthenticationService {
@@ -37,6 +43,12 @@ public class AuthenticationService {
         this.roleService = roleService;
     }
 
+    private String randomColour() {
+        List<String> colours = new java.util.ArrayList<>(List.of("blue", "darkblue", "green", "orange", "pink", "purple", "red"));
+        Collections.shuffle(colours);
+        return colours.get(0);
+    }
+
     public User signup(RegisterUserDto input) {
         User user = new User();
         user.setFirstName(input.getFirstName());
@@ -46,7 +58,17 @@ public class AuthenticationService {
         user.setRole(roleService.findByName(RoleEnum.valueOf(input.getRole().toUpperCase())));
         user.setBirthday(input.getBirthday());
         user.setPhoneNumber(input.getPhoneNumber());
-
+        user.setAddress(input.getAddress());
+        user.setIdCard(input.getIdCard());
+        user.setPartner(input.isPartner());
+        try {
+            String colour = randomColour();
+            ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_" + colour + ".png");
+            byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
+            user.setProfilePicture(profilePicture);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return userRepository.save(user);
     }
 

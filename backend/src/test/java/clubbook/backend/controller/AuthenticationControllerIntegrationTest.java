@@ -7,6 +7,7 @@ import clubbook.backend.repository.UserRepository;
 import clubbook.backend.service.AuthenticationService;
 import clubbook.backend.service.JwtService;
 import clubbook.backend.service.RoleService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -63,6 +64,7 @@ public class AuthenticationControllerIntegrationTest {
         authenticationController = new AuthenticationController(jwtService, authenticationService);
     }
 
+    @Transactional
     @Test
     public void testCreateUserCorrect() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
@@ -84,10 +86,13 @@ public class AuthenticationControllerIntegrationTest {
                 + "\"firstName\": \"Marty\","
                 + "\"lastName\": \"McFly\","
                 + "\"phoneNumber\": \"767676767\","
-                + "\"birthday\": \"1968-06-09\""
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
                 + "}";
 
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        //when(userRepository.save(any(User.class))).thenReturn(user);
 
         mockMvc.perform(post("/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -95,6 +100,7 @@ public class AuthenticationControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 
+    @Transactional
     @Test
     public void testCreateUserIncorrect() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
@@ -125,6 +131,7 @@ public class AuthenticationControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Transactional
     @Test
     public void testLoginUserCorrect() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
@@ -146,7 +153,10 @@ public class AuthenticationControllerIntegrationTest {
                 + "\"firstName\": \"Marty\","
                 + "\"lastName\": \"McFly\","
                 + "\"phoneNumber\": \"767676767\","
-                + "\"birthday\": \"1968-06-09\""
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
                 + "}";
 
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -169,6 +179,7 @@ public class AuthenticationControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 
+    @Transactional
     @Test
     public void testLoginUserIncorrect() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
@@ -193,7 +204,10 @@ public class AuthenticationControllerIntegrationTest {
                 + "\"firstName\": \"Marty\","
                 + "\"lastName\": \"McFly\","
                 + "\"phoneNumber\": \"767676767\","
-                + "\"birthday\": \"1968-06-09\""
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
                 + "}";
 
         mockMvc.perform(post("/auth/signup")

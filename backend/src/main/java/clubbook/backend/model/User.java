@@ -38,11 +38,23 @@ public class User implements UserDetails {
     @Temporal(TemporalType.DATE)
     private LocalDate birthday;
 
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String idCard;
+
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
 
-    public User(String firstName, String lastName, String email, String password, String phoneNumber, LocalDate birthday, Role role) {
+    @Column(nullable = false)
+    private boolean partner;
+
+    @Column(name = "profile_picture", columnDefinition="BYTEA", nullable = false)
+    private byte[] profilePicture;
+
+    public User(String firstName, String lastName, String email, String password, String phoneNumber, LocalDate birthday, Role role, String address, String idCard, boolean partner, byte[] profilePicture) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -50,6 +62,10 @@ public class User implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.birthday = birthday;
         this.role = role;
+        this.address = address;
+        this.idCard = idCard;
+        this.partner = partner;
+        this.profilePicture = profilePicture;
     }
 
     public User() {}
@@ -70,40 +86,8 @@ public class User implements UserDetails {
         return email;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName().toString());
-
-        return List.of(authority);
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.getEmail();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
     public String getPhoneNumber() {
@@ -116,6 +100,22 @@ public class User implements UserDetails {
 
     public Role getRole() {
         return role;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public boolean isPartner() {
+        return partner;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
     }
 
     public void setId(int id) {
@@ -148,5 +148,53 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
+
+    public void setPartner(boolean partner) {
+        this.partner = partner;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName().toString());
+
+        return List.of(authority);
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

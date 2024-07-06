@@ -26,4 +26,9 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         return optionalUser.orElse(null);
     }
+
+    public User findById(int id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser.orElse(null);
+    }
 }

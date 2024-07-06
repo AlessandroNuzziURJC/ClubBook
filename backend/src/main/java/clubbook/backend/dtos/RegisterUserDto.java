@@ -30,7 +30,16 @@ public class RegisterUserDto {
     @NotNull(message = "Birthday is mandatory")
     private LocalDate birthday;
 
-    public RegisterUserDto(String email, String password, String role, String firstName, String lastName, String phoneNumber, LocalDate birthday) {
+    @NotNull(message = "Address is mandatory")
+    private String address;
+
+    private String idCard;
+
+    private boolean partner;
+
+    private byte[] profilePicture;
+
+    public RegisterUserDto(String email, String password, String role, String firstName, String lastName, String phoneNumber, LocalDate birthday, String address, String idCard, boolean partner, byte[] profilePicture) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -38,6 +47,10 @@ public class RegisterUserDto {
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.birthday = birthday;
+        this.address = address;
+        this.idCard = idCard;
+        this.partner = partner;
+        this.profilePicture = profilePicture;
     }
 
     public RegisterUserDto() {
@@ -97,5 +110,37 @@ public class RegisterUserDto {
 
     public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
+
+    public boolean isPartner() {
+        return partner;
+    }
+
+    public void setPartner(boolean partner) {
+        this.partner = partner;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }
