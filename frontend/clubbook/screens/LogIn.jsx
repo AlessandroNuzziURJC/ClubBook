@@ -36,9 +36,13 @@ export default function LogIn() {
             if (response.ok) {
                 const result = await response.json();
                 await AsyncStorage.setItem('userToken', result.token);
-                await AsyncStorage.setItem('userName', email);
+                await AsyncStorage.setItem('email', email);
                 await AsyncStorage.setItem('userPassword', password);
-                Alert.alert('Información', 'Se ha iniciado sesión correctamente.');
+                await AsyncStorage.setItem('id', result.user.id.toString());
+                await AsyncStorage.setItem('firstName', result.user.firstName);
+                await AsyncStorage.setItem('lastName', result.user.lastName);
+                await AsyncStorage.setItem('phoneNumber', result.user.phoneNumber);
+                await AsyncStorage.setItem('birthday', result.user.birthday);
 
                 const role = result.user.role.name;
 
