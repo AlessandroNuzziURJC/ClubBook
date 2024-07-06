@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import Profile from '../components/Profile';
+import { Ionicons } from "@expo/vector-icons";
 
 const HomeStackScreen = () => {
     return (
@@ -25,6 +26,11 @@ const TeacherMainScreen = () => {
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
             <Tab.Screen name="SettingsMenu" component={SettingsStackScreen} />
+            <Tab.Screen name="Perfil" component={Profile} options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="person" color={color} size={size} />
+                ),
+            }} />
         </Tab.Navigator>
     );
 };
