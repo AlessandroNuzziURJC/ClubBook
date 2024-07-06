@@ -20,70 +20,81 @@ const Profile = () => {
         partner: ''
     });
 
-    const getUserFromAsyncStorage = async () => {
+    const getUserData = async (data) => {
+        return await fetch(`${Configuration.API_URL}/me/${data.id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    }
+
+    const getUserPhoto = async (data) => {
+        return await fetch(`${Configuration.API_URL}/${data.id}/profilePicture`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    }
+
+    const updateScreenData = async (result) => {
+        const userData = {
+            email: result.email,
+            id: result.id.toString(),
+            firstName: result.firstName,
+            lastName: result.lastName,
+            phoneNumber: result.phoneNumber,
+            birthday: result.birthday,
+            address: result.address,
+            idCard: result.idCard,
+            partner: result.partner
+        };
+        setUser(userData);
+    }
+
+    const saveInAsyncStorage = async (result) => {
+        await AsyncStorage.setItem('id', result.id.toString());
+        await AsyncStorage.setItem('firstName', result.firstName);
+        await AsyncStorage.setItem('lastName', result.lastName);
+        await AsyncStorage.setItem('phoneNumber', result.phoneNumber);
+        await AsyncStorage.setItem('birthday', result.birthday);
+        await AsyncStorage.setItem('address', result.address);
+        await AsyncStorage.setItem('idCard', result.idCard);
+    }
+
+    const getFromServer = async () => {
         try {
-            const userToken = await AsyncStorage.getItem("userToken");
-            const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`${Configuration.API_URL}/me/${userId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`,
-                }
-            });
+            const data = {
+                token: await AsyncStorage.getItem("userToken"),
+                id: await AsyncStorage.getItem("id")
+            }
+
+            const response = await getUserData(data);
 
             if (response.ok) {
                 const result = await response.json();
-                const userData = {
-                    email: result.email,
-                    id: result.id.toString(),
-                    firstName: result.firstName,
-                    lastName: result.lastName,
-                    phoneNumber: result.phoneNumber,
-                    birthday: result.birthday,
-                    address: result.address,
-                    idCard: result.idCard,
-                    partner: result.partner
-                };
-                setUser(userData);
-                await AsyncStorage.setItem('id', result.id.toString());
-                await AsyncStorage.setItem('firstName', result.firstName);
-                await AsyncStorage.setItem('lastName', result.lastName);
-                await AsyncStorage.setItem('phoneNumber', result.phoneNumber);
-                await AsyncStorage.setItem('birthday', result.birthday);
-                await AsyncStorage.setItem('address', result.address);
-                await AsyncStorage.setItem('idCard', result.idCard);
+                updateScreenData(result);
+                saveInAsyncStorage(result);
             } else {
-                Alert.alert('Error', 'Ha habido un error en la comunicación.');
+                Alert.alert('Error', 'Error al cargar los datos.');
             }
-        } catch (error) {
-            Alert.alert('Ha habido un error en la comunicación: ', error);
-        }
-    };
 
-    const getUserProfile = async () => {
-        try {
-            const userToken = await AsyncStorage.getItem("userToken");
-            const userId = await AsyncStorage.getItem("id");
-            const response = await fetch(`${Configuration.API_URL}/${userId}/profilePicture`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${userToken}`,
-                }
-            });
+            const responseImage = await getUserPhoto(data);
 
-            if (response.ok) {
-                const blob = await response.blob();
+            if (responseImage.ok) {
+                const blob = await responseImage.blob();
                 setProfilePicture(blob);
             } else {
                 setProfilePicture(require('../assets/error.png'));
                 Alert.alert('Error', 'Error al cargar la imagen del perfil');
             }
         } catch (error) {
-            setProfilePicture(require('../assets/error.png'));
-            Alert.alert('Error', 'Ha ocurrido un error al intentar cargar la imagen del perfil');
+            Alert.alert('Ha habido un error en la comunicación: ', error);
         }
-    }
+    };
+
 
 
     const onRefresh = React.useCallback(() => {
@@ -91,12 +102,11 @@ const Profile = () => {
         setTimeout(() => {
             setRefreshing(false);
         }, 2000);
-        getUserFromAsyncStorage();
+        getFromServer();
     }, []);
 
     useEffect(() => {
-        getUserFromAsyncStorage();
-        getUserProfile();
+        getFromServer();
     }, []);
 
     return (
