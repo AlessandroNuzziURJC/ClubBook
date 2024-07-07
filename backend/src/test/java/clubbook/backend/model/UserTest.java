@@ -19,19 +19,23 @@ class UserTest {
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
         ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
         byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
-        User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
+        User user = new User("Jane", "Smith", "jane.smith@example.com", "newpassword", "9876543210", dateOfBirth, role, "Calle Olvido, 1", "123123123X", true, profilePicture);
 
-        assertEquals("John", user.getFirstName());
-        assertEquals("Doe", user.getLastName());
-        assertEquals("john.doe@example.com", user.getEmail());
-        assertEquals("password", user.getPassword());
-        assertEquals("1234567890", user.getPhoneNumber());
+        assertEquals("Jane", user.getFirstName());
+        assertEquals("Smith", user.getLastName());
+        assertEquals("jane.smith@example.com", user.getEmail());
+        assertEquals("newpassword", user.getPassword());
+        assertEquals("9876543210", user.getPhoneNumber());
         assertEquals(dateOfBirth, user.getBirthday());
         assertEquals(role, user.getRole());
+        assertEquals("Calle Olvido, 1", user.getAddress());
+        assertEquals("123123123X", user.getIdCard());
+        assertTrue(user.isPartner());
+        assertEquals(profilePicture, user.getProfilePicture());
     }
 
     @Test
-    public void testSetters() {
+    public void testSetters() throws Exception {
         Role role1 = new Role(RoleEnum.ADMINISTRATOR);
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
         User user = new User();
@@ -43,6 +47,12 @@ class UserTest {
         user.setPhoneNumber("9876543210");
         user.setBirthday(dateOfBirth);
         user.setRole(role1);
+        user.setAddress("Calle Olvido, 1");
+        user.setIdCard("123123123X");
+        user.setPartner(false);
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
+        user.setProfilePicture(profilePicture);
 
         assertEquals("Jane", user.getFirstName());
         assertEquals("Smith", user.getLastName());
@@ -51,6 +61,11 @@ class UserTest {
         assertEquals("9876543210", user.getPhoneNumber());
         assertEquals(dateOfBirth, user.getBirthday());
         assertEquals(role1, user.getRole());
+        assertEquals("Calle Olvido, 1", user.getAddress());
+        assertEquals("123123123X", user.getIdCard());
+        assertFalse(user.isPartner());
+        assertEquals(profilePicture, user.getProfilePicture());
+
     }
 
     @Test

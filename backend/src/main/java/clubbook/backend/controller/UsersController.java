@@ -26,7 +26,7 @@ public class UsersController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/me/{id}")
+    @GetMapping("/{id}/me")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> getMyUserData(@PathVariable int id) {
         User user = userService.findById(id);
@@ -57,4 +57,6 @@ public class UsersController {
         headers.setContentType(MediaType.IMAGE_PNG);
         return new ResponseEntity<>(user.getProfilePicture(), headers, HttpStatus.OK);
     }
+
+
 }
