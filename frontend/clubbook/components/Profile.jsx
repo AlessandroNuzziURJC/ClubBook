@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { ScrollView, View, Text, StyleSheet, Image, TouchableOpacity, Alert, RefreshControl } from "react-native";
 import Configuration from '../screens/config/Configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
     const [refreshing, setRefreshing] = useState(false);
-
+    const navigation = useNavigation();
     const [profilePicture, setProfilePicture] = useState(null);
 
     const [user, setUser] = useState({
@@ -20,8 +21,19 @@ const Profile = () => {
         partner: ''
     });
 
+    const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = () => {
+                resolve(reader.result);
+            };
+            reader.readAsDataURL(blob);
+        });
+    };
+
     const getUserData = async (data) => {
-        return await fetch(`${Configuration.API_URL}/me/${data.id}`, {
+        return await fetch(`${Configuration.API_URL}/${data.id}/me`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -62,6 +74,7 @@ const Profile = () => {
         await AsyncStorage.setItem('birthday', result.birthday);
         await AsyncStorage.setItem('address', result.address);
         await AsyncStorage.setItem('idCard', result.idCard);
+        await AsyncStorage.setItem('partner', result.partner.toString());
     }
 
     const getFromServer = async () => {
@@ -85,13 +98,14 @@ const Profile = () => {
 
             if (responseImage.ok) {
                 const blob = await responseImage.blob();
-                setProfilePicture(blob);
+                const base64 = await blobToBase64(blob);
+                setProfilePicture(base64);
             } else {
                 setProfilePicture(require('../assets/error.png'));
                 Alert.alert('Error', 'Error al cargar la imagen del perfil');
             }
         } catch (error) {
-            Alert.alert('Ha habido un error en la comunicación: ', error);
+            Alert.alert('Ha habido un error en la comunicación: ');
         }
     };
 
@@ -118,7 +132,7 @@ const Profile = () => {
                     <View style={styles.columnContainer}>
                         <View style={styles.subheader}>
                             <Text style={styles.pageTitle}>Perfil</Text>
-                            <TouchableOpacity style={styles.editContainer}>
+                            <TouchableOpacity style={styles.editContainer} onPress={() => navigation.navigate('ProfileEdit')}>
                                 <Image
                                     source={require('../assets/edit_icon.png')}
                                     style={styles.icon}
@@ -133,7 +147,7 @@ const Profile = () => {
                         )}
                     </View>
                     <Image
-                        source={profilePicture ? { uri: URL.createObjectURL(profilePicture) } : require('../assets/loading.gif')}
+                        source={profilePicture ? { uri: profilePicture } : require('../assets/loading.gif')}
                         style={styles.image}
                     />
                 </View>
@@ -141,7 +155,13 @@ const Profile = () => {
                     <View style={styles.labelDataContainer}>
                         <Text style={styles.label}>Nombre:</Text>
                         <View style={styles.dataContainer}>
-                            <Text style={styles.data}>{`${user.firstName} ${user.lastName}`}</Text>
+                            <Text style={styles.data}>{`${user.firstName}`}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.labelDataContainer}>
+                        <Text style={styles.label}>Apellidos:</Text>
+                        <View style={styles.dataContainer}>
+                            <Text style={styles.data}>{`${user.lastName}`}</Text>
                         </View>
                     </View>
                     <View style={styles.labelDataContainer}>

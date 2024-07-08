@@ -7,6 +7,7 @@ import AdministratorMainScreen from './screens/AdministratorMainScreen';
 import StudentMainScreen from './screens/StudentMainScreen';
 import TeacherMainScreen from './screens/TeacherMainScreen';
 
+
 export default function App() {
 
   const Stack = createNativeStackNavigator();
@@ -15,10 +16,10 @@ export default function App() {
       <View style={{ height: 35 }}></View>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LogIn">
-          <Stack.Screen name="LogIn" component={LogIn} options={{headerShown: false}}/>
-          <Stack.Screen name="AdministratorMainScreen" component={AdministratorMainScreen} options={{headerShown: false}}/>
-          <Stack.Screen name="StudentMainScreen" component={StudentMainScreen} options={{headerShown: false}}/>
-          <Stack.Screen name="TeacherMainScreen" component={TeacherMainScreen} options={{headerShown: false}}/>
+          <Stack.Screen name="LogIn" component={LogIn} options={{headerShown: false, gestureEnabled: false}}/>
+          <Stack.Screen name="AdministratorMainScreen" component={AdministratorMainScreen} options={{headerShown: false, gestureEnabled: false}}/>
+          <Stack.Screen name="StudentMainScreen" component={StudentMainScreen} options={{headerShown: false, gestureEnabled: false}}/>
+          <Stack.Screen name="TeacherMainScreen" component={TeacherMainScreen} options={{headerShown: false, gestureEnabled: false}}/>
         </Stack.Navigator>
       </NavigationContainer>
     </View>
