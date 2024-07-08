@@ -28,9 +28,9 @@ class UsersControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private Long extractIdFromResponse(String response) throws Exception {
+    private String extractValue(String response, String key) throws Exception {
         JsonNode jsonNode = objectMapper.readTree(response);
-        return jsonNode.get("id").asLong();
+        return jsonNode.get(key).asText();
     }
 
     @Test
@@ -91,7 +91,7 @@ class UsersControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long userId = extractIdFromResponse(response);
+        String userId = extractValue(response, "id");
 
         mockMvc.perform(get("/{id}/me", userId))
                 .andExpect(status().isOk());
@@ -122,7 +122,7 @@ class UsersControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long userId = extractIdFromResponse(response);
+        String userId = extractValue(response, "id");
 
         mockMvc.perform(get("/{id}/me", userId))
                 .andExpect(status().isOk());
@@ -153,7 +153,7 @@ class UsersControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long userId = extractIdFromResponse(response);
+        String userId = extractValue(response, "id");
 
         mockMvc.perform(get("/{id}/me", userId))
                 .andExpect(status().isOk());
@@ -190,7 +190,7 @@ class UsersControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long userId = extractIdFromResponse(response);
+        String userId = extractValue(response, "id");
 
         mockMvc.perform(get("/{id}/profilePicture", userId))
                 .andExpect(status().isOk());
@@ -221,7 +221,7 @@ class UsersControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long userId = extractIdFromResponse(response);
+        String userId = extractValue(response, "id");
 
         mockMvc.perform(get("/{id}/profilePicture", userId))
                 .andExpect(status().isOk());
@@ -252,9 +252,198 @@ class UsersControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Long userId = extractIdFromResponse(response);
+        String userId = extractValue(response, "id");
 
         mockMvc.perform(get("/{id}/profilePicture", userId))
+                .andExpect(status().isOk());
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "student@prueba.com", roles = {"STUDENT"})
+    void updateStudentData() throws Exception {
+        String userJson = "{"
+                + "\"email\": \"student@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"STUDENT\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+
+        String response = mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String userId = extractValue(response, "id");
+
+        String userLoginJson =  "{"
+                + "\"email\": \"student@prueba.com\","
+                + "\"password\": \"password\"}";
+
+        response = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userLoginJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String token = extractValue(response, "token");
+
+        String userJsonUpdated = "{"
+                + "\"email\": \"student@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"STUDENT\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"123456789\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+
+        mockMvc.perform(post("/{id}/updateUser", userId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJsonUpdated))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/{id}/me", userId))
+                .andExpect(status().isOk());
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "teacher@prueba.com", roles = {"TEACHER"})
+    void updateTeacherData() throws Exception {
+        String userJson = "{"
+                + "\"email\": \"teacher@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+
+        String response = mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String userId = extractValue(response, "id");
+
+        String userLoginJson =  "{"
+                + "\"email\": \"teacher@prueba.com\","
+                + "\"password\": \"password\"}";
+
+        response = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userLoginJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String token = extractValue(response, "token");
+
+        String userJsonUpdated = "{"
+                + "\"email\": \"teacher@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"123456789\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+
+        mockMvc.perform(post("/{id}/updateUser", userId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJsonUpdated))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/{id}/me", userId))
+                .andExpect(status().isOk());
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "administrator@prueba.com", roles = {"ADMINISTATOR"})
+    void updateAdministratorData() throws Exception {
+        String userJson = "{"
+                + "\"email\": \"administrator@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"ADMINISTRATOR\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+
+        String response = mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String userId = extractValue(response, "id");
+
+        String userLoginJson =  "{"
+                + "\"email\": \"administrator@prueba.com\","
+                + "\"password\": \"password\"}";
+
+        response = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userLoginJson))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String token = extractValue(response, "token");
+
+        String userJsonUpdated = "{"
+                + "\"email\": \"administrator@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"ADMINISTRATOR\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"123456789\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+
+        mockMvc.perform(post("/{id}/updateUser", userId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJsonUpdated))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/{id}/me", userId))
                 .andExpect(status().isOk());
     }
 }

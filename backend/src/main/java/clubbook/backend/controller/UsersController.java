@@ -1,13 +1,19 @@
 package clubbook.backend.controller;
 
+import clubbook.backend.dtos.RegisterUserDto;
+import clubbook.backend.dtos.UpdateUserDto;
 import clubbook.backend.model.User;
 import clubbook.backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,5 +64,27 @@ public class UsersController {
         return new ResponseEntity<>(user.getProfilePicture(), headers, HttpStatus.OK);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/updateUser")
+    public ResponseEntity<User> updateUser(@PathVariable int id, @Valid @RequestBody UpdateUserDto updateUserDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        if (!userDetails.getUsername().equals(updateUserDto.getEmail())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        User registeredUser = userService.findById(id);
+        registeredUser.setFirstName(updateUserDto.getFirstName());
+        registeredUser.setLastName(updateUserDto.getLastName());
+        registeredUser.setEmail(updateUserDto.getEmail());
+        registeredUser.setPhoneNumber(updateUserDto.getPhoneNumber());
+        registeredUser.setBirthday(updateUserDto.getBirthday());
+        registeredUser.setAddress(updateUserDto.getAddress());
+        registeredUser.setIdCard(updateUserDto.getIdCard());
+        registeredUser.setPartner(updateUserDto.isPartner());
+        registeredUser = userService.save(registeredUser);
+        return ResponseEntity.ok(registeredUser);
+    }
 
 }
