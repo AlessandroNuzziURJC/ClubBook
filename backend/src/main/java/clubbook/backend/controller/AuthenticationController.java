@@ -45,7 +45,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
         String jwtToken = token.replace("Bearer ", "");
         jwtService.invalidateToken(jwtToken);
