@@ -45,6 +45,13 @@ public class AuthenticationController {
         return ResponseEntity.ok(loginResponse);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
+        String jwtToken = token.replace("Bearer ", "");
+        jwtService.invalidateToken(jwtToken);
+        return ResponseEntity.ok().build();
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         return ResponseEntity.badRequest().body("Validation failed: " + ex.getBindingResult().toString());

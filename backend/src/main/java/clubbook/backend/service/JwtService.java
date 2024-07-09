@@ -6,9 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +22,8 @@ public class JwtService {
 
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
+
+    private final Set<String> blacklistedTokens = new HashSet<>();
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -62,6 +62,8 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        if (blacklistedTokens.contains(token))
+            return false;
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
@@ -93,5 +95,9 @@ public class JwtService {
     private SecretKey getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public void invalidateToken(String jwtToken) {
+        blacklistedTokens.add(jwtToken);
     }
 }
