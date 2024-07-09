@@ -149,7 +149,7 @@ const Profile = () => {
             token: await AsyncStorage.getItem("userToken"),
             id: await AsyncStorage.getItem("id")
         }
-        await fetch(`${Configuration.API_URL}/logout`, {
+        await fetch(`${Configuration.API_URL}/auth/logout`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${data.token}`,
