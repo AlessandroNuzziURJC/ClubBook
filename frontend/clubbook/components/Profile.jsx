@@ -123,6 +123,49 @@ const Profile = () => {
         getFromServer();
     }, []);
 
+    const logout = async () => {
+        Alert.alert(
+            'Cerrar sesión',
+            '¿Estás seguro que quieres cerrar sesión?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel'
+                },
+                {
+                    text: 'Cerrar sesión',
+                    onPress: async () => {
+                        await requestLogout();
+                        navigation.navigate('LogIn');
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    const requestLogout = async () => {
+        const data = {
+            token: await AsyncStorage.getItem("userToken"),
+            id: await AsyncStorage.getItem("id")
+        }
+        await fetch(`${Configuration.API_URL}/logout`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        await AsyncStorage.removeItem('id');
+        await AsyncStorage.removeItem('userToken');
+        await AsyncStorage.removeItem('firstName');
+        await AsyncStorage.removeItem('lastName');
+        await AsyncStorage.removeItem('phoneNumber');
+        await AsyncStorage.removeItem('birthday');
+        await AsyncStorage.removeItem('address');
+        await AsyncStorage.removeItem('idCard');
+        await AsyncStorage.removeItem('partner');
+    };
+
     return (
         <ScrollView style={styles.container} refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -199,6 +242,11 @@ const Profile = () => {
                         <View style={styles.dataContainer}>
                             <Text style={styles.data}>4R-123123123</Text>
                         </View>
+                    </View>
+                    <View style={styles.logoutContainer}>
+                        <TouchableOpacity onPress={logout}>
+                            <Text style={styles.logout}>Cerrar sesión</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -283,5 +331,15 @@ const styles = StyleSheet.create({
     },
     data: {
         fontSize: 16,
+    },
+    logoutContainer: {
+        alignItems: 'center',
+        marginTop: 30,
+        marginBottom: 40
+    },
+    logout: {
+        color: 'red',
+        fontSize: 16,
+        fontWeight: 'bold'
     }
 });
