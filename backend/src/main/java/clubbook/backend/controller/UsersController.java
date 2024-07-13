@@ -6,6 +6,7 @@ import clubbook.backend.model.User;
 import clubbook.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +31,14 @@ public class UsersController {
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/students")
+    public Page<User> getAllStudents(@RequestParam(defaultValue = "0") int pageNumber,
+                                     @RequestParam(defaultValue = "10") int pageSize) {
+        Page<User> page =userService.getStudentsPage(pageNumber, pageSize);
+        return page;
     }
 
     @GetMapping("/{id}/me")

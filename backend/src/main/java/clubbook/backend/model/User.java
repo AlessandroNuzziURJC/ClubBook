@@ -51,6 +51,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean partner;
 
+    @JsonIgnore
     @Column(name = "profile_picture", columnDefinition="BYTEA", nullable = false)
     private byte[] profilePicture;
 
