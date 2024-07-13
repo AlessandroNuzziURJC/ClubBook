@@ -33,7 +33,7 @@ public class UsersController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     @GetMapping("/students")
     public Page<User> getAllStudents(@RequestParam(defaultValue = "0") int pageNumber,
                                      @RequestParam(defaultValue = "10") int pageSize) {

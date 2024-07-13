@@ -7,9 +7,12 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.annotation.DirtiesContext;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -285,7 +288,7 @@ class UsersControllerTest {
 
         String userId = extractValue(response, "id");
 
-        String userLoginJson =  "{"
+        String userLoginJson = "{"
                 + "\"email\": \"student@prueba.com\","
                 + "\"password\": \"password\"}";
 
@@ -348,7 +351,7 @@ class UsersControllerTest {
 
         String userId = extractValue(response, "id");
 
-        String userLoginJson =  "{"
+        String userLoginJson = "{"
                 + "\"email\": \"teacher@prueba.com\","
                 + "\"password\": \"password\"}";
 
@@ -411,7 +414,7 @@ class UsersControllerTest {
 
         String userId = extractValue(response, "id");
 
-        String userLoginJson =  "{"
+        String userLoginJson = "{"
                 + "\"email\": \"administrator@prueba.com\","
                 + "\"password\": \"password\"}";
 
@@ -445,5 +448,97 @@ class UsersControllerTest {
 
         mockMvc.perform(get("/{id}/me", userId))
                 .andExpect(status().isOk());
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void getStudentsDataTeacher() throws Exception {
+
+        String response;
+
+        String student1 = "{"
+                + "\"email\": \"student@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"STUDENT\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        response = mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student1))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+
+        String student2 = "{"
+                + "\"email\": \"student2@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"STUDENT\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        response = mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student2))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String student3 = "{"
+                + "\"email\": \"student3@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"STUDENT\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        response = mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student3))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        response = mockMvc.perform(get("/students"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("3", extractValue(response, "totalElements"));
+
+        response = mockMvc.perform(get("/students?pageSize=2"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("2", extractValue(response, "totalPages"));
+        assertEquals("2", extractValue(response, "numberOfElements"));
+
+        response = mockMvc.perform(get("/students?pageNumber=1&pageSize=2"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("2", extractValue(response, "totalPages"));
+        assertEquals("1", extractValue(response, "numberOfElements"));
     }
 }
