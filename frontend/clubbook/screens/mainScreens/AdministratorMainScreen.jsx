@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Profile from '../components/Profile';
-import ProfileEdit from '../components/ProfileEdit';
+import Profile from '../../components/Profile';
+import ProfileEdit from '../profileScreens/ProfileEditScreen';
 import { Ionicons } from "@expo/vector-icons";
 
 const HomeStackScreen = () => {

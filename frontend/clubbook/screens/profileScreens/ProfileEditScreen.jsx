@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, View, Text, StyleSheet, Image, TextInput, Alert, TouchableOpacity } from "react-native";
-import Configuration from '../screens/config/Configuration';
+import Configuration from '../../config/Configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -156,7 +156,7 @@ const EditProfile = () => {
                 const base64 = await blobToBase64(blob);
                 setProfilePicture(base64);
             } else {
-                setProfilePicture(require('../assets/error.png'));
+                setProfilePicture(require('../../assets/error.png'));
                 Alert.alert('Error', 'Error al cargar la imagen del perfil');
             }
         } catch (error) {
@@ -218,7 +218,7 @@ const EditProfile = () => {
                         )}
                     </View>
                     <Image
-                        source={profilePicture ? { uri: profilePicture } : require('../assets/loading.gif')}
+                        source={profilePicture ? { uri: profilePicture } : require('../../assets/loading.gif')}
                         style={styles.image}
                     />
                 </View>

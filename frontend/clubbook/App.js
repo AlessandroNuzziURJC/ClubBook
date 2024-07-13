@@ -3,9 +3,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './screens/LogIn';
-import AdministratorMainScreen from './screens/AdministratorMainScreen';
-import StudentMainScreen from './screens/StudentMainScreen';
-import TeacherMainScreen from './screens/TeacherMainScreen';
+import AdministratorMainScreen from './screens/mainScreens/AdministratorMainScreen';
+import StudentMainScreen from './screens/mainScreens/StudentMainScreen';
+import TeacherMainScreen from './screens/mainScreens/TeacherMainScreen';
 
 
 export default function App() {
