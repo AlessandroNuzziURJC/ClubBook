@@ -35,10 +35,17 @@ public class UsersController {
 
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     @GetMapping("/students")
-    public Page<User> getAllStudents(@RequestParam(defaultValue = "0") int pageNumber,
+    public ResponseEntity<Page<User>> getAllStudents(@RequestParam(defaultValue = "0") int pageNumber,
                                      @RequestParam(defaultValue = "10") int pageSize) {
-        Page<User> page =userService.getStudentsPage(pageNumber, pageSize);
-        return page;
+        Page<User> page = userService.getStudentsPage(pageNumber, pageSize);
+        return ResponseEntity.ok(page);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
+    @GetMapping("/studentsSearch")
+    public ResponseEntity<List<User>> getStudentsListFilteredByName(@RequestParam String search) {
+        List<User> list = userService.getStudentsListFilteredByName(search);
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}/me")

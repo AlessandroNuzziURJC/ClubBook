@@ -45,7 +45,7 @@ public class User implements UserDetails {
     private String idCard;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "role_fk_id", referencedColumnName = "roleId", nullable = false)
     private Role role;
 
     @Column(nullable = false)

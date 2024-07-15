@@ -1,4 +1,4 @@
-birthday,id,partner,role_id,phone_number,address,email,first_name,id_card,last_name,password
+birthday,id,partner,role_fk_id,phone_number,address,email,first_name,id_card,last_name,password
 2001-03-20,100,true,1,603603604,"Calle Olvidada, 2",pruebastudent1@gmail.com,Alessandro,123123124X,Nuzzi Herrero,abcde1
 2000-01-11,101,false,1,603603605,"Calle Falsa, 3",pruebastudent2@gmail.com,Laura,123123125Y,González Pérez,abcde2
 1999-12-22,102,true,1,603603606,"Calle Verdadera, 4",pruebastudent3@gmail.com,Carlos,123123126Z,Nuzzi Herrero,abcde3

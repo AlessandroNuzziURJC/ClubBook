@@ -39,4 +39,22 @@ public class UserService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return userRepository.findAllStudentsByOrderByNameAsc(pageable);
     }
+
+    private String modifySearch(String search) {
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < search.length(); i++) {
+            char currentChar = search.charAt(i);
+            if ((currentChar >= 'a' && currentChar <= 'z')|| (currentChar >= 'A' && currentChar <= 'Z')) {
+                output.append(currentChar);
+            } else {
+                output.append('_');
+            }
+        }
+        return '%' + output.toString() + '%';
+    }
+
+    public List<User> getStudentsListFilteredByName(String search) {
+        String searchMod = modifySearch(search);
+        return userRepository.findAllStudentsByOrderByNameAscWithSearch(searchMod);
+    }
 }
