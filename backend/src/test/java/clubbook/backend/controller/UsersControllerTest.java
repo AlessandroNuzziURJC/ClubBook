@@ -708,4 +708,265 @@ class UsersControllerTest {
         mockMvc.perform(get("/students"))
                 .andExpect(status().isForbidden());
     }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void getTeachersDataTeacher() throws Exception {
+
+        String response;
+
+        String student1 = "{"
+                + "\"email\": \"teacher@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student1))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+
+        String student2 = "{"
+                + "\"email\": \"teacher2@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student2))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String student3 = "{"
+                + "\"email\": \"teacher3@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student3))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        response = mockMvc.perform(get("/teachers"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("3", extractValue(response, "totalElements"));
+
+        response = mockMvc.perform(get("/teachers?pageSize=2"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("2", extractValue(response, "totalPages"));
+        assertEquals("2", extractValue(response, "numberOfElements"));
+
+        response = mockMvc.perform(get("/teachers?pageNumber=1&pageSize=2"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("2", extractValue(response, "totalPages"));
+        assertEquals("1", extractValue(response, "numberOfElements"));
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMINISTRATOR"})
+    void getTeachersDataAdministrator() throws Exception {
+
+        String response;
+
+        String student1 = "{"
+                + "\"email\": \"teacher@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student1))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+
+        String student2 = "{"
+                + "\"email\": \"teacher2@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student2))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String student3 = "{"
+                + "\"email\": \"teacher3@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student3))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        response = mockMvc.perform(get("/teachers"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("3", extractValue(response, "totalElements"));
+
+        response = mockMvc.perform(get("/teachers?pageSize=2"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("2", extractValue(response, "totalPages"));
+        assertEquals("2", extractValue(response, "numberOfElements"));
+
+        response = mockMvc.perform(get("/teachers?pageNumber=1&pageSize=2"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        assertEquals("2", extractValue(response, "totalPages"));
+        assertEquals("1", extractValue(response, "numberOfElements"));
+    }
+
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "student", roles = {"STUDENT"})
+    void getTeachersDataStudent() throws Exception {
+
+        String student1 = "{"
+                + "\"email\": \"teacher@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student1))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+
+        String student2 = "{"
+                + "\"email\": \"teacher2@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student2))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String student3 = "{"
+                + "\"email\": \"teacher3@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"TEACHER\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+        mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(student3))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        mockMvc.perform(get("/teachers?pageNumber=1&pageSize=2"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/teachers?pageNumber=1"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/teachers?pageSize=2"))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/teachers"))
+                .andExpect(status().isForbidden());
+    }
 }
