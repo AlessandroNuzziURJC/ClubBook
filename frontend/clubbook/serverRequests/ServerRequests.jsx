@@ -49,6 +49,26 @@ const ServerRequest = {
         });
     },
 
+    getTeachersPage: async (data, page) => {
+        return await fetch(`${Configuration.API_URL}/teachers?pageNumber=${page}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    },
+
+    getTeachersSearchPage: async (data, search) => {
+        return await fetch(`${Configuration.API_URL}/teachersSearch?search=${search}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    },
+
     getUserPhoto: async (id) => {
         const data = await ServerRequest.getTokenAndId();
         const response = await fetch(`${Configuration.API_URL}/${id}/profilePicture`, {
@@ -58,6 +78,24 @@ const ServerRequest = {
             }
         })
         return response;
+    },
+    requestLogout: async () => {
+        const data = ServerRequest.getTokenAndId();
+        await fetch(`${Configuration.API_URL}/auth/logout`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        await AsyncStorage.removeItem('id');
+        await AsyncStorage.removeItem('userToken');
+        await AsyncStorage.removeItem('firstName');
+        await AsyncStorage.removeItem('lastName');
+        await AsyncStorage.removeItem('phoneNumber');
+        await AsyncStorage.removeItem('birthday');
+        await AsyncStorage.removeItem('address');
+        await AsyncStorage.removeItem('idCard');
+        await AsyncStorage.removeItem('partner');
     }
 }
 

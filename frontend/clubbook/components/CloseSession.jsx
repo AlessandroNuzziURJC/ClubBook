@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Text, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import ServerRequest from '../serverRequests/ServerRequests';
 
 const CloseSessionButton = ({ visible }) => {
     const navigation = useNavigation();
@@ -19,7 +20,7 @@ const CloseSessionButton = ({ visible }) => {
                 {
                     text: 'Cerrar sesión',
                     onPress: async () => {
-                        await requestLogout();
+                        await ServerRequest.requestLogout();
                         navigation.navigate('LogIn');
                     }
                 }
@@ -27,28 +28,6 @@ const CloseSessionButton = ({ visible }) => {
             { cancelable: false }
         );
     }
-
-    const requestLogout = async () => {
-        const data = {
-            token: await AsyncStorage.getItem("userToken"),
-            id: await AsyncStorage.getItem("id")
-        }
-        await fetch(`${Configuration.API_URL}/auth/logout`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${data.token}`,
-            }
-        });
-        await AsyncStorage.removeItem('id');
-        await AsyncStorage.removeItem('userToken');
-        await AsyncStorage.removeItem('firstName');
-        await AsyncStorage.removeItem('lastName');
-        await AsyncStorage.removeItem('phoneNumber');
-        await AsyncStorage.removeItem('birthday');
-        await AsyncStorage.removeItem('address');
-        await AsyncStorage.removeItem('idCard');
-        await AsyncStorage.removeItem('partner');
-    };
 
     return (
         <View style={styles.logoutContainer} visible={visible}>

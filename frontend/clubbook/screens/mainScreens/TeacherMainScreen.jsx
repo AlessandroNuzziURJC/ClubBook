@@ -22,9 +22,9 @@ const UsersStackNavigator = () => {
     return (
         <UsersStack.Navigator screenOptions={{
             headerShown: false
-        }}>
-            <UsersStack.Screen name="Students" component={UsersScreen} />
-            <UsersStack.Screen name="StudentProfile" component={UserInfoScreen}/>
+        }} initialRouteName="UsersScreen">
+            <UsersStack.Screen name="UsersScreen" component={UsersScreen} initialParams={{ key: 'student' }} />
+            <UsersStack.Screen name="UserProfile" component={UserInfoScreen}/>
         </UsersStack.Navigator>
     );
 }

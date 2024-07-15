@@ -3,6 +3,7 @@ import { ScrollView, View, Text, StyleSheet, TextInput, Alert, TouchableOpacity 
 import UsersFlatList from '../../components/UsersFlatList';
 import ServerRequest from "../../serverRequests/ServerRequests";
 import SearchUser from '../../components/SearchUser';
+import { useRoute } from '@react-navigation/native';
 
 const UsersScreen = () => {
     const [userList, setUserList] = useState([]);
@@ -10,14 +11,21 @@ const UsersScreen = () => {
     const [hasMore, setHasMore] = useState(true);
     const [maxUsers, setMaxUsers] = useState(0);
     const [isSearching, setIsSearching] = useState(false);
+    const route = useRoute();
+    const { key } = route.params;
+
+    const serverFunctionMap = {
+        student: ServerRequest.getStudentsPage,
+        teacher: ServerRequest.getTeachersPage
+    }
 
     const getUsers = async () => {
-        if ( !hasMore || isSearching) return;
+        if (!hasMore || isSearching) return;
 
         const data = await ServerRequest.getTokenAndId();
 
         try {
-            const response = await ServerRequest.getStudentsPage(data, page);
+            const response = await serverFunctionMap[key](data, page);
 
             if (!response.ok) {
                 Alert.alert('Error', 'Error al cargar los datos.');
@@ -28,7 +36,7 @@ const UsersScreen = () => {
             const result = await response.json();
             setMaxUsers(result.totalElements);
             setUserList(prevUsers => [...prevUsers, ...result.content]);
-            setHasMore(! result.content.last);
+            setHasMore(!result.content.last);
         } catch (error) {
             Alert.alert('Error', 'Error al cargar los datos.');
         }
@@ -53,19 +61,20 @@ const UsersScreen = () => {
         setIsSearching(false);
         setUserList([]);
         setPage(0);
-        getUsers(); 
+        getUsers();
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>Alumnos</Text>
+                    <Text style={styles.pageTitle}>{key === 'student' ? 'Alumnos' : 'Profesores'}</Text>
                 </View>
                 <View style={styles.subheader}>
-                    <SearchUser 
-                        usersSearch={handleSearchResults} 
+                    <SearchUser
+                        usersSearch={handleSearchResults}
                         onSearchClear={handleSearchClear}
+                        userType={key}
                     />
                 </View>
             </View>

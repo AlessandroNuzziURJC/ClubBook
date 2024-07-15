@@ -43,7 +43,7 @@ const UsersFlatList = ({ users, maxUsers, loadMoreUsers }) => {
                     source={userImages[index]}
                     style={styles.image}
                 />
-                <TouchableOpacity style={styles.rows} onPress={() => navigation.navigate('StudentProfile', { item })}>
+                <TouchableOpacity style={styles.rows} onPress={() => navigation.navigate('UserProfile', { item })}>
                     <View style={styles.profileinfo}>
                         <Text style={styles.name}>{`${item.firstName} ${item.lastName}`}</Text>
                     </View>
