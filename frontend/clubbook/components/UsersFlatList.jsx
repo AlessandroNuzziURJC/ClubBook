@@ -1,4 +1,3 @@
-// UsersFlatList.jsx
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';

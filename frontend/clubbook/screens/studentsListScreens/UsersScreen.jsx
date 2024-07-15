@@ -2,18 +2,18 @@ import React, { useState, useEffect } from "react";
 import { ScrollView, View, Text, StyleSheet, TextInput, Alert, TouchableOpacity } from "react-native";
 import UsersFlatList from '../../components/UsersFlatList';
 import ServerRequest from "../../serverRequests/ServerRequests";
+import SearchUser from '../../components/SearchUser';
 
 const UsersScreen = () => {
     const [userList, setUserList] = useState([]);
     const [page, setPage] = useState(0);
-    const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [maxUsers, setMaxUsers] = useState(0);
+    const [isSearching, setIsSearching] = useState(false);
 
     const getUsers = async () => {
-        if (loading || !hasMore) return;
+        if ( !hasMore || isSearching) return;
 
-        setLoading(true);
         const data = await ServerRequest.getTokenAndId();
 
         try {
@@ -26,19 +26,17 @@ const UsersScreen = () => {
             }
 
             const result = await response.json();
-            setMaxUsers(result.totalElements)
+            setMaxUsers(result.totalElements);
             setUserList(prevUsers => [...prevUsers, ...result.content]);
-            setHasMore(result.content.length > 0);
+            setHasMore(! result.content.last);
         } catch (error) {
             Alert.alert('Error', 'Error al cargar los datos.');
-        } finally {
-            setLoading(false);
         }
     };
 
     useEffect(() => {
         getUsers();
-    }, [page]);
+    }, [page, isSearching]);
 
     const loadMoreUsers = () => {
         if (hasMore) {
@@ -46,17 +44,28 @@ const UsersScreen = () => {
         }
     };
 
+    const handleSearchResults = (data) => {
+        setIsSearching(true);
+        setUserList(data);
+    };
+
+    const handleSearchClear = () => {
+        setIsSearching(false);
+        setUserList([]);
+        setPage(0);
+        getUsers(); 
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>Usuarios</Text>
+                    <Text style={styles.pageTitle}>Alumnos</Text>
                 </View>
                 <View style={styles.subheader}>
-                    <TextInput
-                        style={styles.searchbar}
-                        onChangeText={null}
-                        placeholder={'Introduce el nombre'}
+                    <SearchUser 
+                        usersSearch={handleSearchResults} 
+                        onSearchClear={handleSearchClear}
                     />
                 </View>
             </View>
@@ -77,7 +86,6 @@ const UsersScreen = () => {
 };
 
 export default UsersScreen;
-
 
 const styles = StyleSheet.create({
     container: {
@@ -112,15 +120,6 @@ const styles = StyleSheet.create({
     pageTitle: {
         fontSize: 24,
         fontWeight: 'bold'
-    },
-    searchbar: {
-        height: 40,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        borderRadius: 5,
-        width: '100%',
-        backgroundColor: '#fff'
     },
     horizontalScrollView: {
         height: 40,

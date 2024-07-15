@@ -49,7 +49,7 @@ const TeacherMainScreen = () => {
     return (
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
-            <Tab.Screen name="Usuarios" component={UsersStackNavigator} options={{
+            <Tab.Screen name="Alumnos" component={UsersStackNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="people" color={color} size={size} />
                 ),

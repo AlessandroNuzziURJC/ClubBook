@@ -29,8 +29,18 @@ const ServerRequest = {
         });
     },
 
-    getStudentsPage: async (data ,page) => {
+    getStudentsPage: async (data, page) => {
         return await fetch(`${Configuration.API_URL}/students?pageNumber=${page}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    },
+
+    getStudentsSearchPage: async (data, search) => {
+        return await fetch(`${Configuration.API_URL}/studentsSearch?search=${search}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
