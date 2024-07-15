@@ -48,6 +48,21 @@ public class UsersController {
         return ResponseEntity.ok(list);
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
+    @GetMapping("/teachers")
+    public ResponseEntity<Page<User>> getAllTeachers(@RequestParam(defaultValue = "0") int pageNumber,
+                                                     @RequestParam(defaultValue = "10") int pageSize) {
+        Page<User> page = userService.getTeachersPage(pageNumber, pageSize);
+        return ResponseEntity.ok(page);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
+    @GetMapping("/teachersSearch")
+    public ResponseEntity<List<User>> getTeachersListFilteredByName(@RequestParam String search) {
+        List<User> list = userService.getTeachersListFilteredByName(search);
+        return ResponseEntity.ok(list);
+    }
+
     @GetMapping("/{id}/me")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> getMyUserData(@PathVariable int id) {

@@ -57,4 +57,14 @@ public class UserService {
         String searchMod = modifySearch(search);
         return userRepository.findAllStudentsByOrderByNameAscWithSearch(searchMod);
     }
+
+    public Page<User> getTeachersPage(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return userRepository.findAllTeachersByOrderByNameAsc(pageable);
+    }
+
+    public List<User> getTeachersListFilteredByName(String search) {
+        String searchMod = modifySearch(search);
+        return userRepository.findAllTeachersByOrderByNameAscWithSearch(searchMod);
+    }
 }
