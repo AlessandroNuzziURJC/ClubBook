@@ -1,42 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, View, Text, StyleSheet, TextInput, Alert, TouchableOpacity } from "react-native";
-import UsersFlatList from '../../components/UsersFlatList';
+import { ScrollView, View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import UsersFlatList from '../../components/UsersFlatListPage';
 import ServerRequest from "../../serverRequests/ServerRequests";
-import SearchUser from '../../components/SearchUser';
+import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 
 const UsersScreen = () => {
     const [userList, setUserList] = useState([]);
     const [page, setPage] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
     const [maxUsers, setMaxUsers] = useState(0);
-    const [isSearching, setIsSearching] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const route = useRoute();
     const { key } = route.params;
+    const navigation = useNavigation();
 
     const serverFunctionMap = {
         student: ServerRequest.getStudentsPage,
         teacher: ServerRequest.getTeachersPage
-    }
+    };
 
     const getUsers = async () => {
-        if (!hasMore || isSearching) return;
-
         const data = await ServerRequest.getTokenAndId();
-
         try {
             const response = await serverFunctionMap[key](data, page);
 
             if (!response.ok) {
                 Alert.alert('Error', 'Error al cargar los datos.');
-                setHasMore(false);
                 return;
             }
 
             const result = await response.json();
             setMaxUsers(result.totalElements);
             setUserList(prevUsers => [...prevUsers, ...result.content]);
-            setHasMore(!result.content.last);
+            setHasMore(!result.last);
         } catch (error) {
             Alert.alert('Error', 'Error al cargar los datos.');
         }
@@ -44,24 +40,12 @@ const UsersScreen = () => {
 
     useEffect(() => {
         getUsers();
-    }, [page, isSearching]);
+    }, [page])
 
     const loadMoreUsers = () => {
         if (hasMore) {
             setPage(prevPage => prevPage + 1);
         }
-    };
-
-    const handleSearchResults = (data) => {
-        setIsSearching(true);
-        setUserList(data);
-    };
-
-    const handleSearchClear = () => {
-        setIsSearching(false);
-        setUserList([]);
-        setPage(0);
-        getUsers();
     };
 
     return (
@@ -71,11 +55,9 @@ const UsersScreen = () => {
                     <Text style={styles.pageTitle}>{key === 'student' ? 'Alumnos' : 'Profesores'}</Text>
                 </View>
                 <View style={styles.subheader}>
-                    <SearchUser
-                        usersSearch={handleSearchResults}
-                        onSearchClear={handleSearchClear}
-                        userType={key}
-                    />
+                    <TouchableOpacity style={styles.searchbarcontainer} onPress={() => navigation.navigate('Searcher', { key })}>
+                        <Text style={styles.searchbar}>Buscar</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
             <View>
@@ -104,17 +86,6 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20
     },
-    icon: {
-        width: 20,
-        height: 20
-    },
-    image: {
-        width: 70,
-        height: 70,
-        borderRadius: 100,
-        marginRight: 20,
-        alignSelf: 'center',
-    },
     header: {
         justifyContent: 'space-between',
         paddingTop: 20,
@@ -130,12 +101,22 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold'
     },
+    searchbarcontainer: {
+        width: '100%'
+    },
+    searchbar: {
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+        width: '100%',
+        backgroundColor: '#fff',
+        color: 'gray'
+    },
     horizontalScrollView: {
         height: 40,
         marginBottom: 20
-    },
-    horizontalContentContainer: {
-        alignItems: 'center'
     },
     filter: {
         color: '#1162BF',
@@ -152,44 +133,4 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'medium'
     },
-    content: {
-        flex: 1
-    },
-    column: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    profileinfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%'
-    },
-    rows: {
-        borderTopWidth: 1,
-        flex: 1,
-        paddingTop: 10
-    },
-    contact: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 5
-    },
-    name: {
-        fontWeight: 'bold',
-        fontSize: 16
-    },
-    phonenumber: {
-        fontSize: 14,
-        color: 'gray'
-    },
-    marginionicon: {
-        marginRight: 5
-    },
-    seemore: {
-        alignSelf: 'flex-end',
-        color: '#1162BF',
-        fontWeight: 'bold',
-        marginTop: 15,
-        marginBottom: 10
-    }
 });

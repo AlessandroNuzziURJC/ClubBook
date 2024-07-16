@@ -7,6 +7,7 @@ import ProfileEdit from '../profileScreens/ProfileEditScreen';
 import UsersScreen from '../studentsListScreens/UsersScreen';
 import { Ionicons } from "@expo/vector-icons";
 import UserInfoScreen from '../studentsListScreens/UserInfoScreen';
+import SearchUser from "../../components/SearchUser";
 
 const HomeStackScreen = () => {
     return (
@@ -25,6 +26,7 @@ const UsersStackNavigator = () => {
         }} initialRouteName="UsersScreen">
             <UsersStack.Screen name="UsersScreen" component={UsersScreen} initialParams={{ key: 'student' }} />
             <UsersStack.Screen name="UserProfile" component={UserInfoScreen}/>
+            <UsersStack.Screen name="Searcher" component={SearchUser}/>
         </UsersStack.Navigator>
     );
 }

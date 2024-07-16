@@ -8,6 +8,7 @@ import UsersScreen from '../studentsListScreens/UsersScreen';
 import { Ionicons } from "@expo/vector-icons";
 import UserInfoScreen from '../studentsListScreens/UserInfoScreen';
 import UserListSelector from "../userListSelector/userListSelector";
+import SearchUser from "../../components/SearchUser";
 
 const HomeStackScreen = () => {
     return (
@@ -23,10 +24,11 @@ const UsersStackNavigator = () => {
     return (
         <UsersStack.Navigator screenOptions={{
             headerShown: false
-        }} initialRouteName="UsuariosLists">
-            <UsersStack.Screen name="UsuariosLists" component={UserListSelector} />
+        }} initialRouteName="UsersLists">
+            <UsersStack.Screen name="UsersLists" component={UserListSelector} />
             <UsersStack.Screen name="UsersScreen" component={UsersScreen} />
             <UsersStack.Screen name="UserProfile" component={UserInfoScreen}/>
+            <UsersStack.Screen name="Searcher" component={SearchUser}/>
         </UsersStack.Navigator>
     );
 }

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
 import Functions from '../functions/Functions';
 
-const UsersFlatList = ({ users, maxUsers, loadMoreUsers }) => {
+const UsersFlatList = ({ users, maxUsers, loadMoreUsers}) => {
     const navigation = useNavigation();
     const [userImages, setUserImages] = useState(Array(maxUsers).fill(require('../assets/loading.gif')));
 
