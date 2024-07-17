@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-community/checkbox": "^0.5.17",
     "@react-native-community/datetimepicker": "^8.1.1",
     "@react-navigation/bottom-tabs": "^6.6.0",
     "@react-navigation/native": "^6.1.17",
@@ -30,7 +31,9 @@
     "react-native": "0.74.3",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal-datetime-picker": "^17.1.0",
-    "react-test-renderer": "^18.2.0"
+    "react-native-paper": "^5.12.3",
+    "react-test-renderer": "^18.2.0",
+    "expo-checkbox": "~3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.7",

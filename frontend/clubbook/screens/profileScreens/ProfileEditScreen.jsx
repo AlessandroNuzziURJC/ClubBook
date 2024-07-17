@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
         padding: 20
     },
     contentContainer: {
-        marginBottom: 40
+        paddingBottom: 20
     },
     icon: {
         width: 20,

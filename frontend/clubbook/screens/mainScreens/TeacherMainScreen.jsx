@@ -49,7 +49,16 @@ const ProfileStackNavigator = () => {
 const TeacherMainScreen = () => {
     const Tab = createBottomTabNavigator();
     return (
-        <Tab.Navigator screenOptions={{ headerShown: false }}>
+        <Tab.Navigator screenOptions={{
+            headerShown: false,
+            style: {
+                height: '9%',
+                position: 'absolute',
+                bottom: 0,
+                elevation: 0
+            },
+            tabBarActiveTintColor: '#1162BF',
+        }}>
             <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
             <Tab.Screen name="Alumnos" component={UsersStackNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
