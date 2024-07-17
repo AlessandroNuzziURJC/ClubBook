@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Image, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Configuration from './config/Configuration'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import ServerRequest from '../serverRequests/ServerRequests';
 
 
 export default function LogIn() {
@@ -25,13 +25,7 @@ export default function LogIn() {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${Configuration.API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
+            const response = await ServerRequest.logIn(email, password);
 
             if (response.ok) {
                 const result = await response.json();
@@ -59,9 +53,6 @@ export default function LogIn() {
                     default:
                         break;
                 }
-
-                // Do something with the result if needed
-                //Alert.alert('Información', 'El usuario es: ' + await AsyncStorage.getItem('userName'));
             }
 
             if (response.status === 401) {

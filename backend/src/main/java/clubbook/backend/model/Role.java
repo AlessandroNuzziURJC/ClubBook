@@ -14,7 +14,7 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
-    private Integer id;
+    private Integer roleId;
 
     @Column(unique = true, nullable = false)
     @Enumerated(EnumType.STRING)
@@ -31,12 +31,12 @@ public class Role {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    public Integer getId() {
-        return id;
+    public Integer getRoleId() {
+        return roleId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 
     public RoleEnum getName() {

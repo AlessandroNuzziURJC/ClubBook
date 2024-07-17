@@ -45,12 +45,13 @@ public class User implements UserDetails {
     private String idCard;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "role_fk_id", referencedColumnName = "roleId", nullable = false)
     private Role role;
 
     @Column(nullable = false)
     private boolean partner;
 
+    @JsonIgnore
     @Column(name = "profile_picture", columnDefinition="BYTEA", nullable = false)
     private byte[] profilePicture;
 

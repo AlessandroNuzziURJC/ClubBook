@@ -6,6 +6,7 @@ import clubbook.backend.model.User;
 import clubbook.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,6 +31,36 @@ public class UsersController {
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
+    @GetMapping("/students")
+    public ResponseEntity<Page<User>> getAllStudents(@RequestParam(defaultValue = "0") int pageNumber,
+                                     @RequestParam(defaultValue = "10") int pageSize) {
+        Page<User> page = userService.getStudentsPage(pageNumber, pageSize);
+        return ResponseEntity.ok(page);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
+    @GetMapping("/studentsSearch")
+    public ResponseEntity<List<User>> getStudentsListFilteredByName(@RequestParam String search) {
+        List<User> list = userService.getStudentsListFilteredByName(search);
+        return ResponseEntity.ok(list);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    @GetMapping("/teachers")
+    public ResponseEntity<Page<User>> getAllTeachers(@RequestParam(defaultValue = "0") int pageNumber,
+                                                     @RequestParam(defaultValue = "10") int pageSize) {
+        Page<User> page = userService.getTeachersPage(pageNumber, pageSize);
+        return ResponseEntity.ok(page);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    @GetMapping("/teachersSearch")
+    public ResponseEntity<List<User>> getTeachersListFilteredByName(@RequestParam String search) {
+        List<User> list = userService.getTeachersListFilteredByName(search);
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}/me")
