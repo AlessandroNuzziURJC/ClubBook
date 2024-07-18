@@ -38,7 +38,7 @@ public class ClassGroupService {
         for (Integer id: registerClassGroupDto.getIdTeachers()) {
             teachers.add(userService.findById(id));
         }
-        classGroup.setTeachersList(teachers);
+        classGroup.setTeachers(teachers);
 
         List<Schedule> schedules = new ArrayList<>(20);
         Schedule schedule;
