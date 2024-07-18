@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Table(name = "T_Roles")
+@Table(name = "T_Role")
 @Entity
 public class Role {
     @Id

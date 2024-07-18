@@ -24,7 +24,7 @@ public class DataGenerator {
 
     @PostConstruct
     public void init() {
-
+        /*
         RoleEnum[] rolesEnum = RoleEnum.values();
         Role role;
         for (RoleEnum roleEnumValue : rolesEnum) {
@@ -32,7 +32,7 @@ public class DataGenerator {
             this.roleService.save(role);
         }
 
-        /*Role studentRole = roleService.findByName(RoleEnum.STUDENT);
+        Role studentRole = roleService.findByName(RoleEnum.STUDENT);
         Role teacherRole = roleService.findByName(RoleEnum.TEACHER);
 
         User user = new User("Alessandro", "Nuzzi Herrero", "sandro.nuzzi.h@gmail.com", "abcd", "603636098", LocalDate.of(2001, 2, 16), teacherRole);
