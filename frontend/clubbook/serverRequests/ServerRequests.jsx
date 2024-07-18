@@ -79,8 +79,9 @@ const ServerRequest = {
         })
         return response;
     },
+
     requestLogout: async () => {
-        const data = ServerRequest.getTokenAndId();
+        const data = await ServerRequest.getTokenAndId();
         await fetch(`${Configuration.API_URL}/auth/logout`, {
             method: 'GET',
             headers: {
@@ -96,6 +97,18 @@ const ServerRequest = {
         await AsyncStorage.removeItem('address');
         await AsyncStorage.removeItem('idCard');
         await AsyncStorage.removeItem('partner');
+    },
+
+    createClass: async(classGroup) => {
+        const data = await ServerRequest.getTokenAndId();
+        await fetch(`${Configuration.API_URL}/class`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify(classGroup)
+        });
     }
 }
 

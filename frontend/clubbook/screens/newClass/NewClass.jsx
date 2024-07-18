@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from "@react-navigation/native";
+import ClassGroup from "../../entities/ClassGroup";
+import Schedule from "../../entities/Schedule";
+import ServerRequests from "../../serverRequests/ServerRequests";
 
 const NewClass = () => {
     const navigation = useNavigation();
+
+    const [name, setName] = useState('');
+    const [address, setAddress] = useState('');
 
     const [professors, setProfessors] = useState([
         { id: 1, name: 'Profesor 1', selected: false },
@@ -69,6 +75,27 @@ const NewClass = () => {
         hideTimePicker();
     };
 
+    const handleSendDataToServer = async () => {
+        try {
+            const selectedProfessors = professors.filter(professor => professor.selected)
+                .map(item => item.id);
+            const selectedSchedule = schedule.filter(day => day.selected)
+                .map(item => new Schedule(item));
+            
+            const classGroup = new ClassGroup(name, address, selectedProfessors, selectedSchedule);
+    
+            const response = await ServerRequests.createClass(classGroup);
+            
+            if (response.ok) {
+                navigation.goBack();
+            } else {
+                Alert.alert('Error de comunicación con el servidor.');
+            }
+        } catch (error) {
+            Alert.alert('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
+        }
+    };
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
@@ -78,9 +105,19 @@ const NewClass = () => {
             </View>
             <View style={styles.content}>
                 <Text style={styles.label}>Nombre:</Text>
-                <TextInput style={styles.input} placeholder="Nombre de la clase" />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Nombre de la clase"
+                    value={name}
+                    onChangeText={setName}
+                />
                 <Text style={styles.label}>Dirección:</Text>
-                <TextInput style={styles.input} placeholder="Dirección" />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Dirección"
+                    value={address}
+                    onChangeText={setAddress}
+                />
                 <Text style={styles.label}>Profesor/es:</Text>
                 <View style={styles.teacherlist}>
                     {professors.map(item => (
@@ -131,7 +168,7 @@ const NewClass = () => {
                     <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
                         <Text style={styles.buttonText}>Cancelar</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.saveButton}>
+                    <TouchableOpacity style={styles.saveButton} onPress={handleSendDataToServer}>
                         <Text style={styles.buttonText}>Guardar</Text>
                     </TouchableOpacity>
                 </View>
@@ -151,7 +188,6 @@ const NewClass = () => {
         </ScrollView>
     );
 };
-
 
 export default NewClass;
 
