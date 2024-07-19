@@ -1,26 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, RefreshControl } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-
-const initialClasses = [
-    { id: '1', name: 'Costa 1', schedule: 'Lunes y Miércoles 10:00-11:30', students: ['Alice', 'Bob', 'Charlie'] },
-    { id: '2', name: 'Costa 2', schedule: 'Martes y Jueves 09:00-10:30', students: ['David', 'Eve', 'Frank'] },
-    { id: '3', name: 'Quevedo 1', schedule: 'Lunes y Miércoles 12:00-13:30', students: ['Grace', 'Heidi', 'Ivan'] },
-    { id: '4', name: 'Quevedo 2', schedule: 'Martes y Jueves 11:00-12:30', students: ['Jack', 'Kathy', 'Liam'] },
-    { id: '5', name: 'Quevedo 3', schedule: 'Viernes 10:00-12:00', students: ['Mona', 'Nancy', 'Oscar'] },
-];
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import ServerRequests from "../../serverRequests/ServerRequests";
+import ClassGroup from "../../entities/ClassGroup";
 
 const ClassListSelector = () => {
-    const [classes, setClasses] = useState(initialClasses);
+    const [classes, setClasses] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
+
+    useEffect(() => {
+        getFromServer();
+    }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            refreshClasses();
+        }, [])
+    );
 
     const handleEdit = (item) => {
         console.log('Editar', item.name);
     };
 
-    const handleDelete = (item) => {
+    const handleDelete =  (item) => {
         Alert.alert(
             "Confirmar eliminación",
             `¿Estás seguro de que deseas eliminar la clase "${item.name}"?`,
@@ -31,7 +35,21 @@ const ClassListSelector = () => {
                 },
                 {
                     text: "Eliminar",
-                    onPress: () => console.log('Eliminar', item.name),
+                    onPress: async () => {
+                        try {
+                            console.log(item)
+                            const response = await ServerRequests.deleteClassGroup(item.id);
+                            if (!response.ok) {
+                                Alert.alert('Error en la comunicación con el servidor 1.');
+                                refreshClasses();
+                                return;
+                            }
+                            refreshClasses();
+                        } catch (error) {
+                            console.log('Error: ', error);
+                            Alert.alert('Error en la comunicación con el servidor.');
+                        }
+                    },
                     style: "destructive"
                 }
             ]
@@ -45,9 +63,26 @@ const ClassListSelector = () => {
     const refreshClasses = () => {
         setRefreshing(true);
         setTimeout(() => {
-            setClasses(initialClasses); 
+            getFromServer();
             setRefreshing(false);
         }, 2000);
+    };
+
+    const getFromServer = async () => {
+        try {
+            const response = await ServerRequests.getClassGroups();
+
+            if (!response.ok) {
+                Alert.alert('Error en la comunicación con el servidor');
+                return;
+            }
+
+            const data = await response.json();
+            setClasses(data.map(item => new ClassGroup.parseFromJSON(item)));
+        } catch (error) {
+            console.log('Error: ', error);
+            Alert.alert('Error en la comunicación con el servidor.');
+        }
     };
 
     const renderItem = ({ item }) => (
@@ -85,7 +120,7 @@ const ClassListSelector = () => {
                 <FlatList
                     data={classes}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}

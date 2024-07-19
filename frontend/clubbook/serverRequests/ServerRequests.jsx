@@ -59,6 +59,17 @@ const ServerRequest = {
         });
     },
 
+    getAllTeachers: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        return await fetch(`${Configuration.API_URL}/allTeachers`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    },
+
     getTeachersSearchPage: async (data, search) => {
         return await fetch(`${Configuration.API_URL}/teachersSearch?search=${search}`, {
             method: 'GET',
@@ -99,9 +110,21 @@ const ServerRequest = {
         await AsyncStorage.removeItem('partner');
     },
 
+    getClassGroups: async() => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/class`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
     createClass: async(classGroup) => {
         const data = await ServerRequest.getTokenAndId();
-        await fetch(`${Configuration.API_URL}/class`, {
+        const response = await fetch(`${Configuration.API_URL}/class`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -109,6 +132,19 @@ const ServerRequest = {
             },
             body: JSON.stringify(classGroup)
         });
+        return response;
+    },
+
+    deleteClassGroup: async (id) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/${id}/class`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
     }
 }
 

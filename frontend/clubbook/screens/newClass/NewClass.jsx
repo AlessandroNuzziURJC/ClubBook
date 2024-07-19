@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -13,11 +13,7 @@ const NewClass = () => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
 
-    const [professors, setProfessors] = useState([
-        { id: 1, name: 'Profesor 1', selected: false },
-        { id: 2, name: 'Profesor 2', selected: false },
-        { id: 3, name: 'Profesor 3', selected: false },
-    ]);
+    const [professors, setProfessors] = useState([]);
 
     const [schedule, setSchedule] = useState([
         { day: 'Lunes', selected: false, startTime: '', endTime: '' },
@@ -33,6 +29,21 @@ const NewClass = () => {
     const [isEndTimePickerVisible, setEndTimePickerVisible] = useState(false);
     const [selectedDayIndex, setSelectedDayIndex] = useState(null);
     const [timeType, setTimeType] = useState('startTime');
+
+    useEffect(() => {
+        getTeachers();
+    }, []);
+
+    const getTeachers = async () => {
+        const response = await ServerRequests.getAllTeachers();
+        if (! response.ok) {
+            Alert.alert('Problemas con la comunicación con el servidor.')
+            return;
+        }
+
+        const result = await response.json();
+        setProfessors(result);
+    }
 
     const handleSelectProfessor = (id) => {
         setProfessors(prevProfessors =>
@@ -82,7 +93,7 @@ const NewClass = () => {
             const selectedSchedule = schedule.filter(day => day.selected)
                 .map(item => new Schedule(item));
             
-            const classGroup = new ClassGroup(name, address, selectedProfessors, selectedSchedule);
+            const classGroup = new ClassGroup(name, null, address, selectedProfessors, selectedSchedule, null);
     
             const response = await ServerRequests.createClass(classGroup);
             
@@ -123,7 +134,7 @@ const NewClass = () => {
                     {professors.map(item => (
                         <View key={item.id} style={styles.scheduleContainer}>
                             <View style={styles.checkboxContainer}>
-                                <Text style={styles.teacherName}>{item.name}</Text>
+                                <Text style={styles.teacherName}>{item.firstName} {item.lastName}</Text>
                                 <Checkbox
                                     value={item.selected}
                                     onValueChange={() => handleSelectProfessor(item.id)}
