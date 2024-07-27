@@ -33,4 +33,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             nativeQuery = true
     )
     List<User> findAllTeachersByOrderByNameAscWithSearch(String searchMod);
+
+    @Query("SELECT u FROM User u WHERE u.role.name ='TEACHER' ORDER BY unaccent(u.firstName) ASC")
+    List<User> findAllTeachers();
+
+    /*
+    SELECT * FROM T_USER
+	LEFT OUTER JOIN T_CLASS_GROUP_STUDENTS ON students_id = id
+	WHERE role_fk_id = 1 AND class_group_id IS NULL;
+
+    Nearly correct
+     */
+    //List<User> findAllStudentsWithoutClassGroup();
 }

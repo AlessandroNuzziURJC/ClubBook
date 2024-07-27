@@ -10,22 +10,35 @@ import java.time.LocalTime;
 
 public class ScheduleDto {
 
+    private int id;
+
     @NotBlank(message = "Weekday is mandatory")
     private String weekDay;
 
     @NotBlank(message = "Init is mandatory")
     private LocalTime init;
 
-    @NotBlank(message = "Finish is mandatory")
-    private LocalTime finish;
+    @NotBlank(message = "Duration is mandatory")
+    private int duration;
 
-    public ScheduleDto(String weekDay, LocalTime init, LocalTime finish) {
+    public ScheduleDto(int id, String weekDay, LocalTime init, int duration) {
+        this.id = id;
         this.weekDay = weekDay;
         this.init = init;
-        this.finish = finish;
+        this.duration = duration;
     }
 
+    //PRobar meter el id a ver si lo actualioza, si no crear la tabla enlazarlo y gestioanrlo indpenedientement
+
     public ScheduleDto() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getWeekDay() {
@@ -44,11 +57,11 @@ public class ScheduleDto {
         this.init = init;
     }
 
-    public LocalTime getFinish() {
-        return finish;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setFinish(LocalTime finish) {
-        this.finish = finish;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

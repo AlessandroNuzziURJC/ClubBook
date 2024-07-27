@@ -19,16 +19,16 @@ public class Schedule {
     @Column(name = "init")
     private LocalTime init;
 
-    @Column(name= "finish")
-    private LocalTime finish;
+    @Column(name= "duration")
+    private int duration;
 
     public Schedule() {}
 
-    public Schedule(Integer id, WeekDayEnum weekDay, LocalTime init, LocalTime finish) {
+    public Schedule(Integer id, WeekDayEnum weekDay, LocalTime init, int duration) {
         this.id = id;
         this.weekDay = weekDay;
         this.init = init;
-        this.finish = finish;
+        this.duration = duration;
     }
 
     public Integer getId() {
@@ -55,11 +55,11 @@ public class Schedule {
         this.init = init;
     }
 
-    public LocalTime getFinish() {
-        return finish;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setEnd(LocalTime finish) {
-        this.finish = finish;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

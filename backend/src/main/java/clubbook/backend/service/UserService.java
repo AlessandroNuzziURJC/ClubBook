@@ -67,4 +67,12 @@ public class UserService {
         String searchMod = modifySearch(search);
         return userRepository.findAllTeachersByOrderByNameAscWithSearch(searchMod);
     }
+
+    public List<User> getAllTeachers() {
+        return userRepository.findAllTeachers();
+    }
+
+    /*public List<User> getAllStudentsWithoutClassGroup() {
+        return userRepository.findAllStudentsWithoutClassGroup();
+    }*/
 }

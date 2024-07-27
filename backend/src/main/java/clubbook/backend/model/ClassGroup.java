@@ -1,5 +1,6 @@
 package clubbook.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -18,16 +19,16 @@ public class ClassGroup {
     @Column(nullable = false)
     private String address;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @Column(nullable = false)
     private List<User> teachers;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<User> students;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
     @JoinColumn(name = "classGroup_fk", referencedColumnName = "id", nullable = false)
-    private List<Schedule> schedule;
+    private List<Schedule> schedules;
 
     public ClassGroup() {}
 
@@ -36,7 +37,11 @@ public class ClassGroup {
         this.address = address;
         this.teachers = teachers;
         this.students = students;
-        this.schedule = schedule;
+        this.schedules = schedules;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
@@ -75,11 +80,11 @@ public class ClassGroup {
         this.students = students;
     }
 
-    public List<Schedule> getSchedule() {
-        return schedule;
+    public List<Schedule> getSchedules() {
+        return schedules;
     }
 
-    public void setSchedule(List<Schedule> schedule) {
-        this.schedule = schedule;
+    public void setSchedules(List<Schedule> schedule) {
+        this.schedules = schedule;
     }
 }

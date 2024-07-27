@@ -12,15 +12,15 @@ public class RegisterClassGroupDto {
     @NotBlank(message = "Address is mandatory")
     private String address;
 
-    private List<Integer> idTeachers;
+    private List<Integer> teachers;
 
-    private List<ScheduleDto> schedulesDto;
+    private List<ScheduleDto> schedules;
 
-    public RegisterClassGroupDto(String name, String address, List<Integer> idTeachers, List<ScheduleDto> schedulesDto) {
+    public RegisterClassGroupDto(String name, String address, List<Integer> teachers, List<ScheduleDto> schedules) {
         this.name = name;
         this.address = address;
-        this.idTeachers = idTeachers;
-        this.schedulesDto = schedulesDto;
+        this.teachers = teachers;
+        this.schedules = schedules;
     }
 
     public RegisterClassGroupDto() {
@@ -42,19 +42,19 @@ public class RegisterClassGroupDto {
         this.address = address;
     }
 
-    public List<Integer> getIdTeachers() {
-        return idTeachers;
+    public List<Integer> getTeachers() {
+        return teachers;
     }
 
-    public void setIdTeachers(List<Integer> idTeachers) {
-        this.idTeachers = idTeachers;
+    public void setIdTeachers(List<Integer> teachers) {
+        this.teachers = teachers;
     }
 
-    public List<ScheduleDto> getSchedulesDto() {
-        return schedulesDto;
+    public List<ScheduleDto> getSchedules() {
+        return schedules;
     }
 
-    public void setSchedulesDto(List<ScheduleDto> schedulesDto) {
-        this.schedulesDto = schedulesDto;
+    public void setSchedules(List<ScheduleDto> schedules) {
+        this.schedules = schedules;
     }
 }
