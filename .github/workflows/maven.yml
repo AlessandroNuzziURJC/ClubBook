@@ -31,4 +31,4 @@ jobs:
       run: node -v
 
     - name: Run tests
-      run: ./mvnw clean dependency:resolve test
+      run: mvn -B clean verify --file pom.xml
