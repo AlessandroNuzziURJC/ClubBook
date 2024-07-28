@@ -17,7 +17,7 @@ class UserTest {
     public void testConstructorAndGetters() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/Profile_blue.png");
         byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
         User user = new User("Jane", "Smith", "jane.smith@example.com", "newpassword", "9876543210", dateOfBirth, role, "Calle Olvido, 1", "123123123X", true, profilePicture);
 
@@ -50,7 +50,7 @@ class UserTest {
         user.setAddress("Calle Olvido, 1");
         user.setIdCard("123123123X");
         user.setPartner(false);
-        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/Profile_blue.png");
         byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
         user.setProfilePicture(profilePicture);
 
@@ -72,7 +72,7 @@ class UserTest {
     public void testGetAuthoritiesStudent() throws Exception {
         Role role = new Role(RoleEnum.STUDENT);
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/Profile_blue.png");
         byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
         User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
 
@@ -86,7 +86,7 @@ class UserTest {
     public void testGetAuthoritiesTeacher() throws Exception {
         Role role = new Role(RoleEnum.TEACHER);
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/Profile_blue.png");
         byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
         User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
@@ -99,7 +99,7 @@ class UserTest {
     public void testGetAuthoritiesAdministrator() throws Exception {
         Role role = new Role(RoleEnum.ADMINISTRATOR);
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_blue.png");
+        ClassPathResource imgFile = new ClassPathResource("assets/profilepics/Profile_blue.png");
         byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
         User user = new User("John", "Doe", "john.doe@example.com", "password", "1234567890", dateOfBirth, role, "Calle", "123123123", true, profilePicture);
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
