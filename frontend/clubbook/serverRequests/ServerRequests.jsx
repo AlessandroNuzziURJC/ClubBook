@@ -49,8 +49,42 @@ const ServerRequest = {
         });
     },
 
+    getAllStudentsWithoutClassGroup: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        return await fetch(`${Configuration.API_URL}/studentsWithoutClassGroup`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    },
+
+    postNewStudentsInClassGroup: async (id, studentsIds) => {
+        const data = await ServerRequest.getTokenAndId();
+        return await fetch(`${Configuration.API_URL}/${id}/addStudents`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify(studentsIds),
+        });
+    },
+
     getTeachersPage: async (data, page) => {
         return await fetch(`${Configuration.API_URL}/teachers?pageNumber=${page}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+    },
+
+    getAllTeachers: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        return await fetch(`${Configuration.API_URL}/allTeachers`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -79,8 +113,9 @@ const ServerRequest = {
         })
         return response;
     },
+
     requestLogout: async () => {
-        const data = ServerRequest.getTokenAndId();
+        const data = await ServerRequest.getTokenAndId();
         await fetch(`${Configuration.API_URL}/auth/logout`, {
             method: 'GET',
             headers: {
@@ -96,6 +131,68 @@ const ServerRequest = {
         await AsyncStorage.removeItem('address');
         await AsyncStorage.removeItem('idCard');
         await AsyncStorage.removeItem('partner');
+    },
+
+    getClassGroups: async() => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/classGroup`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
+    getClassGroup: async(id) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/${id}/classGroup`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
+    createClassGroup: async(classGroup) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/classGroup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify(classGroup)
+        });
+        return response;
+    },
+    
+    modifyClassGroup: async(classGroup) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/${classGroup.id}/classGroup`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify(classGroup)
+        });
+        return response;
+    },
+
+    deleteClassGroup: async (id) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/${id}/classGroup`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
     }
 }
 

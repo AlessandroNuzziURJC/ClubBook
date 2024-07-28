@@ -41,6 +41,13 @@ public class UsersController {
         return ResponseEntity.ok(page);
     }
 
+    @GetMapping("/studentsWithoutClassGroup")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    public ResponseEntity<List<User>> getAllStudentsWithoutClassGroup() {
+        List<User> users = userService.getAllStudentsWithoutClassGroup();
+        return ResponseEntity.ok(users);
+    }
+
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     @GetMapping("/studentsSearch")
     public ResponseEntity<List<User>> getStudentsListFilteredByName(@RequestParam String search) {
@@ -54,6 +61,12 @@ public class UsersController {
                                                      @RequestParam(defaultValue = "10") int pageSize) {
         Page<User> page = userService.getTeachersPage(pageNumber, pageSize);
         return ResponseEntity.ok(page);
+    }
+
+    @PreAuthorize(("hasAnyRole('ADMINISTRATOR')"))
+    @GetMapping("/allTeachers")
+    public ResponseEntity<List<User>> getAllTeachers() {
+        return ResponseEntity.ok(userService.getAllTeachers());
     }
 
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")

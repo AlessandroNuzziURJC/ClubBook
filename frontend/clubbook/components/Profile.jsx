@@ -13,19 +13,21 @@ const Profile = ({ editButton, refreshing, onRefresh, profilePicture, user }) =>
                     <View style={styles.columnContainer}>
                         <View style={styles.subheader}>
                             <Text style={styles.pageTitle}>Perfil</Text>
-                            <EditProfileButton visible={editButton} />
+                            
                         </View>
                         {user.partner && (
                             <View style={styles.partnerContainer}>
                                 <Text style={styles.partner}>Socio</Text>
                             </View>
                         )}
+                        <EditProfileButton visible={editButton}/>
                     </View>
                     <Image
                         source={profilePicture ? profilePicture : require('../assets/loading.gif')}
                         style={styles.image}
                     />
                 </View>
+                
                 <View style={styles.infoContainer}>
                     <View style={styles.labelDataContainer}>
                         <Text style={styles.label}>Nombre:</Text>
@@ -136,6 +138,7 @@ const styles = StyleSheet.create({
     },
     partnerContainer: {
         justifyContent: 'center',
+        marginBottom: 10
     },
     partner: {
         fontSize: 18,
