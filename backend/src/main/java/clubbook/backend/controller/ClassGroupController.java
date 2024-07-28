@@ -2,6 +2,7 @@ package clubbook.backend.controller;
 
 import clubbook.backend.dtos.RegisterClassGroupDto;
 import clubbook.backend.model.ClassGroup;
+import clubbook.backend.model.User;
 import clubbook.backend.service.ClassGroupService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,4 +67,10 @@ public class ClassGroupController {
         return ResponseEntity.ok(newClassGroup);
     }
 
+    @PostMapping("/{id}/addStudents")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    public ResponseEntity<List<User>> addNewStudentsClassGroup(@PathVariable int id, @RequestBody List<Integer> studentsIds) {
+        List<User> users = classGroupService.addNewStudentsClassGroup(id, studentsIds);
+        return ResponseEntity.ok(users);
+    }
 }

@@ -41,12 +41,12 @@ public class UsersController {
         return ResponseEntity.ok(page);
     }
 
-    /*@GetMapping("/studentsWithoutClassGroup")
-    @PreAuthorize("hasAnyRole('ADMINSITATOR')")
+    @GetMapping("/studentsWithoutClassGroup")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<User>> getAllStudentsWithoutClassGroup() {
         List<User> users = userService.getAllStudentsWithoutClassGroup();
         return ResponseEntity.ok(users);
-    }*/
+    }
 
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     @GetMapping("/studentsSearch")

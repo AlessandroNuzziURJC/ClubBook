@@ -72,7 +72,11 @@ public class UserService {
         return userRepository.findAllTeachers();
     }
 
-    /*public List<User> getAllStudentsWithoutClassGroup() {
+    public List<User> getAllStudentsWithoutClassGroup() {
         return userRepository.findAllStudentsWithoutClassGroup();
-    }*/
+    }
+
+    public List<User> addNewStudentsClassGroup() {
+        return null;
+    }
 }

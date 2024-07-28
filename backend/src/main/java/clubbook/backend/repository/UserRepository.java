@@ -44,5 +44,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Nearly correct
      */
-    //List<User> findAllStudentsWithoutClassGroup();
+
+    @Query(
+            value = "SELECT * FROM T_USER LEFT OUTER JOIN T_CLASS_GROUP_STUDENTS ON students_id = id WHERE role_fk_id = 1 AND class_group_id IS NULL",
+            nativeQuery = true
+    )
+    List<User> findAllStudentsWithoutClassGroup();
 }

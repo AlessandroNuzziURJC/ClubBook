@@ -114,4 +114,19 @@ public class ClassGroupService {
     public ClassGroup getClassGroup(int id) {
         return this.classGroupRepository.findById(id).orElseThrow();
     }
+
+    public List<User> addNewStudentsClassGroup(int id, List<Integer> studentsIds) {
+        ClassGroup classGroup = classGroupRepository.findById(id).orElseThrow();
+        List<User> students = classGroup.getStudents();
+        User aux;
+        for (Integer studentId : studentsIds) {
+            aux = userService.findById(studentId);
+            if (aux != null) {
+                students.add(aux);
+            }
+        }
+        classGroup.setStudents(students);
+        classGroupRepository.save(classGroup);
+        return students;
+    }
 }
