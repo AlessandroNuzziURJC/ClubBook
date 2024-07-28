@@ -9,8 +9,11 @@ import { Ionicons } from "@expo/vector-icons";
 import UserInfoScreen from '../studentsListScreens/UserInfoScreen';
 import UserListSelector from "../userListSelector/userListSelector";
 import SearchUser from "../../components/SearchUser";
-import ClassListSelector from "../classListSelector/ClassListSelector";
-import NewClass from '../newClass/NewClass'
+import ClassGroupListSelector from "../classGroupScreens/ClassGroupListSelector";
+import NewClassGroup from "../classGroupScreens/NewClassGroup";
+import ClassGroupInfo from "../classGroupScreens/ClassGroupInfo";
+import EditClassGroup from "../classGroupScreens/EditClassGroup";
+import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudents";
 
 const HomeStackScreen = () => {
     return (
@@ -27,8 +30,12 @@ const ClassGroupScreen = () => {
         <ClassStack.Navigator screenOptions={{
             headerShown: false
         }} initialRouteName="ClassLists">
-            <ClassStack.Screen name="ClassLists" component={ClassListSelector} />
-            <ClassStack.Screen name="NewClass" component={NewClass} />
+            <ClassStack.Screen name="ClassGroupLists" component={ClassGroupListSelector} />
+            <ClassStack.Screen name="NewClassGroup" component={NewClassGroup} />
+            <ClassStack.Screen name="ClassGroupInfo" component={ClassGroupInfo} />
+            <ClassStack.Screen name="UserProfile" component={UserInfoScreen}/>
+            <ClassStack.Screen name="EditClassGroup" component={EditClassGroup}/>
+            <ClassStack.Screen name="ClassGroupAddStudent" component={ClassGroupAddStudent}/>
         </ClassStack.Navigator>
     );
 };

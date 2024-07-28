@@ -1,19 +1,17 @@
 import React from 'react';
 import { TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from "@expo/vector-icons";
 
 const EditProfileButton = ({ visible }) => {
     const navigation = useNavigation();
 
-    if (!visible) return null; 
+    if (!visible) return null;
 
     return (
         <TouchableOpacity style={styles.editContainer} onPress={() => navigation.navigate('ProfileEdit')}>
-            <Image
-                source={require('../assets/edit_icon.png')}
-                style={styles.icon}
-            />
             <Text style={styles.edit}>Editar usuario</Text>
+            <Ionicons name="pencil-outline" size={18} color="#1162BF" />
         </TouchableOpacity>
     );
 };
@@ -21,17 +19,15 @@ const EditProfileButton = ({ visible }) => {
 const styles = StyleSheet.create({
     editContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        justifyContent: 'flex-start',
         paddingBottom: 3,
-    },
-    icon: {
-        width: 20,
-        height: 20,
+        marginBottom: 20
     },
     edit: {
+        marginRight: 5,
         alignSelf: 'flex-end',
         textDecorationLine: 'underline',
-        fontWeight: '300',
+        fontWeight: '500',
         color: '#1162BF',
     },
 });

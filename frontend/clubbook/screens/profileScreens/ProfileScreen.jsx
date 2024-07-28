@@ -79,7 +79,7 @@ const ProfileScreen = () => {
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);
-        }, 2000);
+        }, 500);
         getFromServer();
     };
 

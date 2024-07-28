@@ -1,30 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, RefreshControl } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import ClassGroup from "../../entities/ClassGroup";
+import Schedule from "../../entities/Schedule";
 
 const ClassListSelector = () => {
     const [classes, setClasses] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
+    const route = useRoute();
 
     useEffect(() => {
         getFromServer();
     }, []);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            refreshClasses();
-        }, [])
-    );
+    useEffect(() => {
+        if (route.params?.classGroup) {
+            if (classes.some(cls => cls.id === route.params.classGroup.id)) {
+                updateClassInList(route.params.classGroup);
+            } else {
+                setClasses([...classes, route.params.classGroup]);
+            }
+        }
+    }, [route.params?.classGroup]);
 
     const handleEdit = (item) => {
-        console.log('Editar', item.name);
+        navigation.navigate('EditClassGroup', {
+            item
+        });
     };
 
-    const handleDelete =  (item) => {
+    const handleViewMore = (item) => {
+        navigation.navigate('ClassGroupInfo', {
+            item
+        });
+    };
+
+    const handleDelete = (item) => {
         Alert.alert(
             "Confirmar eliminación",
             `¿Estás seguro de que deseas eliminar la clase "${item.name}"?`,
@@ -37,7 +51,6 @@ const ClassListSelector = () => {
                     text: "Eliminar",
                     onPress: async () => {
                         try {
-                            console.log(item)
                             const response = await ServerRequests.deleteClassGroup(item.id);
                             if (!response.ok) {
                                 Alert.alert('Error en la comunicación con el servidor 1.');
@@ -56,16 +69,12 @@ const ClassListSelector = () => {
         );
     };
 
-    const handleViewMore = (item) => {
-        console.log('Ver más', item.name);
-    };
-
     const refreshClasses = () => {
         setRefreshing(true);
         setTimeout(() => {
             getFromServer();
             setRefreshing(false);
-        }, 2000);
+        }, 500);
     };
 
     const getFromServer = async () => {
@@ -85,24 +94,36 @@ const ClassListSelector = () => {
         }
     };
 
+    const updateClassInList = (updatedClass) => {
+        setClasses(classes.map(cls => (cls.id === updatedClass.id ? updatedClass : cls)));
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.classItem}>
             <View style={styles.classDetails}>
-                <Text style={styles.className}>{item.name}</Text>
-                <View style={styles.iconContainer}>
-                    <TouchableOpacity onPress={() => handleEdit(item)} style={styles.iconButton}>
-                        <Ionicons name="pencil-outline" size={20} color="#1162BF" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleDelete(item)} style={styles.iconButton}>
-                        <Ionicons name="trash-outline" size={20} color="red" />
-                    </TouchableOpacity>
-                </View>
+                <Text style={styles.className}>{item.name.substring(0, 12)}</Text>
+                <TouchableOpacity onPress={() => handleDelete(item)} style={styles.iconButton}>
+                    <Ionicons name="trash-outline" size={20} color="red" />
+                </TouchableOpacity>
             </View>
-            <Text style={styles.classSchedule}>{item.schedule}</Text>
-            <Text style={styles.classStudentCount}>Estudiantes: {item.students.length}</Text>
-            <TouchableOpacity onPress={() => handleViewMore(item)} style={styles.viewMoreButton}>
-                <Text style={styles.viewMoreText}>Ver más</Text>
-            </TouchableOpacity>
+
+            <Text style={[styles.infoClass, { marginTop: 10 }]}>Estudiantes: {item.students.length}</Text>
+            <View style={styles.schedules}>
+                {item.schedules.map(day => (
+                    <Text style={styles.infoClass} key={day.id}>{Schedule.reverseTranslate(day.weekDay) + ':'
+                        + day.init.substring(0, 5)}</Text>
+                ))}
+            </View>
+
+            <View style={styles.iconContainer}>
+                <TouchableOpacity onPress={() => handleEdit(item)} style={styles.iconButton}>
+                    <Text style={styles.iconButtonText}>Editar</Text>
+                    <Ionicons name="pencil-outline" size={20} color="#1162BF" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleViewMore(item)} style={styles.iconButton}>
+                    <Text style={styles.viewMoreText}>Ver más</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 
@@ -111,7 +132,7 @@ const ClassListSelector = () => {
             <View style={styles.header}>
                 <View style={styles.subheader}>
                     <Text style={styles.pageTitle}>Lista de clases</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('NewClass')} style={styles.iconButtonAdd}>
+                    <TouchableOpacity onPress={() => navigation.navigate('NewClassGroup')}>
                         <Ionicons name="add-outline" size={30} color='#1162BF' />
                     </TouchableOpacity>
                 </View>
@@ -120,7 +141,7 @@ const ClassListSelector = () => {
                 <FlatList
                     data={classes}
                     renderItem={renderItem}
-                    
+                    keyExtractor={(item) => item.id.toString()}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
@@ -158,11 +179,18 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
     },
-    iconButtonAdd: {
-
-    },
     iconButton: {
-        padding: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 10,
+    },
+    iconButtonText: {
+        marginRight: 5,
+        fontSize: 16,
+        color: '#1162BF',
+    },
+    iconButtonTextDelete: {
+        color: 'red',
     },
     content: {
         flex: 1,
@@ -182,6 +210,11 @@ const styles = StyleSheet.create({
     },
     iconContainer: {
         flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingTop: 10,
+        marginTop: 10,
+        borderTopWidth: 1,
+        borderColor: '#1162BF'
     },
     className: {
         fontSize: 20,
@@ -191,10 +224,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#555',
     },
-    classStudentCount: {
+    infoClass: {
         fontSize: 14,
         color: '#777',
-        marginTop: 5,
+    },
+    schedules: {
+        marginTop: 10
     },
     viewMoreButton: {
         marginTop: 10,
@@ -203,6 +238,5 @@ const styles = StyleSheet.create({
     viewMoreText: {
         color: '#1162BF',
         fontSize: 16,
-        textDecorationLine: 'underline',
     },
 });
