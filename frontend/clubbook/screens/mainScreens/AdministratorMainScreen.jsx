@@ -9,11 +9,11 @@ import { Ionicons } from "@expo/vector-icons";
 import UserInfoScreen from '../studentsListScreens/UserInfoScreen';
 import UserListSelector from "../userListSelector/userListSelector";
 import SearchUser from "../../components/SearchUser";
-import ClassGroupListSelector from "../classGroupScreens/ClassGroupListSelector";
-import NewClassGroup from "../classGroupScreens/NewClassGroup";
-import ClassGroupInfo from "../classGroupScreens/ClassGroupInfo";
-import EditClassGroup from "../classGroupScreens/EditClassGroup";
-import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudents";
+import ClassGroupListSelector from "../classGroupScreens/ClassGroupListSelectorScreen";
+import NewClassGroup from "../classGroupScreens/NewClassGroupScreen";
+import ClassGroupInfo from "../classGroupScreens/ClassGroupInfoScreen";
+import EditClassGroup from "../classGroupScreens/EditClassGroupScreen";
+import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudentsScreen";
 
 const HomeStackScreen = () => {
     return (

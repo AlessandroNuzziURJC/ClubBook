@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { View, Text, BackHandler, Alert } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Profile from '../../components/Profile';
+import ProfileScreen from "../profileScreens/ProfileScreen";
 import ProfileEdit from '../profileScreens/ProfileEditScreen';
 import { Ionicons } from "@expo/vector-icons";
 
@@ -29,7 +29,7 @@ const ProfileStackNavigator = () => {
         <ProfileStack.Navigator screenOptions={{
             headerShown: false
             }}>
-            <ProfileStack.Screen name="Profile" component={Profile} />
+            <ProfileStack.Screen name="Profile" component={ProfileScreen} />
             <ProfileStack.Screen name="ProfileEdit" component={ProfileEdit} />
         </ProfileStack.Navigator>
     );
