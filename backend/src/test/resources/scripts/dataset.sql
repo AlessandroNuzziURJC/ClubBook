@@ -109,8 +109,6 @@ VALUES
 
 INSERT INTO t_schedule(id, duration, init, weekday, class_group_fk)
 VALUES
-    (1, 60, '16:00', 'MONDAY', 1),
-    (2, 60, '16:00', 'WEDNESDAY', 1),
     (3, 60, '17:00', 'MONDAY', 2),
     (4, 60, '17:00', 'WEDNESDAY', 2),
     (5, 60, '18:00', 'TUESDAY', 3),

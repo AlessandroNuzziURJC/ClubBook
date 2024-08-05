@@ -163,6 +163,13 @@ class UsersControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
+    void getProfilePictureNotFoundAdministrator() throws Exception {
+        mockMvc.perform(get("/{id}/profilePicture", 108))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @WithMockUser(username = "teststudent2@gmail.com", roles = {"STUDENT"})
     void updateStudentData() throws Exception {
 
@@ -385,5 +392,97 @@ class UsersControllerTest {
                 .andExpect(status().isForbidden());
         mockMvc.perform(get("/teachers"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getTeachersNotLogged() throws Exception {
+        mockMvc.perform(get("/allTeachers")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "student", roles = {"STUDENT"})
+    void getTeachersStudent() throws Exception {
+        mockMvc.perform(get("/allTeachers")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void getTeachersTeacher() throws Exception {
+        mockMvc.perform(get("/allTeachers")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
+    void getTeachersAdministrator() throws Exception {
+        mockMvc.perform(get("/allTeachers")).andExpect(status().isOk());
+    }
+
+    @Test
+    void getTeachersSearchNotLogged() throws Exception {
+        mockMvc.perform(get("/teachersSearch").param("search", "Alice")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "student", roles = {"STUDENT"})
+    void getTeachersSearchStudent() throws Exception {
+        mockMvc.perform(get("/teachersSearch").param("search", "Alice")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void getTeachersSearchTeacher() throws Exception {
+        mockMvc.perform(get("/teachersSearch").param("search", "Alice")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
+    void getTeachersSearchAdministrator() throws Exception {
+        mockMvc.perform(get("/teachersSearch").param("search", "Alice")).andExpect(status().isOk());
+    }
+
+    @Test
+    void getStudentsSearchNotLogged() throws Exception {
+        mockMvc.perform(get("/studentsSearch").param("search", "Tina")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "student", roles = {"STUDENT"})
+    void getStudentsSearchStudent() throws Exception {
+        mockMvc.perform(get("/studentsSearch").param("search", "Tina")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void getStudentsSearchTeacher() throws Exception {
+        mockMvc.perform(get("/studentsSearch").param("search", "Tina")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
+    void getStudentsSearchAdministrator() throws Exception {
+        mockMvc.perform(get("/studentsSearch").param("search", "Tina")).andExpect(status().isOk());
+    }
+
+    @Test
+    void getStudentsWithoutClassGroupNotLogged() throws Exception {
+        mockMvc.perform(get("/studentsWithoutClassGroup")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "student", roles = {"STUDENT"})
+    void getStudentsWithoutClassGroupStudent() throws Exception {
+        mockMvc.perform(get("/studentsWithoutClassGroup")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void getStudentsWithoutClassGroupTeacher() throws Exception {
+        mockMvc.perform(get("/studentsWithoutClassGroup")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
+    void getStudentsWithoutClassGroupAdministrator() throws Exception {
+        mockMvc.perform(get("/studentsWithoutClassGroup")).andExpect(status().isOk());
     }
 }
