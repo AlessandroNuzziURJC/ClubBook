@@ -75,9 +75,9 @@ const ClassGroupAddStudents = () => {
                     <Text style={styles.classGroupName}>{classGroup.name}</Text>
                 </View>
             </View>
-            <View style={styles.content}>
+            <ScrollView style={styles.content}>
                 <UserCheckboxList users={totalStudents} usersError={false} handleSelectUser={handleSelectStudent} />
-            </View>
+            </ScrollView>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
                     <Text style={styles.buttonText}>Cancelar</Text>
