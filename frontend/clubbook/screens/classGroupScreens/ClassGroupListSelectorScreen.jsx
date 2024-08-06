@@ -11,6 +11,7 @@ const ClassListSelector = () => {
     const [refreshing, setRefreshing] = useState(false);
     const navigation = useNavigation();
     const route = useRoute();
+    const { editAndDelete } = route.params;
 
     useEffect(() => {
         getFromServer();
@@ -34,7 +35,8 @@ const ClassListSelector = () => {
 
     const handleViewMore = (item) => {
         navigation.navigate('ClassGroupInfo', {
-            item
+            item,
+            editAndDelete
         });
     };
 
@@ -102,9 +104,11 @@ const ClassListSelector = () => {
         <View style={styles.classItem}>
             <View style={styles.classDetails}>
                 <Text style={styles.className}>{item.name.substring(0, 12)}</Text>
-                <TouchableOpacity onPress={() => handleDelete(item)} style={styles.iconButton}>
-                    <Ionicons name="trash-outline" size={20} color="red" />
-                </TouchableOpacity>
+                {editAndDelete &&
+                    <TouchableOpacity onPress={() => handleDelete(item)} style={styles.iconButton}>
+                        <Ionicons name="trash-outline" size={20} color="red" />
+                    </TouchableOpacity>
+                }
             </View>
 
             <Text style={[styles.infoClass, { marginTop: 10 }]}>Estudiantes: {item.students.length}</Text>
@@ -116,10 +120,12 @@ const ClassListSelector = () => {
             </View>
 
             <View style={styles.iconContainer}>
-                <TouchableOpacity onPress={() => handleEdit(item)} style={styles.iconButton}>
-                    <Text style={styles.iconButtonText}>Editar</Text>
-                    <Ionicons name="pencil-outline" size={20} color="#1162BF" />
-                </TouchableOpacity>
+                {editAndDelete &&
+                    <TouchableOpacity onPress={() => handleEdit(item)} style={styles.iconButton}>
+                        <Text style={styles.iconButtonText}>Editar</Text>
+                        <Ionicons name="pencil-outline" size={20} color="#1162BF" />
+                    </TouchableOpacity>
+                }
                 <TouchableOpacity onPress={() => handleViewMore(item)} style={styles.iconButton}>
                     <Text style={styles.viewMoreText}>Ver más</Text>
                 </TouchableOpacity>
@@ -132,9 +138,11 @@ const ClassListSelector = () => {
             <View style={styles.header}>
                 <View style={styles.subheader}>
                     <Text style={styles.pageTitle}>Lista de clases</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('NewClassGroup')}>
-                        <Ionicons name="add-outline" size={30} color='#1162BF' />
-                    </TouchableOpacity>
+                    {editAndDelete &&
+                        <TouchableOpacity onPress={() => navigation.navigate('NewClassGroup')}>
+                            <Ionicons name="add-outline" size={30} color='#1162BF' />
+                        </TouchableOpacity>
+                    }
                 </View>
             </View>
             <View style={styles.content}>

@@ -30,7 +30,7 @@ const ClassGroupScreen = () => {
         <ClassStack.Navigator screenOptions={{
             headerShown: false
         }} initialRouteName="ClassLists">
-            <ClassStack.Screen name="ClassGroupLists" component={ClassGroupListSelector} />
+            <ClassStack.Screen name="ClassGroupLists" component={ClassGroupListSelector} initialParams={{ editAndDelete: true }}/>
             <ClassStack.Screen name="NewClassGroup" component={NewClassGroup} />
             <ClassStack.Screen name="ClassGroupInfo" component={ClassGroupInfo} />
             <ClassStack.Screen name="UserProfile" component={UserInfoScreen}/>
