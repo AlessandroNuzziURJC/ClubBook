@@ -32,7 +32,7 @@ public class ClassGroup {
 
     public ClassGroup() {}
 
-    public ClassGroup(String name, String address, List<User> teachers, List<User> students, List<Schedule> schedule) {
+    public ClassGroup(String name, String address, List<User> teachers, List<User> students, List<Schedule> schedules) {
         this.name = name;
         this.address = address;
         this.teachers = teachers;
