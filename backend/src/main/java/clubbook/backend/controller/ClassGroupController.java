@@ -26,7 +26,7 @@ public class ClassGroupController {
     }
 
     @GetMapping("/classGroup")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<List<ClassGroup>> getAllClassGroups() {
         List<ClassGroup> classGroupList = this.classGroupService.getAllClassGroups();
         if (classGroupList == null) {

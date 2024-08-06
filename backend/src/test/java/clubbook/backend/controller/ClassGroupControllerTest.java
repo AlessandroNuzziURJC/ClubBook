@@ -40,7 +40,7 @@ public class ClassGroupControllerTest {
     @WithMockUser(username = "testteacher1@gmail.com", roles = {"TEACHER"})
     void getAllClassGroups_Teacher() throws Exception {
         mockMvc.perform(get("/classGroup"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test
