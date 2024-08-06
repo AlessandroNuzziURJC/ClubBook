@@ -9,7 +9,7 @@ import ServerRequests from "../../serverRequests/ServerRequests";
 const ClassInfo = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const { item } = route.params;
+    const { item, editAndDelete } = route.params;
     const [classGroup, setClassGroup] = useState(item);
     const [isContentExpanded, setIsContentExpanded] = useState(false); // Inicialmente cerrado
     const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -86,16 +86,18 @@ const ClassInfo = () => {
             <View style={styles.header}>
                 <View style={styles.subheader}>
                     <Text style={styles.pageTitle}>{classGroup.name.substring(0, 18)}</Text>
-                    <View style={styles.iconButtonsContainer}>
-                        <TouchableOpacity onPress={() => handleEdit(classGroup)} style={styles.iconButton}>
+                    {editAndDelete &&
+                        <View style={styles.iconButtonsContainer}>
+                            <TouchableOpacity onPress={() => handleEdit(classGroup)} style={styles.iconButton}>
 
-                            <Ionicons name="pencil-outline" size={20} color="#1162BF" />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleDelete(classGroup)} style={styles.iconButton}>
+                                <Ionicons name="pencil-outline" size={20} color="#1162BF" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => handleDelete(classGroup)} style={styles.iconButton}>
 
-                            <Ionicons name="trash-outline" size={20} color="red" />
-                        </TouchableOpacity>
-                    </View>
+                                <Ionicons name="trash-outline" size={20} color="red" />
+                            </TouchableOpacity>
+                        </View>
+                    }
                 </View>
             </View>
             <Animated.View style={[styles.content, { height: contentHeight }]}>
@@ -137,10 +139,12 @@ const ClassInfo = () => {
             <View style={styles.studentsListContainer}>
                 <View style={styles.studentsListHeader}>
                     <Text style={styles.labelStudentsList}>Lista de alumnos</Text>
-                    <TouchableOpacity onPress={() => handleAddStudent(classGroup)} style={styles.addButton}>
-                        <Text style={styles.addButtonText}>Añadir alumnos</Text>
-                        <Ionicons name="add-circle-outline" size={20} color="#1162BF" />
-                    </TouchableOpacity>
+                    {editAndDelete &&
+                        <TouchableOpacity onPress={() => handleAddStudent(classGroup)} style={styles.addButton}>
+                            <Text style={styles.addButtonText}>Añadir alumnos</Text>
+                            <Ionicons name="add-circle-outline" size={20} color="#1162BF" />
+                        </TouchableOpacity>
+                    }
                 </View>
                 <UsersFlatListNotPaged users={classGroup.students} />
             </View>
@@ -196,7 +200,7 @@ const styles = StyleSheet.create({
     content: {
         overflow: 'hidden',
         paddingBottom: 20,
-        borderRadius:10
+        borderRadius: 10
     },
     generalInfo: {
         backgroundColor: '#ddeeff',

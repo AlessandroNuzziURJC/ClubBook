@@ -28,8 +28,6 @@ public class ScheduleDto {
         this.duration = duration;
     }
 
-    //PRobar meter el id a ver si lo actualioza, si no crear la tabla enlazarlo y gestioanrlo indpenedientement
-
     public ScheduleDto() {
     }
 

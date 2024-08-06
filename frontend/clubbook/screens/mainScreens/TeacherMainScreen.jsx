@@ -8,12 +8,29 @@ import UsersScreen from '../studentsListScreens/UsersScreen';
 import { Ionicons } from "@expo/vector-icons";
 import UserInfoScreen from '../studentsListScreens/UserInfoScreen';
 import SearchUser from "../../components/SearchUser";
+import ClassGroupListSelector from "../classGroupScreens/ClassGroupListSelectorScreen";
+import ClassGroupInfo from "../classGroupScreens/ClassGroupInfoScreen";
+import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudentsScreen";
 
 const HomeStackScreen = () => {
     return (
         <View>
             <Text>Este es el home teacher</Text>
         </View>
+    );
+};
+
+const ClassStack = createNativeStackNavigator();
+
+const ClassGroupScreen = () => {
+    return (
+        <ClassStack.Navigator screenOptions={{
+            headerShown: false
+        }} initialRouteName="ClassLists">
+            <ClassStack.Screen name="ClassGroupLists" component={ClassGroupListSelector} initialParams={{ editAndDelete: false }} />
+            <ClassStack.Screen name="ClassGroupInfo" component={ClassGroupInfo}/>
+            <ClassStack.Screen name="UserProfile" component={UserInfoScreen}/>
+        </ClassStack.Navigator>
     );
 };
 
@@ -60,6 +77,11 @@ const TeacherMainScreen = () => {
             tabBarActiveTintColor: '#1162BF',
         }}>
             <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
+            <Tab.Screen name="Clases" component={ClassGroupScreen} options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="barbell-outline" color={color} size={size} />
+                ),
+            }} />
             <Tab.Screen name="Alumnos" component={UsersStackNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="people" color={color} size={size} />
