@@ -4,6 +4,7 @@ import Configuration from '../../config/Configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from '@react-navigation/native';
+import FormFooter from "../../components/FormFooter";
 
 const EditProfile = () => {
     const [profilePicture, setProfilePicture] = useState(null);
@@ -204,128 +205,123 @@ const EditProfile = () => {
 
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.contentContainer}>
-                <View style={styles.header}>
-                    <View style={styles.columnContainer}>
-                        <View style={styles.subheader}>
-                            <Text style={styles.pageTitle}>Editar perfil</Text>
-                        </View>
-                        {user.partner && (
-                            <View style={styles.partnerContainer}>
-                                <Text style={styles.partner}>Socio</Text>
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                <View style={styles.contentContainer}>
+                    <View style={styles.header}>
+                        <View style={styles.columnContainer}>
+                            <View style={styles.subheader}>
+                                <Text style={styles.pageTitle}>Editar perfil</Text>
                             </View>
-                        )}
-                    </View>
-                    <Image
-                        source={profilePicture ? { uri: profilePicture } : require('../../assets/loading.gif')}
-                        style={styles.image}
-                    />
-                </View>
-                <View style={styles.infoContainer}>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>Nombre:</Text>
-                        <View style={styles.dataContainer}>
-                            <TextInput
-                                style={styles.data}
-                                value={user.firstName}
-                                onChangeText={(text) => {
-                                    handleInputChange('firstName', text);
-                                }}
-                                placeholder={'Nombre'}
-                            />
+                            {user.partner && (
+                                <View style={styles.partnerContainer}>
+                                    <Text style={styles.partner}>Socio</Text>
+                                </View>
+                            )}
                         </View>
+                        <Image
+                            source={profilePicture ? { uri: profilePicture } : require('../../assets/loading.gif')}
+                            style={styles.image}
+                        />
                     </View>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>Apellidos:</Text>
-                        <View style={styles.dataContainer}>
-                            <TextInput
-                                style={styles.data}
-                                value={user.lastName}
-                                onChangeText={(text) => {
-                                    handleInputChange('lastName', text);
-                                }}
-                                placeholder={'Apellidos'}
-                            />
+                    <View style={styles.infoContainer}>
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>Nombre:</Text>
+                            <View style={styles.dataContainer}>
+                                <TextInput
+                                    style={styles.data}
+                                    value={user.firstName}
+                                    onChangeText={(text) => {
+                                        handleInputChange('firstName', text);
+                                    }}
+                                    placeholder={'Nombre'}
+                                />
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>DNI/NIE:</Text>
-                        <View style={styles.dataContainer}>
-                            <TextInput
-                                style={styles.data}
-                                value={user.idCard}
-                                onChangeText={(text) => {
-                                    handleInputChange('idCard', text);
-                                }}
-                                placeholder={'DNI/NIE'}
-                            />
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>Apellidos:</Text>
+                            <View style={styles.dataContainer}>
+                                <TextInput
+                                    style={styles.data}
+                                    value={user.lastName}
+                                    onChangeText={(text) => {
+                                        handleInputChange('lastName', text);
+                                    }}
+                                    placeholder={'Apellidos'}
+                                />
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>Dirección:</Text>
-                        <View style={styles.dataContainer}>
-                            <TextInput
-                                style={styles.data}
-                                value={user.address}
-                                onChangeText={(text) => {
-                                    handleInputChange('address', text);
-                                }}
-                                placeholder={'Dirección'}
-                            />
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>DNI/NIE:</Text>
+                            <View style={styles.dataContainer}>
+                                <TextInput
+                                    style={styles.data}
+                                    value={user.idCard}
+                                    onChangeText={(text) => {
+                                        handleInputChange('idCard', text);
+                                    }}
+                                    placeholder={'DNI/NIE'}
+                                />
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>Número de teléfono:</Text>
-                        <View style={styles.dataContainer}>
-                            <TextInput
-                                style={styles.data}
-                                value={user.phoneNumber}
-                                onChangeText={(text) => {
-                                    handleInputChange('phoneNumber', text);
-                                }}
-                                placeholder={'Número de teléfono'}
-                            />
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>Dirección:</Text>
+                            <View style={styles.dataContainer}>
+                                <TextInput
+                                    style={styles.data}
+                                    value={user.address}
+                                    onChangeText={(text) => {
+                                        handleInputChange('address', text);
+                                    }}
+                                    placeholder={'Dirección'}
+                                />
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>Email:</Text>
-                        <View style={styles.dataContainerNotMod}>
-                            <Text style={styles.data}>{user.email}</Text>
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>Número de teléfono:</Text>
+                            <View style={styles.dataContainer}>
+                                <TextInput
+                                    style={styles.data}
+                                    value={user.phoneNumber}
+                                    onChangeText={(text) => {
+                                        handleInputChange('phoneNumber', text);
+                                    }}
+                                    placeholder={'Número de teléfono'}
+                                />
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>Fecha de nacimiento:</Text>
-                        <View style={styles.dataContainer}>
-                            <TouchableOpacity onPress={showDatePicker}>
-                                <Text>{user.birthday}</Text>
-                            </TouchableOpacity>
-                            <DateTimePickerModal
-                                value={selectedDate}
-                                isVisible={datePickerVisible}
-                                mode="date"
-                                onConfirm={handleConfirm}
-                                onCancel={hideDatePicker}
-                            />
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>Email:</Text>
+                            <View style={styles.dataContainerNotMod}>
+                                <Text style={styles.data}>{user.email}</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.labelDataContainer}>
-                        <Text style={styles.label}>Número de licencia:</Text>
-                        <View style={styles.dataContainerNotMod}>
-                            <Text style={styles.data}>4R-123123123</Text>
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>Fecha de nacimiento:</Text>
+                            <View style={styles.dataContainer}>
+                                <TouchableOpacity onPress={showDatePicker}>
+                                    <Text>{user.birthday}</Text>
+                                </TouchableOpacity>
+                                <DateTimePickerModal
+                                    value={selectedDate}
+                                    isVisible={datePickerVisible}
+                                    mode="date"
+                                    onConfirm={handleConfirm}
+                                    onCancel={hideDatePicker}
+                                />
+                            </View>
                         </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-                            <Text style={styles.buttonText}>Cancelar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.saveButton} onPress={sendUpdates}>
-                            <Text style={styles.buttonText}>Guardar</Text>
-                        </TouchableOpacity>
+                        <View style={styles.labelDataContainer}>
+                            <Text style={styles.label}>Número de licencia:</Text>
+                            <View style={styles.dataContainerNotMod}>
+                                <Text style={styles.data}>4R-123123123</Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+            <FormFooter cancel={{ function: navigation.goBack, text: 'Cancelar' }} save={{ function: sendUpdates, text: 'Guardar' }} />
+        </View>
     );
 }
 
@@ -335,10 +331,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 20
+        paddingTop: 20,
     },
-    contentContainer: {
-        paddingBottom: 20
+    scrollViewContent: {
+        paddingLeft: 20,
+        paddingRight: 20
     },
     icon: {
         width: 20,
@@ -356,13 +353,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingTop: 20,
         marginBottom: 20
-    },
-    subheader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        marginBottom: 10,
-        marginTop: 20
     },
     columnContainer: {
         flexDirection: 'column',
@@ -386,13 +376,14 @@ const styles = StyleSheet.create({
     },
     partnerContainer: {
         justifyContent: 'center',
+        marginBottom: 0 // Modificación: Eliminado el marginBottom
     },
     partner: {
         fontSize: 18,
         fontWeight: '600'
     },
     infoContainer: {
-        marginBottom: 20
+        marginBottom: 0 // Modificación: Eliminado el marginBottom
     },
     labelDataContainer: {
         marginBottom: 15
@@ -406,32 +397,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'lightgray',
         padding: 10,
         borderRadius: 10,
-        borderColor: 'black',
-        borderWidth: 1
-    },
-    dataContainerNotMod: {
-        backgroundColor: '#f5f5f5',
-        padding: 10,
-        borderRadius: 10
     },
     data: {
         fontSize: 16,
     },
-    saveButton: {
-        padding: 10,
-        borderRadius: 5,
-        width: '45%',
-        alignItems: 'center'
-    },
-    cancelButton: {
-        padding: 10,
-        borderRadius: 5,
-        width: '45%',
-        alignItems: 'center'
-    },
-    buttonText: {
-        color: '#1162BF',
-        fontWeight: 'bold',
-        fontSize: 16
-    }
 });

@@ -84,7 +84,6 @@ const ClassInfo = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
                     <Text style={styles.pageTitle}>{classGroup.name.substring(0, 18)}</Text>
                     {editAndDelete &&
                         <View style={styles.iconButtonsContainer}>
@@ -98,7 +97,6 @@ const ClassInfo = () => {
                             </TouchableOpacity>
                         </View>
                     }
-                </View>
             </View>
             <Animated.View style={[styles.content, { height: contentHeight }]}>
                 <View style={styles.generalInfo}>
@@ -159,19 +157,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
     },
     header: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
         justifyContent: 'space-between',
         paddingTop: 20,
         marginBottom: 20,
-    },
-    subheader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     pageTitle: {
         fontSize: 24,
@@ -200,7 +194,9 @@ const styles = StyleSheet.create({
     content: {
         overflow: 'hidden',
         paddingBottom: 20,
-        borderRadius: 10
+        borderRadius: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     generalInfo: {
         backgroundColor: '#ddeeff',
@@ -245,6 +241,8 @@ const styles = StyleSheet.create({
     studentsListContainer: {
         flex: 1,
         marginTop: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     studentsListHeader: {
         flexDirection: 'row',

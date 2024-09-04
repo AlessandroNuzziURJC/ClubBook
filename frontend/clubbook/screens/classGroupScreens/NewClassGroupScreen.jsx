@@ -7,7 +7,7 @@ import ClassGroupForm from "../../components/ClassGroupForm";
 const NewClass = () => {
     const [classGroup, setClassGroup] = useState(null);
     const navigation = useNavigation();
-    
+
     const saveData = async (classGroupOutput) => {
         if (!classGroupOutput.validate()) {
             Alert.alert('No se ha rellenado correctamente.');
@@ -21,7 +21,7 @@ const NewClass = () => {
                 Alert.alert('Error de comunicación con el servidor.');
             } else {
                 const updatedClassGroup = await response.json();
-                navigation.navigate('ClassGroupLists', { classGroup: updatedClassGroup});
+                navigation.navigate('ClassGroupLists', { classGroup: updatedClassGroup });
             }
         } catch (error) {
             Alert.alert('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
@@ -34,14 +34,12 @@ const NewClass = () => {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>Nueva clase</Text>
-                </View>
+                <Text style={styles.pageTitle}>Nueva clase</Text>
             </View>
             <ClassGroupForm sendClassGroupBack={createClassGroup} />
-        </ScrollView>
+        </View>
     );
 };
 
@@ -52,19 +50,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
     },
     header: {
         justifyContent: 'space-between',
         paddingTop: 20,
         marginBottom: 20,
-    },
-    subheader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        marginTop: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     pageTitle: {
         fontSize: 24,

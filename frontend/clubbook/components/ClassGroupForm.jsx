@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import Schedule from "../entities/Schedule";
 import Checkbox from 'expo-checkbox';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -7,6 +7,7 @@ import ServerRequests from "../serverRequests/ServerRequests";
 import { useNavigation } from "@react-navigation/native";
 import ClassGroup from "../entities/ClassGroup";
 import UserCheckboxList from "./UserCheckboxList";
+import FormFooter from "./FormFooter";
 
 const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
     const navigation = useNavigation();
@@ -119,7 +120,7 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
             .map(item => new Schedule(item));
 
         if (!validForm()) {
-            Alert.alert('No se ha rellenado correctamente el formulario.')
+            Alert.alert('No se ha rellenado correctamente el formulario.');
             return;
         }
 
@@ -128,7 +129,7 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
             : new ClassGroup(name, null, address, selectedTeachers, selectedSchedule, []);
 
         sendClassGroupBack(newClassGroup);
-    }
+    };
 
     const validForm = () => {
         let valid = true;
@@ -166,11 +167,11 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         setScheduleError(newScheduleError);
 
         return valid;
-    }
+    };
 
     return (
-        <View>
-            <View style={styles.content}>
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>
                 <Text style={styles.label}>Nombre:</Text>
                 <TextInput
                     style={[styles.input, nameError && styles.errorInput]}
@@ -188,47 +189,40 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
                 <Text style={styles.label}>Profesor/es:</Text>
                 <UserCheckboxList users={teachers} usersError={teachersError} handleSelectUser={handleSelectProfessor} />
                 <Text style={styles.label}>Horario:</Text>
-                {schedule.map((item, index) => {
-                    return (
-                        <View key={index} style={[styles.scheduleContainer, scheduleError[index] && styles.errorBackground]}>
-                            <View style={styles.checkboxContainer}>
-                                <Text style={styles.teacherName}>{item.weekDay}</Text>
-                                <Checkbox
-                                    value={item.selected}
-                                    onValueChange={() => {
-                                        handleScheduleChange(index, 'selected', !item.selected);
-                                    }}
-                                    style={styles.checkbox}
+                {schedule.map((item, index) => (
+                    <View key={index} style={[styles.scheduleContainer, scheduleError[index] && styles.errorBackground]}>
+                        <View style={styles.checkboxContainer}>
+                            <Text style={styles.teacherName}>{item.weekDay}</Text>
+                            <Checkbox
+                                value={item.selected}
+                                onValueChange={() => {
+                                    handleScheduleChange(index, 'selected', !item.selected);
+                                }}
+                                style={styles.checkbox}
+                            />
+                        </View>
+                        {item.selected && (
+                            <View style={styles.timeInputContainer}>
+                                <TouchableOpacity
+                                    style={styles.timeButton}
+                                    onPress={() => showTimePicker(index)}
+                                >
+                                    <Text style={styles.timeButtonText}>{item.init || 'Inicio'}</Text>
+                                </TouchableOpacity>
+                                <TextInput
+                                    style={[styles.durationInput, scheduleError[index] && styles.errorInput]}
+                                    placeholder="Duración (min)"
+                                    keyboardType="numeric"
+                                    value={item.duration.toString()}
+                                    onChangeText={(text) => handleScheduleChange(index, 'duration', text)}
                                 />
                             </View>
-                            {item.selected && (
-                                <View style={styles.timeInputContainer}>
-                                    <TouchableOpacity
-                                        style={styles.timeButton}
-                                        onPress={() => showTimePicker(index)}
-                                    >
-                                        <Text style={styles.timeButtonText}>{item.init || 'Inicio'}</Text>
-                                    </TouchableOpacity>
-                                    <TextInput
-                                        style={[styles.durationInput, scheduleError[index] && styles.errorInput]}
-                                        placeholder="Duración (min)"
-                                        keyboardType="numeric"
-                                        value={item.duration.toString()}
-                                        onChangeText={(text) => handleScheduleChange(index, 'duration', text)}
-                                    />
-                                </View>
-                            )}
-                        </View>
-                    )
-                })}
-            </View>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-                    <Text style={styles.buttonText}>Cancelar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Text style={styles.buttonText}>Guardar</Text>
-                </TouchableOpacity>
+                        )}
+                    </View>
+                ))}
+            </ScrollView>
+            <View style={styles.footerContainer}>
+                <FormFooter cancel={{ function: navigation.goBack, text: 'Cancelar' }} save={{ function: handleSave, text: 'Guardar' }} />
             </View>
             <DateTimePickerModal
                 isVisible={isStartTimePickerVisible}
@@ -243,14 +237,17 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
 export default ClassGroupForm;
 
 const styles = StyleSheet.create({
-    content: {
+    container: {
         flex: 1,
-        paddingBottom: 20
+    },
+    scrollViewContent: {
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     label: {
         fontWeight: '500',
         fontSize: 18,
-        marginBottom: 10
+        marginBottom: 10,
     },
     input: {
         backgroundColor: 'white',
@@ -260,7 +257,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: 'gray'
+        borderColor: 'gray',
     },
     errorInput: {
         borderColor: 'red',
@@ -270,9 +267,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         height: 40,
-    },
-    teacherlist: {
-        marginBottom: 20
     },
     teacherName: {
         fontSize: 16,
@@ -285,11 +279,11 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingLeft: 20,
         paddingRight: 20,
-        borderRadius: 5
+        borderRadius: 5,
     },
     errorBackground: {
         borderWidth: 2,
-        borderColor: 'red'
+        borderColor: 'red',
     },
     timeInputContainer: {
         flexDirection: 'row',
@@ -319,27 +313,6 @@ const styles = StyleSheet.create({
     },
     timeButtonText: {
         fontWeight: 'bold',
-        color: '#1162BF'
-    },
-    saveButton: {
-        padding: 10,
-        borderRadius: 5,
-        width: '45%',
-        alignItems: 'center'
-    },
-    cancelButton: {
-        padding: 10,
-        borderRadius: 5,
-        width: '45%',
-        alignItems: 'center'
-    },
-    buttonText: {
         color: '#1162BF',
-        fontWeight: 'bold',
-        fontSize: 16
-    }, buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 40
-    }
+    },
 });

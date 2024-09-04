@@ -193,6 +193,43 @@ const ServerRequest = {
             }
         });
         return response;
+    },
+
+    getAttendances: async (year, month, classGroupId) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/attendance/${year}/${month}/${classGroupId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
+    getYears: async (classGroupId) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/attendance/dates/${classGroupId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
+    saveAttendance: async (attendanceDto) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/attendance/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify(attendanceDto)
+        });
+        return response;
     }
 }
 

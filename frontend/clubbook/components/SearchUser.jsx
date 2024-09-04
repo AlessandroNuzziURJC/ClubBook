@@ -58,9 +58,7 @@ const SearchUser = () => {
                 },
             ]}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>Buscar</Text>
-                </View>
+                <Text style={styles.pageTitle}>Buscar</Text>
                 <View style={styles.subheader}>
                     <TextInput
                         ref={inputRef}

@@ -51,9 +51,7 @@ const UsersScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>{key === 'student' ? 'Alumnos' : 'Profesores'}</Text>
-                </View>
+                <Text style={styles.pageTitle}>{key === 'student' ? 'Alumnos' : 'Profesores'}</Text>
                 <View style={styles.subheader}>
                     <TouchableOpacity style={styles.searchbarcontainer} onPress={() => navigation.navigate('Searcher', { key })}>
                         <Text style={styles.searchbar}>Buscar</Text>

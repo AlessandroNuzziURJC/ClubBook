@@ -136,14 +136,12 @@ const ClassListSelector = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>Lista de clases</Text>
-                    {editAndDelete &&
-                        <TouchableOpacity onPress={() => navigation.navigate('NewClassGroup')}>
-                            <Ionicons name="add-outline" size={30} color='#1162BF' />
-                        </TouchableOpacity>
-                    }
-                </View>
+                <Text style={styles.pageTitle}>Lista de clases</Text>
+                {editAndDelete &&
+                    <TouchableOpacity onPress={() => navigation.navigate('NewClassGroup')}>
+                        <Ionicons name="add-outline" size={30} color='#1162BF' />
+                    </TouchableOpacity>
+                }
             </View>
             <View style={styles.content}>
                 <FlatList
@@ -156,6 +154,7 @@ const ClassListSelector = () => {
                             onRefresh={refreshClasses}
                         />
                     }
+                    style={styles.alignTop}
                 />
             </View>
         </View>
@@ -171,17 +170,13 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     header: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
         justifyContent: 'space-between',
         paddingTop: 20,
         marginBottom: 20,
         paddingLeft: 20,
         paddingRight: 20,
-    },
-    subheader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        marginTop: 20,
     },
     pageTitle: {
         fontSize: 24,
@@ -202,6 +197,9 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+    },
+    alignTop: {
+        marginTop: 10,
     },
     classItem: {
         backgroundColor: '#ddeeff',
