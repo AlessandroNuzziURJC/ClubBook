@@ -21,9 +21,11 @@ public class ClassGroup {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Column(nullable = false)
+    @OrderBy("firstName ASC, lastName ASC")
     private List<User> teachers;
 
     @OneToMany(fetch = FetchType.EAGER)
+    @OrderBy("firstName ASC, lastName ASC")
     private List<User> students;
 
     @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
