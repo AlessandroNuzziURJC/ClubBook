@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from "../profileScreens/ProfileScreen";
 import ProfileEdit from '../profileScreens/ProfileEditScreen';
 import { Ionicons } from "@expo/vector-icons";
+import NotificationsScreen from "../notificationsScreens/NotificationScreen";
 
 const HomeStackScreen = () => {
     return (
@@ -14,11 +15,15 @@ const HomeStackScreen = () => {
     );
 };
 
-const SettingsStackScreen = () => {
+const NotificationsStack = createNativeStackNavigator();
+
+const NotificationsStackNavigator = () => {
     return (
-        <View>
-            <Text>Este es el settings student</Text>
-        </View>
+        <NotificationsStack.Navigator screenOptions={{
+            headerShown: false
+        }} initialRouteName="Notifications">
+            <NotificationsStack.Screen name="Notifications" component={NotificationsScreen} />
+        </NotificationsStack.Navigator>
     );
 }
 
@@ -28,7 +33,7 @@ const ProfileStackNavigator = () => {
     return (
         <ProfileStack.Navigator screenOptions={{
             headerShown: false
-            }}>
+        }}>
             <ProfileStack.Screen name="Profile" component={ProfileScreen} />
             <ProfileStack.Screen name="ProfileEdit" component={ProfileEdit} />
         </ProfileStack.Navigator>
@@ -70,8 +75,17 @@ const StudentMainScreen = () => {
             },
             tabBarActiveTintColor: '#1162BF',
         }}>
-            <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
-            <Tab.Screen name="SettingsMenu" component={SettingsStackScreen} />
+            <Tab.Screen name="HomeMenu" component={HomeStackScreen} options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="home" color={color} size={size} />
+                ),
+            }} />
+            <Tab.Screen name="Notificaciones" component={NotificationsStackNavigator}
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="notifications-outline" color={color} size={size} />
+                    ),
+                }} />
             <Tab.Screen name="Perfil" component={ProfileStackNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="person" color={color} size={size} />
