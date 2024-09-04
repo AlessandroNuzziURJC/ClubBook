@@ -10,9 +10,9 @@ import SearchUser from "../../components/SearchUser";
 import ClassGroupListSelector from "../classGroupScreens/ClassGroupListSelectorScreen";
 import ClassGroupInfo from "../classGroupScreens/ClassGroupInfoScreen";
 import TeacherHomeScreen from "../homeScreens/TeacherHomeScreen";
-import AttendanceControlSelector from "../AttendanceControlSelectorScreen"
-import AttendanceData from "../AttendanceData";
-import AttendanceCheckList from "../AttendanceCheckList";
+import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSelectorScreen"
+import AttendanceData from "../attendanceScreens/AttendanceData";
+import AttendanceCheckList from "../attendanceScreens/AttendanceCheckList";
 
 const ClassStack = createNativeStackNavigator();
 

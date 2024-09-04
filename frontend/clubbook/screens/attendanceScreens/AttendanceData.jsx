@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "rea
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from "@react-navigation/native";
-import ServerRequests from "../serverRequests/ServerRequests";
+import ServerRequests from "../../serverRequests/ServerRequests";
 
 const AttendanceData = () => {
     const navigation = useNavigation();

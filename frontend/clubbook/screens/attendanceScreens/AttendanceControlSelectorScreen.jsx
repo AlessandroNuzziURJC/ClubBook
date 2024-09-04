@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import ServerRequests from "../serverRequests/ServerRequests";
-import ClassGroup from "../entities/ClassGroup";
+import ServerRequests from "../../serverRequests/ServerRequests";
+import ClassGroup from "../../entities/ClassGroup";
 
 const AttendanceControlSelector = () => {
     const [classes, setClasses] = useState([]);

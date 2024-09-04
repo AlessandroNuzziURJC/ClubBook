@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
-import AttendanceSelector from "../components/AttendanceSelector";
+import AttendanceSelector from "../../components/AttendanceSelector";
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from '@react-navigation/native';
-import FormFooter from "../components/FormFooter";
+import FormFooter from "../../components/FormFooter";
 import { useRoute } from '@react-navigation/native';
-import AttendanceDto from "../dto/AttendanceDto";
-import ServerRequests from "../serverRequests/ServerRequests";
+import AttendanceDto from "../../dto/AttendanceDto";
+import ServerRequests from "../../serverRequests/ServerRequests";
 
 const AttendanceCheckList = () => {
     const navigation = useNavigation();
