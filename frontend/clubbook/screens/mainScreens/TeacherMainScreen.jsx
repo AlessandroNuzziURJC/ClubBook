@@ -10,7 +10,6 @@ import UserInfoScreen from '../studentsListScreens/UserInfoScreen';
 import SearchUser from "../../components/SearchUser";
 import ClassGroupListSelector from "../classGroupScreens/ClassGroupListSelectorScreen";
 import ClassGroupInfo from "../classGroupScreens/ClassGroupInfoScreen";
-import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudentsScreen";
 
 const HomeStackScreen = () => {
     return (

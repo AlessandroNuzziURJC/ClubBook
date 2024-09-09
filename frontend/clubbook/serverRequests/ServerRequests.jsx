@@ -1,7 +1,48 @@
 import Configuration from '../config/Configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NotificationTokenData from '../entities/NotificationTokenData';
+import NotificationTokenCheckDTO from '../entities/NotificationTokenCheckDTO';
+import { v4 as uuidv4 } from 'uuid';
 
 const ServerRequest = {
+
+    checkNotificationToken: async (notificationToken) => {
+        //Solicitar al backend si dispone de token devolviendolo
+        const tokenFound = await ServerRequest.searchNotificationToken();
+        console.log(tokenFound);
+        if (!tokenFound) {
+            ServerRequest.registerNotificationToken(notificationToken);
+        }
+        await AsyncStorage.removeItem('notificationToken');
+        //Si no tiene coger el neuvo y cargarlo en el backend
+        //Eliminar el token de AsyncStorage en la propiedad 'notificationToken'
+    },
+
+    searchNotificationToken: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        const message = new NotificationTokenCheckDTO(uuidv4(), data.id);
+        return await fetch(`${Configuration.API_URL}/notification/token`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify(message),
+        });
+    },
+
+    registerNotificationToken: async (notificationToken) => {
+        const data = await ServerRequest.getTokenAndId();
+        const message = new NotificationTokenData(uuidv4(), notificationToken, data.id);
+        return await fetch(`${Configuration.API_URL}/notification/token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify({ message }),
+        });
+    },
 
     logIn: async (email, password) => {
         return await fetch(`${Configuration.API_URL}/auth/login`, {
