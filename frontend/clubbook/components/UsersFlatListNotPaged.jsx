@@ -5,9 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
 import Functions from '../functions/Functions';
 
-const UsersFlatListNotPaged = ({ usersList }) => {
+const UsersFlatListNotPaged = ({ users }) => {
     const navigation = useNavigation();
-    const [users, setUsers] = useState(usersList);
     const [userImages, setUserImages] = useState(Array(users.length).fill(require('../assets/loading.gif')));
 
     const getImage = async (id, index) => {

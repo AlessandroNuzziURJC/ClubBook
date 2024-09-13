@@ -32,10 +32,9 @@ const SearchUser = () => {
         };
         let textAux = text.trim();
         if (textAux !== '') {
-            const data = await ServerRequest.getTokenAndId();
-            const response = await serverFunctionMap[key](data, textAux);
+            const response = await serverFunctionMap[key](textAux);
             const result = await response.json();
-            setUsers(result);
+            setUsers(result.data);
         } else {
             setUsers([]);
         }

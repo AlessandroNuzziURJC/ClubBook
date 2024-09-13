@@ -50,9 +50,7 @@ const ProfileScreen = () => {
 
     const getFromServer = async () => {
         try {
-            const data = await ServerRequest.getTokenAndId();
-
-            const response = await ServerRequest.getUserData(data);
+            const response = await ServerRequest.getUserData();
 
             if (response.ok) {
                 const result = await response.json();
@@ -62,6 +60,7 @@ const ProfileScreen = () => {
                 Alert.alert('Error', 'Error al cargar los datos.');
             }
 
+            const data = await ServerRequest.getTokenAndId();
             const responseImage = await ServerRequest.getUserPhoto(data.id);
 
             if (responseImage.ok) {

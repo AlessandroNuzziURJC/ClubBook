@@ -23,9 +23,9 @@ const UsersScreen = () => {
     };
 
     const getUsers = async () => {
-        const data = await ServerRequest.getTokenAndId();
+
         try {
-            const response = await serverFunctionMap[key](data, page);
+            const response = await serverFunctionMap[key](page);
 
             if (response.ok) {
                 const responseData = await response.json();
