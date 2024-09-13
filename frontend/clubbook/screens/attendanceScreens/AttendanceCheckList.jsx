@@ -7,13 +7,51 @@ import FormFooter from "../../components/FormFooter";
 import { useRoute } from '@react-navigation/native';
 import AttendanceDto from "../../dto/AttendanceDto";
 import ServerRequests from "../../serverRequests/ServerRequests";
+import Toast from "../../components/Toast";
 
 const AttendanceCheckList = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { item } = route.params;
-    const [classGroup, setClassGroup] = useState(item);
-    const [students, setStudents] = useState(classGroup.students.map((item) => { item.selected = null; return item; }));
+    const [classGroup, setClassGroup] = useState(null);
+    const [students, setStudents] = useState([]);
+
+    const [emptyMessage, setEmptyMessage] = useState('');
+
+    const [isToastVisible, setIsToastVisible] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const showToast = () => {
+        setIsToastVisible(true);
+        setTimeout(() => {
+            setIsToastVisible(false);
+        }, 1000);
+    };
+
+    useEffect(() => {
+        getFromServer();
+    }, []);
+
+    const getFromServer = async () => {
+        try {
+            const response = await ServerRequests.getClassGroup(item.id);
+            if (response.ok) {
+                const responseData = await response.json();
+                setClassGroup(responseData.data);
+                setStudents(responseData.data.students.map((student) => { student.selected = null; return student; }));
+            } else if (response.status === 400) {
+                const responseData = await response.json();
+                setEmptyMessage('No hay datos disponibles.\n' + responseData.message);
+                return;
+            } else {
+                Alert.alert('Error en la comunicación con el servidor.');
+                setEmptyMessage('No hay clases disponibles.\n');
+                return;
+            }
+        } catch (error) {
+            console.log('Error: ', error);
+            Alert.alert('Error en la comunicación con el servidor.');
+        }
+    }
 
     const handleSelectStudent = (id, selectedStatus) => {
         setStudents(prevStudents =>
@@ -86,7 +124,7 @@ const AttendanceCheckList = () => {
         return formattedDate;
     }
 
-    const validateAndSave = () => {
+    const validateAndSave = async () => {
         if (students.filter(item => item.selected === null).length > 0) {
             Alert.alert('Hay usuarios sin especificar su asistencia.');
             return;
@@ -98,12 +136,19 @@ const AttendanceCheckList = () => {
             Alert.alert('La selección introducida es incorrecta.');
             return;
         }
-        const response = ServerRequests.saveAttendance(attendanceDto);
+        const response = await ServerRequests.saveAttendance(attendanceDto);
+
         if (!response.ok) {
             Alert.alert('Ha habido un error en el servidor.');
-            
+
         } else {
-            navigation.goBack();
+            const result = await response.json();
+            const message = result.message;
+            setToastMessage(message);
+            showToast();
+            setTimeout(() => {
+                navigation.goBack();
+            }, 1000);
         }
 
         return;
@@ -114,34 +159,44 @@ const AttendanceCheckList = () => {
             <View style={styles.header}>
                 <Text style={styles.pageTitle}>Pasar lista</Text>
             </View>
-            <View style={styles.content}>
-                <View style={styles.dateContainer}>
-                    <Text style={styles.bold}>Seleccionar fecha:</Text>
-                    <TouchableOpacity style={[styles.dataContainer, styles.bold]} onPress={showDatePicker}>
-                        <Text>{selectedDate}</Text>
-                    </TouchableOpacity>
-                    <DateTimePickerModal
-                        value={selectedDate}
-                        isVisible={datePickerVisible}
-                        mode="date"
-                        onConfirm={handleConfirm}
-                        onCancel={hideDatePicker}
-                    />
-                </View>
+            {classGroup !== null ? (
+                <View style={styles.content}>
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.bold}>Seleccionar fecha:</Text>
+                        <TouchableOpacity style={[styles.dataContainer, styles.bold]} onPress={showDatePicker}>
+                            <Text>{selectedDate}</Text>
+                        </TouchableOpacity>
+                        <DateTimePickerModal
+                            value={selectedDate}
+                            isVisible={datePickerVisible}
+                            mode="date"
+                            onConfirm={handleConfirm}
+                            onCancel={hideDatePicker}
+                        />
+                    </View>
 
-                <View style={styles.classGroupContainer}>
-                    <Text style={[styles.classGroupTitle, styles.bold]}>Clase 1</Text>
-                </View>
+                    <View style={styles.classGroupContainer}>
+                        <Text style={[styles.classGroupTitle, styles.bold]}>Clase 1</Text>
+                    </View>
 
-                {/* ScrollView takes up remaining space */}
-                <View style={styles.scrollViewContainer}>
-                    <ScrollView style={styles.checkboxList}>
-                        <AttendanceSelector users={students} usersError={null} handleSelectUser={handleSelectStudent} />
-                    </ScrollView>
-                </View>
+                    <View style={styles.scrollViewContainer}>
+                        <ScrollView style={styles.checkboxList}>
+                            <AttendanceSelector users={students} usersError={null} handleSelectUser={handleSelectStudent} />
+                        </ScrollView>
+                    </View>
 
-                <FormFooter cancel={{ function: navigation.goBack, text: 'Cancelar' }} save={{ function: validateAndSave, text: 'Finalizar' }} />
-            </View>
+                    <FormFooter cancel={{ function: navigation.goBack, text: 'Cancelar' }} save={{ function: validateAndSave, text: 'Finalizar' }} />
+                </View>
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+                </View>
+            )}
+            <Toast
+                    visible={isToastVisible}
+                    message={toastMessage}
+                    onClose={() => setIsToastVisible(false)}
+                />
         </View>
     );
 };
@@ -200,5 +255,15 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         paddingLeft: 20,
         paddingRight: 20,
-    }
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyMessage: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#888', // Gris claro para el mensaje
+    },
 });

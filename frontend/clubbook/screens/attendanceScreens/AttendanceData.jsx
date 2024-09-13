@@ -13,16 +13,12 @@ const AttendanceData = () => {
     const [classGroup, setClassGroup] = useState(item);
     const [students, setStudents] = useState([]);
 
+    const [emptyMessage, setEmptyMessage] = useState('');
+
     const getActualMonthValue = () => {
         const actualDate = new Date();
         const month = actualDate.getMonth();
         return month + 1;
-    }
-
-    const getActualYearValue = () => {
-        const actualDate = new Date();
-        const year = actualDate.getFullYear();
-        return year;
     }
 
     const [monthsOpen, setMonthsOpen] = useState(false);
@@ -42,10 +38,6 @@ const AttendanceData = () => {
         { label: 'Diciembre', value: 12 },
     ]);
 
-    const [yearsOpen, setYearsOpen] = useState(false);
-    const [yearsValue, setYearsValue] = useState(getActualYearValue);
-    const [yearsItems, setYearsItems] = useState([]);
-
     const adaptNameView = (name) => {
         if (name.length > 18)
             return name.substring(0, 16) + '...'
@@ -54,28 +46,25 @@ const AttendanceData = () => {
 
     useEffect(() => {
         getFromServer();
-    }, [monthsValue, yearsValue]);
+    }, [monthsValue]);
 
     const getFromServer = async () => {
         try {
-            const response = await ServerRequests.getAttendances(yearsValue, monthsValue, classGroup.id);
-
-            if (!response.ok) {
-                Alert.alert('Error en la comunicación con el servidor');
+            const response = await ServerRequests.getAttendances(monthsValue, classGroup.id);
+            if (response.ok) {
+                const responseData = await response.json();
+                setStudents(responseData.data.usersList);
+                setDates(responseData.data.datesList);
+            } else if (response.status === 400) {
+                const responseData = await response.json();
+                setEmptyMessage('No hay datos disponibles.\n' + responseData.message);
+                return;
+            } else {
+                Alert.alert('Error en la comunicación con el servidor.');
+                setEmptyMessage('No hay clases disponibles.\n');
                 return;
             }
 
-            const data = await response.json();
-            setStudents(data.usersList);
-            setDates(data.datesList);
-
-            const responseYears = await ServerRequests.getYears(classGroup.id);
-            if (!responseYears.ok) {
-                Alert.alert('Error en la comunicación con el servidor');
-                return;
-            }
-            const dataYears = await responseYears.json();
-            setYearsItems(dataYears);
         } catch (error) {
             console.log('Error: ', error);
             Alert.alert('Error en la comunicación con el servidor.');
@@ -87,81 +76,73 @@ const AttendanceData = () => {
             <View style={styles.header}>
                 <Text style={styles.pageTitle}>Consultar asistencia</Text>
             </View>
-            <View style={styles.content}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1 }}>
-                    <DropDownPicker
-                        open={yearsOpen}
-                        value={yearsValue}
-                        items={yearsItems}
-                        setOpen={setYearsOpen}
-                        setValue={setYearsValue}
-                        setItems={setYearsItems}
-                        placeholder="Selecciona el año"
-                        theme="LIGHT"
-                        multiple={false}
-                        containerStyle={{ width: '48%' }}
-                        onChangeValue={value => setYearsValue(value)}
-                    />
-                    <DropDownPicker
-                        open={monthsOpen}
-                        value={monthsValue}
-                        items={monthsItems}
-                        setOpen={setMonthsOpen}
-                        setValue={setMonthsValue}
-                        setItems={setMonthsItems}
-                        placeholder="Selecciona el mes"
-                        theme="LIGHT"
-                        multiple={false}
-                        containerStyle={{ width: '48%' }}
-                        onChangeValue={value => setMonthsValue(value)}
-                    />
-                </View>
-                <TouchableOpacity style={styles.button} onPress={null}>
-                    <Text style={styles.buttonText}>Descargar PDF</Text>
-                </TouchableOpacity>
-                <ScrollView 
-                    style={styles.table} 
-                    contentContainerStyle={styles.tableContent} 
-                    bounces={false}
-                >
-                    <View style={styles.tableRow}>
-                        <View style={styles.tableNameColumn}>
-                            <Text style={[styles.tableCell, styles.headerCell]}>Nombre</Text>
-                            {students.map((student) => (
-                                <Text key={student.id} style={[styles.tableCell, styles.nameCell]}>{adaptNameView(student.firstName + ' ' + student.lastName)}</Text>
-                            ))}
-                        </View>
-                        <ScrollView
-                            horizontal
-                            bounces={false}
-                        >
-                            <View>
-                                <View style={styles.dateRow}>
-                                    {dates.map((date, index) => (
-                                        <Text key={index} style={[styles.tableCell, styles.headerCell]}>{date.substring(8, 10)}</Text>
-                                    ))}
-                                </View>
-                                {students.map((student, studentIndex) => (
-                                    <View key={student.id} style={[
-                                        styles.tableRow,
-                                        (studentIndex % 2 === 0 ? styles.evenRow : styles.oddRow)
-                                    ]}>
-                                        {student.attendanceList.map((value, index) => {
-                                            if (value === null) {
-                                                return (<Text key={`${student.id}-no-data-${index}`} style={styles.tableCell}>_</Text>);
-                                            }
-                                            if (!value)
-                                                return (<Text key={`${student.id}-no-data-${index}`} style={[styles.tableCell, styles.notAttended]}>F</Text>);
-                                            else
-                                                return (<Text key={`${student.id}-no-data-${index}`} style={[styles.tableCell, styles.attended]}>✓</Text>);
-                                        })}
-                                    </View>
+            {students.length !== 0 ? (
+                <View style={styles.content}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1 }}>
+                        <DropDownPicker
+                            open={monthsOpen}
+                            value={monthsValue}
+                            items={monthsItems}
+                            setOpen={setMonthsOpen}
+                            setValue={setMonthsValue}
+                            setItems={setMonthsItems}
+                            placeholder="Selecciona el mes"
+                            theme="LIGHT"
+                            multiple={false}
+                            onChangeValue={value => setMonthsValue(value)}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={null}>
+                        <Text style={styles.buttonText}>Descargar PDF</Text>
+                    </TouchableOpacity>
+                    <ScrollView
+                        style={styles.table}
+                        contentContainerStyle={styles.tableContent}
+                        bounces={false}
+                    >
+                        <View style={styles.tableRow}>
+                            <View style={styles.tableNameColumn}>
+                                <Text style={[styles.tableCell, styles.headerCell]}>Nombre</Text>
+                                {students.map((student) => (
+                                    <Text key={student.id} style={[styles.tableCell, styles.nameCell]}>{adaptNameView(student.firstName + ' ' + student.lastName)}</Text>
                                 ))}
                             </View>
-                        </ScrollView>
-                    </View>
-                </ScrollView>
-            </View>
+                            <ScrollView
+                                horizontal
+                                bounces={false}
+                            >
+                                <View>
+                                    <View style={styles.dateRow}>
+                                        {dates.map((date, index) => (
+                                            <Text key={index} style={[styles.tableCell, styles.headerCell]}>{date.substring(8, 10)}</Text>
+                                        ))}
+                                    </View>
+                                    {students.map((student, studentIndex) => (
+                                        <View key={student.id} style={[
+                                            styles.tableRow,
+                                            (studentIndex % 2 === 0 ? styles.evenRow : styles.oddRow)
+                                        ]}>
+                                            {student.attendanceList.map((value, index) => {
+                                                if (value === null) {
+                                                    return (<Text key={`${student.id}-no-data-${index}`} style={styles.tableCell}>_</Text>);
+                                                }
+                                                if (!value)
+                                                    return (<Text key={`${student.id}-no-data-${index}`} style={[styles.tableCell, styles.notAttended]}>F</Text>);
+                                                else
+                                                    return (<Text key={`${student.id}-no-data-${index}`} style={[styles.tableCell, styles.attended]}>✓</Text>);
+                                            })}
+                                        </View>
+                                    ))}
+                                </View>
+                            </ScrollView>
+                        </View>
+                    </ScrollView>
+                </View>
+                ) : (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+                </View>
+            )}
         </View>
     );
 }
@@ -255,5 +236,15 @@ const styles = StyleSheet.create({
     attended: {
         color: '#009c17',
         fontWeight: 'bold'
-    }
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyMessage: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#888', // Gris claro para el mensaje
+    },
 });

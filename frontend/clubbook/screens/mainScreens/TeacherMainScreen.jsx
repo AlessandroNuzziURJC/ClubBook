@@ -62,7 +62,7 @@ const HomeStackNavigator = () => {
     return (
         <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
             <HomeStack.Screen name="Home" component={TeacherHomeScreen} />
-            <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} />
+            <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: true }}/>
             <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
             <HomeStack.Screen name='AttendanceCheckList' component={AttendanceCheckList} />
         </HomeStack.Navigator>

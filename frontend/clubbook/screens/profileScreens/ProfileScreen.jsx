@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Alert, StyleSheet } from "react-native";
 import Profile from "../../components/Profile";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Functions from "../../functions/Functions";
 import ServerRequest from "../../serverRequests/ServerRequests";
 
 const ProfileScreen = () => {
+    const navigation = useNavigation();
     const [refreshing, setRefreshing] = useState(false);
     const [profilePicture, setProfilePicture] = useState(null);
     const [user, setUser] = useState({
@@ -54,8 +56,8 @@ const ProfileScreen = () => {
 
             if (response.ok) {
                 const result = await response.json();
-                updateScreenData(result);
-                saveInAsyncStorage(result);
+                updateScreenData(result.data);
+                saveInAsyncStorage(result.data);
             } else {
                 Alert.alert('Error', 'Error al cargar los datos.');
             }
@@ -87,10 +89,21 @@ const ProfileScreen = () => {
         getFromServer();
     }, []);
 
+    useFocusEffect(
+        useCallback(() => {
+            getFromServer();
+        }, [])
+    );
+
+    const handleEditProfile = () => {
+        navigation.navigate('ProfileEdit', { 'user': user });
+    };
+
     return (
         <View style={styles.container}>
             <Profile 
                 editButton={true}
+                onEditPress={handleEditProfile}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 profilePicture={profilePicture}

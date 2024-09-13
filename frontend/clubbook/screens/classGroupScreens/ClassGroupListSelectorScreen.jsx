@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert, RefreshControl } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect } from '@react-navigation/native';
 import ServerRequests from "../../serverRequests/ServerRequests";
 import ClassGroup from "../../entities/ClassGroup";
 import Schedule from "../../entities/Schedule";
@@ -13,9 +14,18 @@ const ClassListSelector = () => {
     const route = useRoute();
     const { editAndDelete } = route.params;
 
+    const [emptyMessage, setEmptyMessage] = useState('');
+
     useEffect(() => {
         getFromServer();
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            setEmptyMessage('');
+            getFromServer();
+        }, [])
+    );
 
     useEffect(() => {
         if (route.params?.classGroup) {
@@ -83,16 +93,24 @@ const ClassListSelector = () => {
         try {
             const response = await ServerRequests.getClassGroups();
 
-            if (!response.ok) {
-                Alert.alert('Error en la comunicación con el servidor');
+            if (response.ok) {
+                const responseData = await response.json();
+                setClasses(responseData.data.map(item => new ClassGroup.parseFromJSON(item)));
+            } else if (response.status === 400) {
+                const responseData = await response.json();
+                setClasses([]);
+                setEmptyMessage('No hay clases disponibles.\n' + responseData.message);
+                return;
+            } else {
+                setClasses([]);
+                Alert.alert('Error en la comunicación con el servidor.');
+                setEmptyMessage('No hay clases disponibles.\n');
                 return;
             }
-
-            const data = await response.json();
-            setClasses(data.map(item => new ClassGroup.parseFromJSON(item)));
         } catch (error) {
             console.log('Error: ', error);
             Alert.alert('Error en la comunicación con el servidor.');
+            setEmptyMessage('No hay clases disponibles.\n');
         }
     };
 
@@ -126,7 +144,7 @@ const ClassListSelector = () => {
                         <Ionicons name="pencil-outline" size={20} color="#1162BF" />
                     </TouchableOpacity>
                 }
-                <TouchableOpacity onPress={() => handleViewMore(item)} style={styles.iconButton}>
+                <TouchableOpacity onPress={() => handleViewMore(item.id)} style={styles.iconButton}>
                     <Text style={styles.viewMoreText}>Ver más</Text>
                 </TouchableOpacity>
             </View>
@@ -143,20 +161,26 @@ const ClassListSelector = () => {
                     </TouchableOpacity>
                 }
             </View>
-            <View style={styles.content}>
-                <FlatList
-                    data={classes}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={refreshClasses}
-                        />
-                    }
-                    style={styles.alignTop}
-                />
-            </View>
+            {classes.length > 0 ? (
+                <View style={styles.content}>
+                    <FlatList
+                        data={classes}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id.toString()}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={refreshClasses}
+                            />
+                        }
+                        style={styles.alignTop}
+                    />
+                </View>
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -244,5 +268,15 @@ const styles = StyleSheet.create({
     viewMoreText: {
         color: '#1162BF',
         fontSize: 16,
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyMessage: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#888',
     },
 });

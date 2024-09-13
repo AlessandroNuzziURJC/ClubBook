@@ -195,21 +195,9 @@ const ServerRequest = {
         return response;
     },
 
-    getAttendances: async (year, month, classGroupId) => {
+    getAttendances: async (month, classGroupId) => {
         const data = await ServerRequest.getTokenAndId();
-        const response = await fetch(`${Configuration.API_URL}/attendance/${year}/${month}/${classGroupId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${data.token}`,
-            }
-        });
-        return response;
-    },
-
-    getYears: async (classGroupId) => {
-        const data = await ServerRequest.getTokenAndId();
-        const response = await fetch(`${Configuration.API_URL}/attendance/dates/${classGroupId}`, {
+        const response = await fetch(`${Configuration.API_URL}/attendance/${month}/${classGroupId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

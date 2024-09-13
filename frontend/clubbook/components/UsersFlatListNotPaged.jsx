@@ -5,8 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
 import Functions from '../functions/Functions';
 
-const UsersFlatListNotPaged = ({ users }) => {
+const UsersFlatListNotPaged = ({ usersList }) => {
     const navigation = useNavigation();
+    const [users, setUsers] = useState(usersList);
     const [userImages, setUserImages] = useState(Array(users.length).fill(require('../assets/loading.gif')));
 
     const getImage = async (id, index) => {
@@ -69,6 +70,12 @@ const UsersFlatListNotPaged = ({ users }) => {
 };
 
 const styles = StyleSheet.create({
+    content: {
+        flex: 1,
+    },
+    contentContainer: {
+        padding: 10,
+    },
     column: {
         flexDirection: 'row',
         alignItems: 'center',

@@ -4,22 +4,15 @@ import Configuration from '../../config/Configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import FormFooter from "../../components/FormFooter";
 
 const EditProfile = () => {
     const [profilePicture, setProfilePicture] = useState(null);
     const navigation = useNavigation();
-    const [user, setUser] = useState({
-        email: '',
-        id: '',
-        firstName: '',
-        lastName: '',
-        phoneNumber: '',
-        birthday: '',
-        address: '',
-        idCard: '',
-        partner: ''
-    });
+    const route = useRoute();
+    const { user: initialUser } = route.params;
+    const [user, setUser] = useState(initialUser);
 
     const blobToBase64 = (blob) => {
         return new Promise((resolve, reject) => {

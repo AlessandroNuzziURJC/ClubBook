@@ -14,18 +14,13 @@ import NewClassGroup from "../classGroupScreens/NewClassGroupScreen";
 import ClassGroupInfo from "../classGroupScreens/ClassGroupInfoScreen";
 import EditClassGroup from "../classGroupScreens/EditClassGroupScreen";
 import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudentsScreen";
-
-const HomeStackScreen = () => {
-    return (
-        <View>
-            <Text>Este es el home administrador</Text>
-        </View>
-    );
-};
+import AdministratorHomeScreen from "../homeScreens/AdministratorHomeScreen";
+import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSelectorScreen";
+import AttendanceData from "../attendanceScreens/AttendanceData";
 
 const ClassStack = createNativeStackNavigator();
 
-const ClassGroupScreen = () => {
+const ClassGroupNavigator = () => {
     return (
         <ClassStack.Navigator screenOptions={{
             headerShown: false
@@ -67,6 +62,18 @@ const ProfileStackNavigator = () => {
     );
 };
 
+const HomeStack = createNativeStackNavigator();
+
+const HomeStackNavigator = () => {
+    return (
+        <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
+            <HomeStack.Screen name="Home" component={AdministratorHomeScreen} />
+            <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: false }}/>
+            <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
+        </HomeStack.Navigator>
+    );
+};
+
 const AdministratorMainScreen = () => {
     const Tab = createBottomTabNavigator();
     return (
@@ -80,8 +87,17 @@ const AdministratorMainScreen = () => {
             },
             tabBarActiveTintColor: '#1162BF',
         }}>
-            <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
-            <Tab.Screen name="Clases" component={ClassGroupScreen} options={{
+            <Tab.Screen name="HomeMenu" component={HomeStackNavigator} options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="home" color={color} size={size} />
+                )
+            }} />
+            <Tab.Screen name="Notificaciones" component={HomeStackNavigator} options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="notifications-outline" color={color} size={size} />
+                ),
+            }} />
+            <Tab.Screen name="Clases" component={ClassGroupNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="barbell-outline" color={color} size={size} />
                 ),

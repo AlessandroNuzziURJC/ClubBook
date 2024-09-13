@@ -3,7 +3,7 @@ import { ScrollView, View, Text, StyleSheet, Image, RefreshControl } from "react
 import EditProfileButton from "./EditProfileButton";
 import CloseSessionButton from "./CloseSession";
 
-const Profile = ({ editButton, refreshing, onRefresh, profilePicture, user }) => {
+const Profile = ({ editButton, onEditPress, refreshing, onRefresh, profilePicture, user }) => {
     return (
         <ScrollView style={styles.container} refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -20,7 +20,7 @@ const Profile = ({ editButton, refreshing, onRefresh, profilePicture, user }) =>
                                 <Text style={styles.partner}>Socio</Text>
                             </View>
                         )}
-                        <EditProfileButton visible={editButton}/>
+                        <EditProfileButton visible={editButton} functionClick={onEditPress}/>
                     </View>
                     <Image
                         source={profilePicture ? profilePicture : require('../assets/loading.gif')}
