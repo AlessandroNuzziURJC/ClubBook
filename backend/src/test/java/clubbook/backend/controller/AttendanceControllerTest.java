@@ -2,25 +2,24 @@ package clubbook.backend.controller;
 
 import clubbook.backend.dtos.AttendanceDto;
 import clubbook.backend.dtos.ClassGroupAttendanceDto;
-import clubbook.backend.dtos.YearsDto;
 import clubbook.backend.model.*;
 import clubbook.backend.repository.AttendanceRepository;
+import clubbook.backend.responses.AttendanceResponse;
+import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.AttendanceService;
 import clubbook.backend.service.ClassGroupService;
+import clubbook.backend.service.SeasonService;
 import clubbook.backend.service.UserService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.postgresql.hostchooser.HostRequirement.any;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,6 +45,9 @@ class AttendanceControllerTest {
 
     @Mock
     private ClassGroupService classGroupService;
+
+    @Mock
+    private SeasonService seasonService;
 
     @InjectMocks
     private AttendanceService attendanceService;
@@ -123,7 +124,7 @@ class AttendanceControllerTest {
             attendanceDtoList.add(new AttendanceDto(LocalDate.of(2024, 1, ++i), 1, attended, notAttended));
         }
 
-        this.attendanceController = new AttendanceController(attendanceService);
+        this.attendanceController = new AttendanceController(attendanceService, classGroupService, seasonService);
 
 
         int i = 0;
@@ -139,8 +140,9 @@ class AttendanceControllerTest {
         for (int i = 0; i < 4; i++) {
             when(userService.findById(i + 1)).thenReturn(studentList.get(i));
         }
+        when(seasonService.seasonStarted()).thenReturn(Boolean.TRUE);
         when(attendanceRepository.saveAll(any(List.class))).thenReturn(attendanceList);
-        ResponseEntity<AttendanceDto> attendanceDtoResponseEntity = this.attendanceController.saveAttendances(attendanceDtoList.get(0));
+        ResponseEntity<ResponseWrapper<AttendanceDto>> attendanceDtoResponseEntity = this.attendanceController.saveAttendances(attendanceDtoList.get(0));
         assertEquals(HttpStatus.OK, attendanceDtoResponseEntity.getStatusCode());
     }
 
@@ -150,14 +152,8 @@ class AttendanceControllerTest {
         for (int i = 0; i < 4; i++){
             when(attendanceRepository.findAttendance(eq(i + 1), any(LocalDate.class))).thenReturn(this.attendanceList.get(i));
         }
-        ResponseEntity<ClassGroupAttendanceDto> attendances = this.attendanceController.getAttendances("2024", "1", "1");
+        when(seasonService.seasonStarted()).thenReturn(Boolean.TRUE);
+        ResponseEntity<ResponseWrapper<ClassGroupAttendanceDto>> attendances = this.attendanceController.getAttendances("1", "1");
         assertEquals(HttpStatus.OK, attendances.getStatusCode());
-    }
-
-    @Test
-    void getYears() {
-        when(this.attendanceRepository.getYearsUsingClassGroup(1)).thenReturn(new ArrayList<>(List.of("2024")));
-        ResponseEntity<List<YearsDto>> years = this.attendanceController.getYears("1");
-        assertEquals(HttpStatus.OK, years.getStatusCode());
     }
 }

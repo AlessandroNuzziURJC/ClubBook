@@ -7,6 +7,7 @@ import clubbook.backend.model.RoleEnum;
 import clubbook.backend.model.User;
 import clubbook.backend.repository.UserRepository;
 import clubbook.backend.responses.LoginResponse;
+import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.AuthenticationService;
 import clubbook.backend.service.JwtService;
 import clubbook.backend.service.RoleService;
@@ -85,10 +86,10 @@ class AuthenticationControllerTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
 
-        ResponseEntity<User> response = authenticationController.register(registerUserDto);
+        ResponseEntity<ResponseWrapper<User>> response = authenticationController.register(registerUserDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(user, response.getBody());
+        assertEquals(user, response.getBody().getData());
     }
 
     @Test
@@ -107,7 +108,7 @@ class AuthenticationControllerTest {
         when(roleService.findByName(any(RoleEnum.class))).thenReturn(role);
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
 
-        ResponseEntity<User> response = authenticationController.register(registerUserDto);
+        ResponseEntity<ResponseWrapper<User>> response = authenticationController.register(registerUserDto);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -126,10 +127,10 @@ class AuthenticationControllerTest {
         LoginUserDto loginUserDto = new LoginUserDto("student@prueba.com", "password");
 
         when(userRepository.findByEmail(any(String.class))).thenReturn(Optional.of(user));
-        ResponseEntity<LoginResponse> response = authenticationController.authenticate(loginUserDto);
+        ResponseEntity<ResponseWrapper<LoginResponse>> response = authenticationController.authenticate(loginUserDto);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(user.getEmail(), response.getBody().getUser().getEmail());
-        assertEquals(user.getPassword(), response.getBody().getUser().getPassword());
+        assertEquals(user.getEmail(), response.getBody().getData().getUser().getEmail());
+        assertEquals(user.getPassword(), response.getBody().getData().getUser().getPassword());
     }
 
     @Test

@@ -130,3 +130,6 @@ VALUES
     (108, '2024-01-01', 8, true),
     (109, '2024-01-01', 9, true),
     (110, '2024-01-01', 10, true);
+
+INSERT INTO T_SEASON(id, active, finish, init, admin_creator_id, admin_finisher_id)
+VALUES (101, true, '2025-07-01', '2024-09-01', 71, 71);

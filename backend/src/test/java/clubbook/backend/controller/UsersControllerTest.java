@@ -37,7 +37,14 @@ class UsersControllerTest {
 
     private String extractValue(String response, String key) throws Exception {
         JsonNode jsonNode = objectMapper.readTree(response);
-        return jsonNode.get(key).asText();
+
+        JsonNode dataNode = jsonNode.get("data");
+
+        if (dataNode != null && dataNode.has(key)) {
+            return dataNode.get(key).asText();
+        } else {
+            throw new Exception("Not found key: " + key);
+        }
     }
 
     @Test

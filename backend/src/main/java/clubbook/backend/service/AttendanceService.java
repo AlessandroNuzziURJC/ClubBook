@@ -3,16 +3,21 @@ package clubbook.backend.service;
 import clubbook.backend.dtos.AttendanceDto;
 import clubbook.backend.dtos.ClassGroupAttendanceDto;
 import clubbook.backend.dtos.UserAttendanceDto;
-import clubbook.backend.dtos.YearsDto;
 import clubbook.backend.model.Attendance;
 import clubbook.backend.model.ClassGroup;
 import clubbook.backend.model.User;
 import clubbook.backend.repository.AttendanceRepository;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +33,7 @@ public class AttendanceService {
         this.userService = userService;
         this.classGroupService = classGroupService;
     }
+
 
     public AttendanceDto saveAll(AttendanceDto attendanceDto) {
         User user;
@@ -77,8 +83,8 @@ public class AttendanceService {
         ).collect(Collectors.toList());
     }
 
-    private List<LocalDate> getClassDates(int year, int month, int classGroup) {
-        List<java.sql.Date> sqlDates = attendanceRepository.getClassDates(year, month, classGroup);
+    private List<LocalDate> getClassDates(int month, int classGroup) {
+        List<java.sql.Date> sqlDates = attendanceRepository.getClassDates(month, classGroup);
         return sqlDates.stream()
                 .map(java.sql.Date::toLocalDate)
                 .collect(Collectors.toList());
@@ -92,8 +98,8 @@ public class AttendanceService {
         return attendance.isAttended();
     }
 
-    public ClassGroupAttendanceDto getClassGroupAttendanceWithYearAndMonth(int year, int month, int classGroupId) {
-        List<LocalDate> dates = this.getClassDates(year, month, classGroupId);
+    public ClassGroupAttendanceDto getClassGroupAttendanceWithYearAndMonth(int month, int classGroupId) {
+        List<LocalDate> dates = this.getClassDates(month, classGroupId);
         ClassGroup classGroup = classGroupService.findById(classGroupId);
         List<User> userList = classGroup.getStudents();
         List<UserAttendanceDto> userAttendanceDtoList = new ArrayList<>(userList.size());
@@ -109,12 +115,97 @@ public class AttendanceService {
         return new ClassGroupAttendanceDto(dates, userAttendanceDtoList);
     }
 
-    public List<YearsDto> getYears(int classGroupId) {
-        List<String> yearsList = this.attendanceRepository.getYearsUsingClassGroup(classGroupId);
-        List<YearsDto> yearsDtoList = new ArrayList<>(20);
-        for (String year: yearsList) {
-            yearsDtoList.add(new YearsDto(Integer.parseInt(year), year));
+
+    private String getSpanishMonth(int monthPosition){
+        String[] months = {
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        };
+        return months[monthPosition];
+    }
+
+    public byte[] generatePdf(int classGroupId) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4.rotate());
+
+        try {
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            // Bucle para recorrer los meses del año (0 = Enero, 11 = Diciembre)
+            for (int month = 0; month < 12; month++) {
+                document.newPage();
+
+                String monthName = this.getSpanishMonth(month );
+
+                document.add(new Paragraph("Mes: " + monthName + "\n"));
+
+                ClassGroupAttendanceDto classGroupDto = this.getClassGroupAttendanceWithYearAndMonth(
+                        month + 1, classGroupId);
+
+                if (classGroupDto == null || classGroupDto.getDatesList().isEmpty()) {
+                    document.add(new Paragraph("No hay datos para el mes de " + monthName));
+                } else {
+                    float[] columnWidths = new float[classGroupDto.getDatesList().size() + 1];
+                    columnWidths[0] = 3f;
+                    for (int i = 1; i < columnWidths.length; i++) {
+                        columnWidths[i] = 1f;
+                    }
+
+                    PdfPTable table = new PdfPTable(columnWidths);
+                    table.setWidthPercentage(100);
+
+                    PdfPCell headerNames = new PdfPCell(new Paragraph("Nombres"));
+                    headerNames.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerNames.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    table.addCell(headerNames);
+
+                    PdfPCell header;
+                    for (LocalDate localDate : classGroupDto.getDatesList()) {
+                        header = new PdfPCell(new Paragraph(String.valueOf(localDate.getDayOfMonth())));
+                        header.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        header.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        table.addCell(header);
+                    }
+
+
+                    for (UserAttendanceDto user : classGroupDto.getUsersList()) {
+                        PdfPCell nameCell = new PdfPCell(new Paragraph(user.getFirstName() + " " + user.getLastName()));
+                        nameCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        nameCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        nameCell.setFixedHeight(20f);
+                        table.addCell(nameCell);
+
+
+                        for (Boolean attended : user.getAttendanceList()) {
+                            PdfPCell attendanceCell;
+                            if (attended == null) {
+                                attendanceCell = new PdfPCell(new Paragraph("-"));
+                            } else if (attended) {
+                                attendanceCell = new PdfPCell(new Paragraph("A"));
+                            } else {
+                                attendanceCell = new PdfPCell(new Paragraph("F"));
+                            }
+                            attendanceCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            attendanceCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            attendanceCell.setFixedHeight(20f);
+                            table.addCell(attendanceCell);
+                        }
+                    }
+
+                    document.add(table);
+                }
+            }
+
+            document.close();
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
         }
-        return yearsDtoList;
+
+        return out.toByteArray();
+    }
+
+    public void deleteAll() {
+        this.attendanceRepository.deleteAll();
     }
 }

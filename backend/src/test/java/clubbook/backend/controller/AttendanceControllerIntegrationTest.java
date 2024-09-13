@@ -95,7 +95,7 @@ public class AttendanceControllerIntegrationTest {
     @Test
     @WithMockUser(username = "teststudent1@gmail.com", roles = {"STUDENT"})
     public void getAttendancesTestStudent() throws Exception {
-        mockMvc.perform(get("/attendance/2024/01/1")
+        mockMvc.perform(get("/attendance/01/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
@@ -104,7 +104,7 @@ public class AttendanceControllerIntegrationTest {
     @Test
     @WithMockUser(username = "testteacher1@gmail.com", roles = {"TEACHER"})
     public void getAttendancesTestTeacher() throws Exception {
-        mockMvc.perform(get("/attendance/2024/01/1")
+        mockMvc.perform(get("/attendance/01/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -113,50 +113,15 @@ public class AttendanceControllerIntegrationTest {
     @Test
     @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
     public void getAttendancesTestAdministrator() throws Exception {
-        mockMvc.perform(get("/attendance/2024/01/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
-
-    @Transactional
-    @Test
-    public void getAttendancesTestNoRole() throws Exception {
-        mockMvc.perform(get("/attendance/2024/01/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
-
-    @Transactional
-    @Test
-    @WithMockUser(username = "teststudent1@gmail.com", roles = {"STUDENT"})
-    public void getYearsTestStudent() throws Exception {
-        mockMvc.perform(get("/attendance/dates/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
-
-    @Transactional
-    @Test
-    @WithMockUser(username = "testteacher1@gmail.com", roles = {"TEACHER"})
-    public void getYearsTestTeacher() throws Exception {
-        mockMvc.perform(get("/attendance/dates/1")
+        mockMvc.perform(get("/attendance/01/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Transactional
     @Test
-    @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
-    public void getYearsTestAdministrator() throws Exception {
-        mockMvc.perform(get("/attendance/dates/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
-
-    @Transactional
-    @Test
-    public void getYearsTestNoRole() throws Exception {
-        mockMvc.perform(get("/attendance/dates/1")
+    public void getAttendancesTestNoRole() throws Exception {
+        mockMvc.perform(get("/attendance/01/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }

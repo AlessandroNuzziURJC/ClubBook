@@ -28,12 +28,11 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
             value = "SELECT DISTINCT CAST(a.attendance_date AS DATE) " +
                     "FROM T_ATTENDANCE a " +
                     "JOIN T_CLASS_GROUP_STUDENTS c ON a.user_id = c.students_id " +
-                    "WHERE EXTRACT(YEAR FROM a.attendance_date) = :year " +
-                    "AND EXTRACT(MONTH FROM a.attendance_date) = :month " +
+                    "WHERE EXTRACT(MONTH FROM a.attendance_date) = :month " +
                     "AND c.class_group_id = :classGroup ;",
             nativeQuery = true
     )
-    List<java.sql.Date> getClassDates(int year, int month, int classGroup);
+    List<java.sql.Date> getClassDates(int month, int classGroup);
 
     @Query(
             value = "SELECT DISTINCT EXTRACT(YEAR FROM a.attendance_date) " +

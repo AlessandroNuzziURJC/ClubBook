@@ -4,6 +4,8 @@ import clubbook.backend.dtos.LoginUserDto;
 import clubbook.backend.dtos.RegisterUserDto;
 import clubbook.backend.model.User;
 import clubbook.backend.responses.LoginResponse;
+import clubbook.backend.responses.ResponseMessages;
+import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.AuthenticationService;
 import clubbook.backend.service.JwtService;
 import jakarta.validation.Valid;
@@ -25,15 +27,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<ResponseWrapper<User>> register(@Valid @RequestBody RegisterUserDto registerUserDto) {
         User registeredUser = authenticationService.signup(registerUserDto);
         if (registeredUser == null)
             return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(registeredUser);
+        return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.CORRECT_REGISTER, registeredUser));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@Valid @RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<ResponseWrapper<LoginResponse>> authenticate(@Valid @RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
@@ -42,7 +44,7 @@ public class AuthenticationController {
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
         loginResponse.setUser(authenticatedUser);
 
-        return ResponseEntity.ok(loginResponse);
+        return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.CORRECT_LOG_IN, loginResponse));
     }
 
     @GetMapping("/logout")
