@@ -1,5 +1,4 @@
 import React from "react";
-import { View, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from '../profileScreens/ProfileScreen';
@@ -17,6 +16,7 @@ import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudentsScre
 import AdministratorHomeScreen from "../homeScreens/AdministratorHomeScreen";
 import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSelectorScreen";
 import AttendanceData from "../attendanceScreens/AttendanceData";
+import SeasonControlScreen from "../seasonScreens/SeasonControlScreen";
 
 const ClassStack = createNativeStackNavigator();
 
@@ -68,6 +68,7 @@ const HomeStackNavigator = () => {
     return (
         <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
             <HomeStack.Screen name="Home" component={AdministratorHomeScreen} />
+            <HomeStack.Screen name="Season" component={SeasonControlScreen} />
             <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: false }}/>
             <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
         </HomeStack.Navigator>

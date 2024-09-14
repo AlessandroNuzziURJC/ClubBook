@@ -12,7 +12,7 @@ const AdministratorHomeScreen = () => {
                 <Text style={styles.pageTitle}>Inicio</Text>
             </View>
             <View style={styles.content}>
-                <TouchableOpacity style={styles.element} onPress={() => navigation.navigate(null)}>
+                <TouchableOpacity style={styles.element} onPress={() => navigation.navigate('Season')}>
                     <Ionicons name="flag" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Gestionar temporada</Text>
                 </TouchableOpacity>

@@ -235,6 +235,39 @@ const ServerRequest = {
             body: JSON.stringify(attendanceDto)
         });
         return response;
+    },
+
+    seasonStarted: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/season/started`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+     
+    seasonStart: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/season/start/${data.id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+    
+    seasonFinish: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/season/finish/${data.id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
     }
 }
 
