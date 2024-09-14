@@ -23,6 +23,10 @@ public class SeasonService {
         return this.seasonRepository.findByActive(true) != null;
     }
 
+    public Season seasonActive() {
+        return this.seasonRepository.findByActive(true);
+    }
+
     public boolean startSeason(int adminId) {
         Season season = new Season();
         season.setInit(LocalDate.now());
@@ -38,7 +42,6 @@ public class SeasonService {
         season.setAdminFinisher(this.userService.findById(adminId));
         season.setFinish(LocalDate.now());
         this.seasonRepository.save(season);
-        //Eliminar asistencias
         this.attendanceService.deleteAll();
         return true;
     }

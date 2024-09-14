@@ -20,13 +20,23 @@ public class SeasonController {
         this.seasonService = seasonService;
     }
 
-    @PutMapping("/start/{adminId}")
+    @GetMapping("/started")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    public ResponseEntity<Season> isStarted() {
+        Season season = seasonService.seasonActive();
+        if (season == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(season);
+    }
+
+    @PostMapping("/start/{adminId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<Boolean> startSeason(@PathVariable int adminId) {
         return ResponseEntity.ok(seasonService.startSeason(adminId));
     }
 
-    @PutMapping("/finish/{adminId}")
+    @PostMapping("/finish/{adminId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<Boolean> finishSeason(@PathVariable int adminId) {
         return ResponseEntity.ok(seasonService.finishSeason(adminId));

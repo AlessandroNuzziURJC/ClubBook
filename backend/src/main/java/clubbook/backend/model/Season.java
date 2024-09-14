@@ -22,10 +22,10 @@ public class Season {
     @Column(nullable = false)
     private boolean active;
 
-    @OneToOne
+    @ManyToOne
     private User adminCreator;
 
-    @OneToOne
+    @ManyToOne
     private User adminFinisher;
 
     public Season(int id, LocalDate init, LocalDate finish, boolean active, User adminCreator, User adminFinisher) {
