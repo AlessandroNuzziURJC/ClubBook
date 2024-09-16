@@ -26,12 +26,14 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final UserService userService;
     private final ClassGroupService classGroupService;
+    private final SeasonService seasonService;
 
     @Autowired
-    public AttendanceService(AttendanceRepository attendanceRepository, UserService userService, ClassGroupService classGroupService) {
+    public AttendanceService(AttendanceRepository attendanceRepository, UserService userService, ClassGroupService classGroupService, SeasonService seasonService) {
         this.attendanceRepository = attendanceRepository;
         this.userService = userService;
         this.classGroupService = classGroupService;
+        this.seasonService = seasonService;
     }
 
 
@@ -131,70 +133,16 @@ public class AttendanceService {
         try {
             PdfWriter.getInstance(document, out);
             document.open();
+            LocalDate date = this.seasonService.seasonActive().getInit();
 
-            // Bucle para recorrer los meses del año (0 = Enero, 11 = Diciembre)
-            for (int month = 0; month < 12; month++) {
-                document.newPage();
+            int monthValue = date.getMonthValue();
+            int year = date.getYear();
 
-                String monthName = this.getSpanishMonth(month );
-
-                document.add(new Paragraph("Mes: " + monthName + "\n"));
-
-                ClassGroupAttendanceDto classGroupDto = this.getClassGroupAttendanceWithYearAndMonth(
-                        month + 1, classGroupId);
-
-                if (classGroupDto == null || classGroupDto.getDatesList().isEmpty()) {
-                    document.add(new Paragraph("No hay datos para el mes de " + monthName));
-                } else {
-                    float[] columnWidths = new float[classGroupDto.getDatesList().size() + 1];
-                    columnWidths[0] = 3f;
-                    for (int i = 1; i < columnWidths.length; i++) {
-                        columnWidths[i] = 1f;
-                    }
-
-                    PdfPTable table = new PdfPTable(columnWidths);
-                    table.setWidthPercentage(100);
-
-                    PdfPCell headerNames = new PdfPCell(new Paragraph("Nombres"));
-                    headerNames.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    headerNames.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    table.addCell(headerNames);
-
-                    PdfPCell header;
-                    for (LocalDate localDate : classGroupDto.getDatesList()) {
-                        header = new PdfPCell(new Paragraph(String.valueOf(localDate.getDayOfMonth())));
-                        header.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        header.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                        table.addCell(header);
-                    }
-
-
-                    for (UserAttendanceDto user : classGroupDto.getUsersList()) {
-                        PdfPCell nameCell = new PdfPCell(new Paragraph(user.getFirstName() + " " + user.getLastName()));
-                        nameCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        nameCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                        nameCell.setFixedHeight(20f);
-                        table.addCell(nameCell);
-
-
-                        for (Boolean attended : user.getAttendanceList()) {
-                            PdfPCell attendanceCell;
-                            if (attended == null) {
-                                attendanceCell = new PdfPCell(new Paragraph("-"));
-                            } else if (attended) {
-                                attendanceCell = new PdfPCell(new Paragraph("A"));
-                            } else {
-                                attendanceCell = new PdfPCell(new Paragraph("F"));
-                            }
-                            attendanceCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                            attendanceCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                            attendanceCell.setFixedHeight(20f);
-                            table.addCell(attendanceCell);
-                        }
-                    }
-
-                    document.add(table);
-                }
+            for (int month = monthValue - 1; month < 12; month++) {
+                this.generateDataForMonth(classGroupId, document, month, year);
+            }
+            for (int month = 0; month < monthValue - 1; month++) {
+                this.generateDataForMonth(classGroupId, document, month, year + 1);
             }
 
             document.close();
@@ -203,6 +151,70 @@ public class AttendanceService {
         }
 
         return out.toByteArray();
+    }
+
+    private void generateDataForMonth(int classGroupId, Document document, int month, int year) throws DocumentException {
+        document.newPage();
+
+        String monthName = this.getSpanishMonth(month);
+
+        document.add(new Paragraph("Mes: " + monthName + " (" + year + ")\n"));
+
+        ClassGroupAttendanceDto classGroupDto = this.getClassGroupAttendanceWithYearAndMonth(
+                month + 1, classGroupId);
+
+        if (classGroupDto == null || classGroupDto.getDatesList().isEmpty()) {
+            document.add(new Paragraph("No hay datos para el mes de " + monthName));
+        } else {
+            float[] columnWidths = new float[classGroupDto.getDatesList().size() + 1];
+            columnWidths[0] = 3f;
+            for (int i = 1; i < columnWidths.length; i++) {
+                columnWidths[i] = 1f;
+            }
+
+            PdfPTable table = new PdfPTable(columnWidths);
+            table.setWidthPercentage(100);
+
+            PdfPCell headerNames = new PdfPCell(new Paragraph("Nombres"));
+            headerNames.setHorizontalAlignment(Element.ALIGN_CENTER);
+            headerNames.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            table.addCell(headerNames);
+
+            PdfPCell header;
+            for (LocalDate localDate : classGroupDto.getDatesList()) {
+                header = new PdfPCell(new Paragraph(String.valueOf(localDate.getDayOfMonth())));
+                header.setHorizontalAlignment(Element.ALIGN_CENTER);
+                header.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(header);
+            }
+
+
+            for (UserAttendanceDto user : classGroupDto.getUsersList()) {
+                PdfPCell nameCell = new PdfPCell(new Paragraph(user.getFirstName() + " " + user.getLastName()));
+                nameCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                nameCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                nameCell.setFixedHeight(20f);
+                table.addCell(nameCell);
+
+
+                for (Boolean attended : user.getAttendanceList()) {
+                    PdfPCell attendanceCell;
+                    if (attended == null) {
+                        attendanceCell = new PdfPCell(new Paragraph("-"));
+                    } else if (attended) {
+                        attendanceCell = new PdfPCell(new Paragraph("A"));
+                    } else {
+                        attendanceCell = new PdfPCell(new Paragraph("F"));
+                    }
+                    attendanceCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    attendanceCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    attendanceCell.setFixedHeight(20f);
+                    table.addCell(attendanceCell);
+                }
+            }
+
+            document.add(table);
+        }
     }
 
     public void deleteAll() {

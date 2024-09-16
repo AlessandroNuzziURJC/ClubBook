@@ -1,6 +1,7 @@
 package clubbook.backend.controller;
 
 import clubbook.backend.model.Season;
+import clubbook.backend.service.AttendanceService;
 import clubbook.backend.service.SeasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,12 @@ import static org.springframework.http.ResponseEntity.ok;
 public class SeasonController {
 
     private final SeasonService seasonService;
+    private final AttendanceService attendanceService;
 
     @Autowired
-    public SeasonController(SeasonService seasonService) {
+    public SeasonController(SeasonService seasonService, AttendanceService attendanceService) {
         this.seasonService = seasonService;
+        this.attendanceService = attendanceService;
     }
 
     @GetMapping("/started")
@@ -39,7 +42,9 @@ public class SeasonController {
     @PostMapping("/finish/{adminId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<Boolean> finishSeason(@PathVariable int adminId) {
-        return ResponseEntity.ok(seasonService.finishSeason(adminId));
+        boolean output = seasonService.finishSeason(adminId);
+        this.attendanceService.deleteAll();
+        return ResponseEntity.ok(output);
     }
 
 }

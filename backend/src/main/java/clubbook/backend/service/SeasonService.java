@@ -11,12 +11,10 @@ public class SeasonService {
 
     private final SeasonRepository seasonRepository;
     private final UserService userService;
-    private final AttendanceService attendanceService;
 
-    public SeasonService(SeasonRepository seasonRepository, UserService userService, AttendanceService attendanceService) {
+    public SeasonService(SeasonRepository seasonRepository, UserService userService) {
         this.seasonRepository = seasonRepository;
         this.userService = userService;
-        this.attendanceService = attendanceService;
     }
 
     public boolean seasonStarted() {
@@ -42,7 +40,6 @@ public class SeasonService {
         season.setAdminFinisher(this.userService.findById(adminId));
         season.setFinish(LocalDate.now());
         this.seasonRepository.save(season);
-        this.attendanceService.deleteAll();
         return true;
     }
 }
