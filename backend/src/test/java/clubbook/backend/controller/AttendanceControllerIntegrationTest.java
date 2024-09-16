@@ -125,4 +125,39 @@ public class AttendanceControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "teststudent1@gmail.com", roles = {"STUDENT"})
+    public void getPDFTestStudent() throws Exception {
+        mockMvc.perform(get("/attendance/generatepdf/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "testteacher1@gmail.com", roles = {"TEACHER"})
+    public void getPDFTestTeacher() throws Exception {
+        mockMvc.perform(get("/attendance/generatepdf/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
+    public void getPDFTestAdministrator() throws Exception {
+        mockMvc.perform(get("/attendance/generatepdf/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Transactional
+    @Test
+    public void getPDFTestNoRole() throws Exception {
+        mockMvc.perform(get("/attendance/generatepdf/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
 }
