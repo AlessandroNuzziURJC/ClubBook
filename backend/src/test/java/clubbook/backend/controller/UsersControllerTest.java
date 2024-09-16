@@ -111,12 +111,12 @@ class UsersControllerTest {
     @Test
     @WithMockUser(username = "teststudent1@gmail.com", roles = {"STUDENT"})
     void getProfilePictureStudent() throws Exception {
-        Path imagePath = Paths.get("src/test/resources/assets/profilepics/Profile_blue.png");
+        Path imagePath = Paths.get("src/test/resources/assets/profilepics/profile_blue.png");
         byte[] imageBytes = Files.readAllBytes(imagePath);
 
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "image",
-                "Profile_blue.png",
+                "profile_blue.png",
                 "image/png",
                 imageBytes
         );
@@ -131,12 +131,12 @@ class UsersControllerTest {
     @Test
     @WithMockUser(username = "testteacher1@gmail.com", roles = {"TEACHER"})
     void getProfilePictureTeacher() throws Exception {
-        Path imagePath = Paths.get("src/test/resources/assets/profilepics/Profile_blue.png");
+        Path imagePath = Paths.get("src/test/resources/assets/profilepics/profile_blue.png");
         byte[] imageBytes = Files.readAllBytes(imagePath);
 
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "image",
-                "Profile_blue.png",
+                "profile_blue.png",
                 "image/png",
                 imageBytes
         );
@@ -152,12 +152,12 @@ class UsersControllerTest {
     @Test
     @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
     void getProfilePictureAdministrator() throws Exception {
-        Path imagePath = Paths.get("src/test/resources/assets/profilepics/Profile_blue.png");
+        Path imagePath = Paths.get("src/test/resources/assets/profilepics/profile_blue.png");
         byte[] imageBytes = Files.readAllBytes(imagePath);
 
         MockMultipartFile mockMultipartFile = new MockMultipartFile(
                 "image",
-                "Profile_blue.png",
+                "profile_blue.png",
                 "image/png",
                 imageBytes
         );
