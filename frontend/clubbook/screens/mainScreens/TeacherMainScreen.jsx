@@ -1,5 +1,4 @@
 import React from "react";
-import { View, Text } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from '../profileScreens/ProfileScreen';
@@ -10,26 +9,21 @@ import UserInfoScreen from '../studentsListScreens/UserInfoScreen';
 import SearchUser from "../../components/SearchUser";
 import ClassGroupListSelector from "../classGroupScreens/ClassGroupListSelectorScreen";
 import ClassGroupInfo from "../classGroupScreens/ClassGroupInfoScreen";
-import ClassGroupAddStudent from "../classGroupScreens/ClassGroupAddStudentsScreen";
-
-const HomeStackScreen = () => {
-    return (
-        <View>
-            <Text>Este es el home teacher</Text>
-        </View>
-    );
-};
+import TeacherHomeScreen from "../homeScreens/TeacherHomeScreen";
+import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSelectorScreen"
+import AttendanceData from "../attendanceScreens/AttendanceData";
+import AttendanceCheckList from "../attendanceScreens/AttendanceCheckList";
 
 const ClassStack = createNativeStackNavigator();
 
-const ClassGroupScreen = () => {
+const ClassGroupNavigator = () => {
     return (
         <ClassStack.Navigator screenOptions={{
             headerShown: false
         }} initialRouteName="ClassLists">
             <ClassStack.Screen name="ClassGroupLists" component={ClassGroupListSelector} initialParams={{ editAndDelete: false }} />
-            <ClassStack.Screen name="ClassGroupInfo" component={ClassGroupInfo}/>
-            <ClassStack.Screen name="UserProfile" component={UserInfoScreen}/>
+            <ClassStack.Screen name="ClassGroupInfo" component={ClassGroupInfo} />
+            <ClassStack.Screen name="UserProfile" component={UserInfoScreen} />
         </ClassStack.Navigator>
     );
 };
@@ -42,8 +36,8 @@ const UsersStackNavigator = () => {
             headerShown: false
         }} initialRouteName="UsersScreen">
             <UsersStack.Screen name="UsersScreen" component={UsersScreen} initialParams={{ key: 'student' }} />
-            <UsersStack.Screen name="UserProfile" component={UserInfoScreen}/>
-            <UsersStack.Screen name="Searcher" component={SearchUser}/>
+            <UsersStack.Screen name="UserProfile" component={UserInfoScreen} />
+            <UsersStack.Screen name="Searcher" component={SearchUser} />
         </UsersStack.Navigator>
     );
 }
@@ -62,6 +56,18 @@ const ProfileStackNavigator = () => {
     );
 };
 
+const HomeStack = createNativeStackNavigator();
+
+const HomeStackNavigator = () => {
+    return (
+        <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
+            <HomeStack.Screen name="Home" component={TeacherHomeScreen} />
+            <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: true }}/>
+            <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
+            <HomeStack.Screen name='AttendanceCheckList' component={AttendanceCheckList} />
+        </HomeStack.Navigator>
+    );
+};
 
 const TeacherMainScreen = () => {
     const Tab = createBottomTabNavigator();
@@ -76,8 +82,17 @@ const TeacherMainScreen = () => {
             },
             tabBarActiveTintColor: '#1162BF',
         }}>
-            <Tab.Screen name="HomeMenu" component={HomeStackScreen} />
-            <Tab.Screen name="Clases" component={ClassGroupScreen} options={{
+            <Tab.Screen name="Inicio" component={HomeStackNavigator} options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="home" color={color} size={size} />
+                ),
+            }} />
+            <Tab.Screen name="Notificaciones" component={HomeStackNavigator} options={{
+                tabBarIcon: ({ color, size }) => (
+                    <Ionicons name="notifications-outline" color={color} size={size} />
+                ),
+            }} />
+            <Tab.Screen name="Clases" component={ClassGroupNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="barbell-outline" color={color} size={size} />
                 ),
@@ -97,3 +112,4 @@ const TeacherMainScreen = () => {
 };
 
 export default TeacherMainScreen;
+

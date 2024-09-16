@@ -3,13 +3,13 @@ import { TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
 
-const EditProfileButton = ({ visible }) => {
+const EditProfileButton = ({ visible, functionClick }) => {
     const navigation = useNavigation();
 
     if (!visible) return null;
 
     return (
-        <TouchableOpacity style={styles.editContainer} onPress={() => navigation.navigate('ProfileEdit')}>
+        <TouchableOpacity style={styles.editContainer} onPress={functionClick}>
             <Text style={styles.edit}>Editar usuario</Text>
             <Ionicons name="pencil-outline" size={18} color="#1162BF" />
         </TouchableOpacity>

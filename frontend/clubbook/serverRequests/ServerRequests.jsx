@@ -19,7 +19,8 @@ const ServerRequest = {
         return { token, id };
     },
 
-    getUserData: async (data) => {
+    getUserData: async () => {
+        const data = await ServerRequest.getTokenAndId();
         return await fetch(`${Configuration.API_URL}/${data.id}/me`, {
             method: 'GET',
             headers: {
@@ -29,7 +30,20 @@ const ServerRequest = {
         });
     },
 
-    getStudentsPage: async (data, page) => {
+    updateUser: async() => {
+        const data = await ServerRequest.getTokenAndId();
+        return await fetch(`${Configuration.API_URL}/${data.id}/updateUser`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user),
+        });
+    },
+
+    getStudentsPage: async (page) => {
+        const data = await ServerRequest.getTokenAndId();
         return await fetch(`${Configuration.API_URL}/students?pageNumber=${page}`, {
             method: 'GET',
             headers: {
@@ -39,7 +53,8 @@ const ServerRequest = {
         });
     },
 
-    getStudentsSearchPage: async (data, search) => {
+    getStudentsSearchPage: async (search) => {
+        const data = await ServerRequest.getTokenAndId();
         return await fetch(`${Configuration.API_URL}/studentsSearch?search=${search}`, {
             method: 'GET',
             headers: {
@@ -72,7 +87,8 @@ const ServerRequest = {
         });
     },
 
-    getTeachersPage: async (data, page) => {
+    getTeachersPage: async (page) => {
+        const data = await ServerRequest.getTokenAndId();
         return await fetch(`${Configuration.API_URL}/teachers?pageNumber=${page}`, {
             method: 'GET',
             headers: {
@@ -93,7 +109,8 @@ const ServerRequest = {
         });
     },
 
-    getTeachersSearchPage: async (data, search) => {
+    getTeachersSearchPage: async (search) => {
+        const data = await ServerRequest.getTokenAndId();
         return await fetch(`${Configuration.API_URL}/teachersSearch?search=${search}`, {
             method: 'GET',
             headers: {
@@ -189,6 +206,75 @@ const ServerRequest = {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
+    getAttendances: async (month, classGroupId) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/attendance/${month}/${classGroupId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
+    saveAttendance: async (attendanceDto) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/attendance/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify(attendanceDto)
+        });
+        return response;
+    },
+
+    seasonStarted: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/season/started`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+     
+    seasonStart: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/season/start/${data.id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+    
+    seasonFinish: async () => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/season/finish/${data.id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
+    },
+
+    downloadPdf: async (classGroupId) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/attendance/generatepdf/${classGroupId}`, {
+            method: 'GET',
+            headers: {
                 'Authorization': `Bearer ${data.token}`,
             }
         });

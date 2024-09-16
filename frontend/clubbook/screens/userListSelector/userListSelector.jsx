@@ -9,9 +9,7 @@ const UserListSelector = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>Listas disponibles</Text>
-                </View>
+                <Text style={styles.pageTitle}>Listas disponibles</Text>
             </View>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UsersScreen', { key: 'teacher' })}>
                 <Text style={styles.buttonText}>Lista de profesores</Text>
@@ -37,12 +35,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingTop: 20,
         marginBottom: 20
-    },
-    subheader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        marginTop: 20
     },
     pageTitle: {
         fontSize: 24,
