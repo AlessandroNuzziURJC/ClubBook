@@ -268,6 +268,17 @@ const ServerRequest = {
             }
         });
         return response;
+    },
+
+    downloadPdf: async (classGroupId) => {
+        const data = await ServerRequest.getTokenAndId();
+        const response = await fetch(`${Configuration.API_URL}/attendance/generatepdf/${classGroupId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${data.token}`,
+            }
+        });
+        return response;
     }
 }
 

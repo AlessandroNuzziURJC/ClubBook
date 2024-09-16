@@ -4,6 +4,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from "@react-navigation/native";
 import ServerRequests from "../../serverRequests/ServerRequests";
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const AttendanceData = () => {
     const navigation = useNavigation();
@@ -71,6 +73,36 @@ const AttendanceData = () => {
         }
     };
 
+    const handleDownload = async () => {
+        try {
+            // Descargar el PDF
+            const response = await ServerRequests.downloadPdf(classGroup.id);
+            const blobData = await response.blob();
+            
+            // Guardar el archivo en el sistema
+            const path = `${FileSystem.documentDirectory}attendance_${classGroup.id}.pdf`;
+            const reader = new FileReader();
+    
+            reader.onloadend = async () => {
+                const base64Data = reader.result.split(',')[1];
+                await FileSystem.writeAsStringAsync(path, base64Data, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+    
+                // Compartir o abrir el archivo PDF
+                if (await Sharing.isAvailableAsync()) {
+                    await Sharing.shareAsync(path);
+                } else {
+                    console.log('Compartir no disponible');
+                }
+            };
+            reader.readAsDataURL(blobData);
+    
+        } catch (error) {
+            console.error('Error al descargar o abrir el PDF:', error);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -92,7 +124,7 @@ const AttendanceData = () => {
                             onChangeValue={value => setMonthsValue(value)}
                         />
                     </View>
-                    <TouchableOpacity style={styles.button} onPress={null}>
+                    <TouchableOpacity style={styles.button} onPress={handleDownload}>
                         <Text style={styles.buttonText}>Descargar PDF</Text>
                     </TouchableOpacity>
                     <ScrollView
@@ -138,7 +170,7 @@ const AttendanceData = () => {
                         </View>
                     </ScrollView>
                 </View>
-                ) : (
+            ) : (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyMessage}>{emptyMessage}</Text>
                 </View>
