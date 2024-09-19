@@ -8,30 +8,8 @@ import LogIn from './screens/LoginScreen';
 import AdministratorMainScreen from './screens/mainScreens/AdministratorMainScreen';
 import StudentMainScreen from './screens/mainScreens/StudentMainScreen';
 import TeacherMainScreen from './screens/mainScreens/TeacherMainScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(false);
-
-  useEffect(() => {
-    const initializeNotifications = async () => {
-      const token = await registerForPushNotificationsAsync();
-      if (token) {
-        setExpoPushToken(token);
-      }
-      await AsyncStorage.setItem('notificationToken', expoPushToken);
-    };
-
-    initializeNotifications();
-
-    // Escuchar cuando llega una notificación
-    const subscription = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    return () => subscription.remove();
-  }, []);
 
   const Stack = createNativeStackNavigator();
   return (
@@ -56,34 +34,3 @@ const styles = StyleSheet.create({
   },
 });
 
-// Función para solicitar permisos y obtener el token de Expo
-async function registerForPushNotificationsAsync() {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('¡No se obtuvo permiso para notificaciones!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  } else {
-    alert('Debe usar un dispositivo físico para las notificaciones push');
-  }
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  return token;
-}

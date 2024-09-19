@@ -38,7 +38,7 @@ export default function LogIn() {
                 await AsyncStorage.setItem('phoneNumber', result.user.phoneNumber);
                 await AsyncStorage.setItem('birthday', result.user.birthday);
 
-                ServerRequests.checkNotificationToken(token)
+                //ServerRequests.checkNotificationToken(token);
 
                 const role = result.user.role.name;
 
