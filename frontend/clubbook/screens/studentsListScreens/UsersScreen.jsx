@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ScrollView, View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
-import UsersFlatList from '../../components/UsersFlatListPage';
-import ServerRequest from "../../serverRequests/ServerRequests";
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import UsersFlatList from '../../components/UsersFlatListPage';
+import ServerRequest from "../../serverRequests/ServerRequests";
 
 const UsersScreen = () => {
     const [userList, setUserList] = useState([]);
@@ -14,33 +15,55 @@ const UsersScreen = () => {
     const { key } = route.params;
     const navigation = useNavigation();
 
+    const [emptyMessage, setEmptyMessage] = useState('');
+
     const serverFunctionMap = {
         student: ServerRequest.getStudentsPage,
         teacher: ServerRequest.getTeachersPage
     };
 
     const getUsers = async () => {
-        const data = await ServerRequest.getTokenAndId();
-        try {
-            const response = await serverFunctionMap[key](data, page);
 
-            if (!response.ok) {
+        try {
+            const response = await serverFunctionMap[key](page);
+
+            if (response.ok) {
+                const responseData = await response.json();
+                setMaxUsers(responseData.data.totalElements);
+                setUserList(prevUsers => [...prevUsers, ...responseData.data.content]);
+                setHasMore(!responseData.data.last);
+            } else if (response.status === 400) {
+                const responseData = await response.json();
+                setEmptyMessage('No hay alumnos disponibles.\n' + responseData.message);
+                return;
+            } else {
+                setEmptyMessage('No hay alumnos disponibles.\n');
                 Alert.alert('Error', 'Error al cargar los datos.');
                 return;
             }
 
-            const result = await response.json();
-            setMaxUsers(result.totalElements);
-            setUserList(prevUsers => [...prevUsers, ...result.content]);
-            setHasMore(!result.last);
         } catch (error) {
             Alert.alert('Error', 'Error al cargar los datos.');
         }
     };
 
+    useFocusEffect(
+        useCallback(() => {
+            setUserList([]);
+            setMaxUsers(0);
+            setPage(0);
+            setEmptyMessage('');
+            return () => {
+                setPage(-1);
+        };
+        }, [])
+    );
+
     useEffect(() => {
-        getUsers();
-    }, [page])
+        if (page >= 0) {
+            getUsers();
+        }
+    }, [page]);
 
     const loadMoreUsers = () => {
         if (hasMore) {
@@ -51,27 +74,23 @@ const UsersScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>{key === 'student' ? 'Alumnos' : 'Profesores'}</Text>
-                </View>
-                <View style={styles.subheader}>
-                    <TouchableOpacity style={styles.searchbarcontainer} onPress={() => navigation.navigate('Searcher', { key })}>
-                        <Text style={styles.searchbar}>Buscar</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View>
-                <Text style={styles.filter}>Filtros:</Text>
-                <ScrollView horizontal style={styles.horizontalScrollView} contentContainerStyle={styles.horizontalContentContainer}>
-                    {['Clase 1', 'Clase 2', 'Clase 3', 'Clase 4'].map((filter, index) => (
-                        <TouchableOpacity key={index} style={styles.filterbox}>
-                            <Text style={styles.filtertext}>{filter}</Text>
+                <Text style={styles.pageTitle}>{key === 'student' ? 'Alumnos' : 'Profesores'}</Text>
+                {userList.length !== 0 &&
+                    <View style={styles.subheader}>
+                        <TouchableOpacity style={styles.searchbarcontainer} onPress={() => navigation.navigate('Searcher', { key })}>
+                            <Text style={styles.searchbar}>Buscar</Text>
                         </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                    </View>
+                }
             </View>
 
-            <UsersFlatList users={userList} maxUsers={maxUsers} loadMoreUsers={loadMoreUsers} />
+            {userList.length !== 0 ? (
+                <UsersFlatList users={userList} maxUsers={maxUsers} loadMoreUsers={loadMoreUsers} />
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -132,5 +151,15 @@ const styles = StyleSheet.create({
     filtertext: {
         color: 'white',
         fontWeight: 'medium'
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyMessage: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#888',
     },
 });

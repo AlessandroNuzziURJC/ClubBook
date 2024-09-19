@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ScrollView }
 import { useRoute, useNavigation } from '@react-navigation/native';
 import UserCheckboxList from "../../components/UserCheckboxList";
 import ServerRequests from "../../serverRequests/ServerRequests";
+import FormFooter from "../../components/FormFooter";
 
 const ClassGroupAddStudents = () => {
     const navigation = useNavigation();
@@ -41,16 +42,16 @@ const ClassGroupAddStudents = () => {
 
     const handleSave = async () => {
         const newStudents = totalStudents.filter(item => item.selected);
-    
+
         if (!newStudents.length) {
             Alert.alert('No hay alumnos seleccionados.');
             return;
         }
-    
+
         try {
             const updatedClassGroup = { ...classGroup, students: [...classGroup.students, ...newStudents] };
             const response = await ServerRequests.postNewStudentsInClassGroup(classGroup.id, newStudents.map(item => item.id));
-    
+
             if (response.ok) {
                 setClassGroup(updatedClassGroup);
                 navigation.navigate('ClassGroupLists', { classGroup: updatedClassGroup });
@@ -61,7 +62,7 @@ const ClassGroupAddStudents = () => {
             Alert.alert('Error', 'Ha ocurrido un error al guardar los cambios.');
         }
     }
-    
+
 
     useEffect(() => {
         getFromServer();
@@ -70,22 +71,13 @@ const ClassGroupAddStudents = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>Añadir alumno: </Text>
-                    <Text style={styles.classGroupName}>{classGroup.name}</Text>
-                </View>
+                <Text style={styles.pageTitle}>Añadir alumno: </Text>
+                <Text style={styles.classGroupName}>{classGroup.name}</Text>
             </View>
             <ScrollView style={styles.content}>
                 <UserCheckboxList users={totalStudents} usersError={false} handleSelectUser={handleSelectStudent} />
             </ScrollView>
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-                    <Text style={styles.buttonText}>Cancelar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                    <Text style={styles.buttonText}>Guardar</Text>
-                </TouchableOpacity>
-            </View>
+            <FormFooter cancel={{ function: navigation.goBack, text: 'Cancelar' }} save={{ function: handleSave, text: 'Guardar' }} />
         </View>
     );
 }
@@ -97,19 +89,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
     },
     header: {
-        justifyContent: 'flex-start',
-        paddingTop: 20,
-        marginBottom: 20,
-    },
-    subheader: {
         flexDirection: 'row',
         alignItems: 'flex-end',
         justifyContent: 'flex-start',
-        marginTop: 20,
+        paddingTop: 20,
+        marginBottom: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     pageTitle: {
         fontSize: 24,
@@ -121,6 +109,8 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     saveButton: {
         padding: 10,

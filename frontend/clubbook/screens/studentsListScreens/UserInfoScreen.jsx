@@ -43,7 +43,9 @@ const ProfileScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Profile editButton={false}
+            <Profile 
+                editButton={false}
+                onEditPress={null}
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 profilePicture={profilePicture}

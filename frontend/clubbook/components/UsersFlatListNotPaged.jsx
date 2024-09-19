@@ -69,6 +69,12 @@ const UsersFlatListNotPaged = ({ users }) => {
 };
 
 const styles = StyleSheet.create({
+    content: {
+        flex: 1,
+    },
+    contentContainer: {
+        padding: 10,
+    },
     column: {
         flexDirection: 'row',
         alignItems: 'center',

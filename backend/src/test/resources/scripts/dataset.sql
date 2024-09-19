@@ -117,3 +117,19 @@ VALUES
     (8, 60, '17:00', 'WEDNESDAY', 4),
     (9, 60, '18:00', 'TUESDAY', 5),
     (10, 60, '18:00', 'THURSDAY', 5);
+
+INSERT INTO t_attendance(id, attendance_date, user_id, attended)
+VALUES
+    (101, '2024-01-01', 1, true),
+    (102, '2024-01-01', 2, true),
+    (103, '2024-01-01', 3, true),
+    (104, '2024-01-01', 4, true),
+    (105, '2024-01-01', 5, true),
+    (106, '2024-01-01', 6, true),
+    (107, '2024-01-01', 7, false),
+    (108, '2024-01-01', 8, true),
+    (109, '2024-01-01', 9, true),
+    (110, '2024-01-01', 10, true);
+
+INSERT INTO T_SEASON(id, active, finish, init, admin_creator_id, admin_finisher_id)
+VALUES (101, true, '2025-07-01', '2024-09-01', 71, 71);

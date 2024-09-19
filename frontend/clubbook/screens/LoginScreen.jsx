@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Image, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
 
+import Toast from '../components/Toast';
 
 export default function LogIn() {
     const [email, onChangeEmail] = React.useState('');
@@ -15,10 +16,19 @@ export default function LogIn() {
 
     const emailRegex = /\S+@\S+\.\S+/;
 
+    const [isToastVisible, setIsToastVisible] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const showToast = () => {
+        setIsToastVisible(true);
+        setTimeout(() => {
+            setIsToastVisible(false);
+        }, 1000);
+    };
+
     const handleSubmit = async () => {
         if (!emailRegex.test(email)) {
             setIsValidEmail(false);
-            return ;
+            return;
         }
 
         setIsValidEmail(true);
@@ -29,18 +39,20 @@ export default function LogIn() {
 
             if (response.ok) {
                 const result = await response.json();
-                await AsyncStorage.setItem('userToken', result.token);
+                await AsyncStorage.setItem('userToken', result.data.token);
                 await AsyncStorage.setItem('email', email);
                 await AsyncStorage.setItem('userPassword', password);
-                await AsyncStorage.setItem('id', result.user.id.toString());
-                await AsyncStorage.setItem('firstName', result.user.firstName);
-                await AsyncStorage.setItem('lastName', result.user.lastName);
-                await AsyncStorage.setItem('phoneNumber', result.user.phoneNumber);
-                await AsyncStorage.setItem('birthday', result.user.birthday);
+                await AsyncStorage.setItem('id', result.data.user.id.toString());
+                await AsyncStorage.setItem('firstName', result.data.user.firstName);
+                await AsyncStorage.setItem('lastName', result.data.user.lastName);
+                await AsyncStorage.setItem('phoneNumber', result.data.user.phoneNumber);
+                await AsyncStorage.setItem('birthday', result.data.user.birthday);
+
+                const role = result.data.user.role.name;
+                setToastMessage(result.message);
+                showToast();
 
                 //ServerRequests.checkNotificationToken(token);
-
-                const role = result.user.role.name;
 
                 switch (role) {
                     case 'ADMINISTRATOR':
@@ -113,6 +125,11 @@ export default function LogIn() {
                         disabled={isSubmitting}
                     />
                 </View>
+                <Toast
+                    visible={isToastVisible}
+                    message={toastMessage}
+                    onClose={() => setIsToastVisible(false)}
+                />
             </View>
         </KeyboardAwareScrollView>
     );

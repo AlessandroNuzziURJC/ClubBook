@@ -10,9 +10,12 @@ const ClassInfo = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { item, editAndDelete } = route.params;
-    const [classGroup, setClassGroup] = useState(item);
+    const [classGroupId, setClassGroupId] = useState(item);
+    const [classGroup, setClassGroup] = useState(null);
     const [isContentExpanded, setIsContentExpanded] = useState(false); // Inicialmente cerrado
     const animatedHeight = useRef(new Animated.Value(0)).current;
+
+    const [emptyMessage, setEmptyMessage] = useState('');
 
     // Function to toggle content expansion
     const toggleContent = () => {
@@ -34,10 +37,40 @@ const ClassInfo = () => {
         }).start();
     }, [isContentExpanded]);
 
+    useEffect(() => {
+        getFromServer();
+    }, []);
+
+    const getFromServer = async () => {
+        try {
+            const response = await ServerRequests.getClassGroup(classGroupId);
+            if (response.ok) {
+                const responseData = await response.json();
+                setClassGroup(responseData.data);
+            } else if (response.status === 400) {
+                setClassGroup(null);
+                const responseData = await response.json();
+                setEmptyMessage('No hay datos disponibles.\n' + responseData.message);
+                return;
+            } else {
+                setClassGroup(null);
+                Alert.alert('Error en la comunicación con el servidor.');
+                setEmptyMessage('No hay datos disponibles.\n');
+                return;
+            }
+
+        } catch (error) {
+            console.log('Error: ', error);
+            Alert.alert('Error en la comunicación con el servidor.');
+        }
+    };
+
     // Calculate the height of the content based on its content size
     const contentHeight = animatedHeight.interpolate({
         inputRange: [0, 1],
-        outputRange: [180, Math.min(40 + 40 * (classGroup.teachers.length + classGroup.schedules.length + 2), 600)]
+        outputRange: classGroup
+            ? [180, Math.min(40 + 40 * (classGroup.teachers.length + classGroup.schedules.length + 2), 600)]
+            : [180, 180] // Valor por defecto si classGroup es null
     });
 
     // Handle edit action
@@ -84,70 +117,79 @@ const ClassInfo = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.subheader}>
-                    <Text style={styles.pageTitle}>{classGroup.name.substring(0, 18)}</Text>
-                    {editAndDelete &&
-                        <View style={styles.iconButtonsContainer}>
-                            <TouchableOpacity onPress={() => handleEdit(classGroup)} style={styles.iconButton}>
+                <Text style={styles.pageTitle}>{classGroup ? classGroup.name.substring(0, 18) : 'No disponible'}</Text>
+                {editAndDelete &&
+                    <View style={styles.iconButtonsContainer}>
+                        <TouchableOpacity onPress={() => handleEdit(classGroup)} style={styles.iconButton}>
 
-                                <Ionicons name="pencil-outline" size={20} color="#1162BF" />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => handleDelete(classGroup)} style={styles.iconButton}>
+                            <Ionicons name="pencil-outline" size={20} color="#1162BF" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleDelete(classGroup)} style={styles.iconButton}>
 
-                                <Ionicons name="trash-outline" size={20} color="red" />
-                            </TouchableOpacity>
-                        </View>
-                    }
-                </View>
-            </View>
-            <Animated.View style={[styles.content, { height: contentHeight }]}>
-                <View style={styles.generalInfo}>
-                    <View style={styles.toggleContainer}>
-                        <Text style={styles.toggleTitle}>Información general</Text>
-                        <TouchableOpacity onPress={toggleContent} style={styles.toggleButton}>
-                            <Ionicons name={isContentExpanded ? "chevron-up-outline" : "chevron-down-outline"} size={20} color="#1162BF" />
+                            <Ionicons name="trash-outline" size={20} color="red" />
                         </TouchableOpacity>
                     </View>
-                    <ScrollView>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Dirección:</Text>
-                            <Text style={styles.text}>{classGroup.address}</Text>
-                        </View>
-                        {classGroup.teachers.map((item, index) => (
-                            <View key={index} style={styles.row}>
-                                <Text style={styles.label}>Profesor:</Text>
-                                <Text style={styles.text}>{item.firstName} {item.lastName}</Text>
-                            </View>
-                        ))}
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Horario:</Text>
-                            {classGroup.schedules.length > 0 && (
-                                <Text style={styles.text}>{Schedule.reverseTranslate(classGroup.schedules[0].weekDay)}: {classGroup.schedules[0].init.substring(0, 5)} - {new Schedule(classGroup.schedules[0]).calculateEndTime()}</Text>
-                            )}
-                        </View>
-                        {classGroup.schedules.slice(1).map((item, index) => {
-                            const scheduleItem = new Schedule(item);
-                            return (
-                                <View key={index} style={styles.row}>
-                                    <Text style={styles.text}>{Schedule.reverseTranslate(scheduleItem.weekDay)}: {scheduleItem.init.substring(0, 5)} - {scheduleItem.calculateEndTime()}</Text>
-                                </View>
-                            )
-                        })}
-                    </ScrollView>
-                </View>
-            </Animated.View>
-            <View style={styles.studentsListContainer}>
-                <View style={styles.studentsListHeader}>
-                    <Text style={styles.labelStudentsList}>Lista de alumnos</Text>
-                    {editAndDelete &&
-                        <TouchableOpacity onPress={() => handleAddStudent(classGroup)} style={styles.addButton}>
-                            <Text style={styles.addButtonText}>Añadir alumnos</Text>
-                            <Ionicons name="add-circle-outline" size={20} color="#1162BF" />
-                        </TouchableOpacity>
-                    }
-                </View>
-                <UsersFlatListNotPaged users={classGroup.students} />
+                }
             </View>
+            {classGroup &&
+                <Animated.View style={[styles.content, { height: contentHeight }]}>
+                    <View style={styles.generalInfo}>
+                        <View style={styles.toggleContainer}>
+                            <Text style={styles.toggleTitle}>Información general</Text>
+                            <TouchableOpacity onPress={toggleContent} style={styles.toggleButton}>
+                                <Ionicons name={isContentExpanded ? "chevron-up-outline" : "chevron-down-outline"} size={20} color="#1162BF" />
+                            </TouchableOpacity>
+                        </View>
+                        <ScrollView>
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Dirección:</Text>
+                                <Text style={styles.text}>{classGroup.address}</Text>
+                            </View>
+                            {classGroup.teachers.map((item, index) => (
+                                <View key={index} style={styles.row}>
+                                    <Text style={styles.label}>Profesor:</Text>
+                                    <Text style={styles.text}>{item.firstName} {item.lastName}</Text>
+                                </View>
+                            ))}
+                            <View style={styles.row}>
+                                <Text style={styles.label}>Horario:</Text>
+                                {classGroup.schedules.length > 0 && (
+                                    <Text style={styles.text}>{Schedule.reverseTranslate(classGroup.schedules[0].weekDay)}: {classGroup.schedules[0].init.substring(0, 5)} - {new Schedule(classGroup.schedules[0]).calculateEndTime()}</Text>
+                                )}
+                            </View>
+                            {classGroup.schedules.slice(1).map((item, index) => {
+                                const scheduleItem = new Schedule(item);
+                                return (
+                                    <View key={index} style={styles.row}>
+                                        <Text style={styles.text}>{Schedule.reverseTranslate(scheduleItem.weekDay)}: {scheduleItem.init.substring(0, 5)} - {scheduleItem.calculateEndTime()}</Text>
+                                    </View>
+                                )
+                            })}
+                        </ScrollView>
+                    </View>
+                </Animated.View>
+            }
+            {classGroup ? (
+                <View style={styles.studentsListContainer}>
+                    <View style={styles.studentsListHeader}>
+                        <Text style={styles.labelStudentsList}>Lista de alumnos</Text>
+                        {editAndDelete &&
+                            <TouchableOpacity onPress={() => handleAddStudent(classGroup)} style={styles.addButton}>
+                                <Text style={styles.addButtonText}>Añadir alumnos</Text>
+                                <Ionicons name="add-circle-outline" size={20} color="#1162BF" />
+                            </TouchableOpacity>
+                        }
+                    </View>
+
+                    <UsersFlatListNotPaged usersList={classGroup.students} />
+                </View>
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+                </View>
+            )}
+
+
         </View>
     );
 };
@@ -159,19 +201,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
     },
     header: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
         justifyContent: 'space-between',
         paddingTop: 20,
         marginBottom: 20,
-    },
-    subheader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     pageTitle: {
         fontSize: 24,
@@ -200,7 +238,9 @@ const styles = StyleSheet.create({
     content: {
         overflow: 'hidden',
         paddingBottom: 20,
-        borderRadius: 10
+        borderRadius: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     generalInfo: {
         backgroundColor: '#ddeeff',
@@ -245,6 +285,8 @@ const styles = StyleSheet.create({
     studentsListContainer: {
         flex: 1,
         marginTop: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
     studentsListHeader: {
         flexDirection: 'row',
@@ -265,5 +307,15 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#1162BF',
         marginRight: 5,
-    }
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyMessage: {
+        fontSize: 18,
+        textAlign: 'center',
+        color: '#888',
+    },
 });

@@ -63,7 +63,7 @@ public class AuthenticationService {
         user.setPartner(input.isPartner());
         try {
             String colour = randomColour();
-            ClassPathResource imgFile = new ClassPathResource("assets/profilepics/Profile_" + colour + ".png");
+            ClassPathResource imgFile = new ClassPathResource("assets/profilepics/profile_" + colour + ".png");
             byte[] profilePicture = Files.readAllBytes(imgFile.getFile().toPath());
             user.setProfilePicture(profilePicture);
         } catch (IOException e) {
