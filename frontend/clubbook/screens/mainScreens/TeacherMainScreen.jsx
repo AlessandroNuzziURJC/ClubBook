@@ -14,6 +14,7 @@ import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSel
 import AttendanceData from "../attendanceScreens/AttendanceData";
 import AttendanceCheckList from "../attendanceScreens/AttendanceCheckList";
 
+
 const ClassStack = createNativeStackNavigator();
 
 const ClassGroupNavigator = () => {

@@ -1,12 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import { StyleSheet, Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LogIn from './screens/LoginScreen';
 import AdministratorMainScreen from './screens/mainScreens/AdministratorMainScreen';
 import StudentMainScreen from './screens/mainScreens/StudentMainScreen';
 import TeacherMainScreen from './screens/mainScreens/TeacherMainScreen';
-
 
 export default function App() {
 
@@ -16,10 +17,10 @@ export default function App() {
       <View style={{ height: 35 }}></View>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LogIn">
-          <Stack.Screen name="LogIn" component={LogIn} options={{headerShown: false, gestureEnabled: false}}/>
-          <Stack.Screen name="AdministratorMainScreen" component={AdministratorMainScreen} options={{headerShown: false, gestureEnabled: false}}/>
-          <Stack.Screen name="StudentMainScreen" component={StudentMainScreen} options={{headerShown: false, gestureEnabled: false}}/>
-          <Stack.Screen name="TeacherMainScreen" component={TeacherMainScreen} options={{headerShown: false, gestureEnabled: false}}/>
+          <Stack.Screen name="LogIn" component={LogIn} options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="AdministratorMainScreen" component={AdministratorMainScreen} options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="StudentMainScreen" component={StudentMainScreen} options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="TeacherMainScreen" component={TeacherMainScreen} options={{ headerShown: false, gestureEnabled: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
@@ -32,3 +33,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 });
+

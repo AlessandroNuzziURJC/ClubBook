@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, Button, Image, Alert } from 'react-n
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import ServerRequest from '../serverRequests/ServerRequests';
+import ServerRequests from '../serverRequests/ServerRequests';
 
 import Toast from '../components/Toast';
 
@@ -35,7 +35,7 @@ export default function LogIn() {
         setIsSubmitting(true);
 
         try {
-            const response = await ServerRequest.logIn(email, password);
+            const response = await ServerRequests.logIn(email, password);
 
             if (response.ok) {
                 const result = await response.json();
@@ -51,6 +51,8 @@ export default function LogIn() {
                 const role = result.data.user.role.name;
                 setToastMessage(result.message);
                 showToast();
+
+                //ServerRequests.checkNotificationToken(token);
 
                 switch (role) {
                     case 'ADMINISTRATOR':
