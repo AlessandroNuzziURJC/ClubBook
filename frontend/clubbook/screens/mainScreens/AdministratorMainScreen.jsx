@@ -88,7 +88,7 @@ const AdministratorMainScreen = () => {
             },
             tabBarActiveTintColor: '#1162BF',
         }}>
-            <Tab.Screen name="HomeMenu" component={HomeStackNavigator} options={{
+            <Tab.Screen name="Inicio" component={HomeStackNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="home" color={color} size={size} />
                 )

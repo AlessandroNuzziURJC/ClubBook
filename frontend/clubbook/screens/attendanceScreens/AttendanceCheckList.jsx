@@ -176,7 +176,7 @@ const AttendanceCheckList = () => {
                     </View>
 
                     <View style={styles.classGroupContainer}>
-                        <Text style={[styles.classGroupTitle, styles.bold]}>Clase 1</Text>
+                        <Text style={[styles.classGroupTitle, styles.bold]}>{classGroup.name}</Text>
                     </View>
 
                     <View style={styles.scrollViewContainer}>

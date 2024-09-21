@@ -75,7 +75,7 @@ const StudentMainScreen = () => {
             },
             tabBarActiveTintColor: '#1162BF',
         }}>
-            <Tab.Screen name="HomeMenu" component={HomeStackScreen} options={{
+            <Tab.Screen name="Inicio" component={HomeStackScreen} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="home" color={color} size={size} />
                 ),

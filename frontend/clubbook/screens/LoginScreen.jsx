@@ -12,6 +12,7 @@ export default function LogIn() {
     const [password, onChangePassword] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isValidEmail, setIsValidEmail] = React.useState(true);
+    const [showNotificationAlert, setShowNotificationAlert] = useState(false);
     const navigation = useNavigation();
 
     const emailRegex = /\S+@\S+\.\S+/;
@@ -47,12 +48,20 @@ export default function LogIn() {
                 await AsyncStorage.setItem('lastName', result.data.user.lastName);
                 await AsyncStorage.setItem('phoneNumber', result.data.user.phoneNumber);
                 await AsyncStorage.setItem('birthday', result.data.user.birthday);
+                await AsyncStorage.setItem('role', result.data.user.role.name);
 
                 const role = result.data.user.role.name;
                 setToastMessage(result.message);
                 showToast();
 
-                //ServerRequests.checkNotificationToken(token);
+                
+                //Generar token unico unica vez y almacenarlo en AsynStorage
+                //Contrastar si el usuario consta de ese token en la BBDD
+                //ServerRequests.checkNotificationToken(user, token);
+                //Lo que devuelva guardarlo en showNotificationAlert
+                setShowNotificationAlert(true);
+
+                // Crear ventanita que pregunte si desea recibir notificaciones de este usuario en este dispositivo si no está registrado ya en la BBDD
 
                 switch (role) {
                     case 'ADMINISTRATOR':
@@ -88,6 +97,11 @@ export default function LogIn() {
             setIsSubmitting(false);
         }
     };
+
+    const sendNotificationTokenToServer = () => {
+        /* Enviar token y usuario al servidor */
+        console.log("Notificaciones activadas.")
+    }
 
     return (
         <KeyboardAwareScrollView style={styles.container}>
@@ -131,6 +145,20 @@ export default function LogIn() {
                     onClose={() => setIsToastVisible(false)}
                 />
             </View>
+            {showNotificationAlert &&
+                Alert.alert(
+                    "Activar notificaciones",
+                    "¿Deseas recibir notificaciones de este usuario en este dispositivo?",
+                    [
+                        {
+                            text: "No",
+                            onPress: () => null,
+                            style: "cancel"
+                        },
+                        { text: "Sí", onPress: () => sendNotificationTokenToServer() }
+                    ],
+                    { cancelable: false }
+                )}
         </KeyboardAwareScrollView>
     );
 }

@@ -26,11 +26,11 @@ const ClassGroupAddStudents = () => {
 
     const getFromServer = async () => {
         try {
-            const response = await ServerRequests.getAllStudentsWithoutClassGroup(); //Sustituir por función buena
+            const response = await ServerRequests.getAllStudentsWithoutClassGroup();
 
             if (response.ok) {
                 const result = await response.json();
-                setTotalStudents(result);
+                setTotalStudents(result.data);
             } else {
                 Alert.alert('Error de comunicación con el servidor.');
             }

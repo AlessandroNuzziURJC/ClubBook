@@ -64,7 +64,7 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         }
 
         const result = await response.json();
-        return result;
+        return result.data;
     };
 
     const getSchedules = () => {
