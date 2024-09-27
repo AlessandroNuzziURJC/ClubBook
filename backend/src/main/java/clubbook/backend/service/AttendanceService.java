@@ -25,7 +25,7 @@ public class AttendanceService {
     private final UserService userService;
     private final ClassGroupService classGroupService;
     private final SeasonService seasonService;
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
     @Autowired
     public AttendanceService(AttendanceRepository attendanceRepository, UserService userService, ClassGroupService classGroupService, SeasonService seasonService, NotificationService notificationService) {

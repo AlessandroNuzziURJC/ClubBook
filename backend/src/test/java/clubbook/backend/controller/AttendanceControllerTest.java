@@ -4,12 +4,10 @@ import clubbook.backend.dtos.AttendanceDto;
 import clubbook.backend.dtos.ClassGroupAttendanceDto;
 import clubbook.backend.model.*;
 import clubbook.backend.repository.AttendanceRepository;
+import clubbook.backend.repository.NotificationRepository;
 import clubbook.backend.responses.AttendanceResponse;
 import clubbook.backend.responses.ResponseWrapper;
-import clubbook.backend.service.AttendanceService;
-import clubbook.backend.service.ClassGroupService;
-import clubbook.backend.service.SeasonService;
-import clubbook.backend.service.UserService;
+import clubbook.backend.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -48,6 +46,12 @@ class AttendanceControllerTest {
 
     @Mock
     private SeasonService seasonService;
+
+    @Mock
+    private NotificationRepository notificationRepository;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private AttendanceService attendanceService;
@@ -142,6 +146,7 @@ class AttendanceControllerTest {
         }
         when(seasonService.seasonStarted()).thenReturn(Boolean.TRUE);
         when(attendanceRepository.saveAll(any(List.class))).thenReturn(attendanceList);
+        when(notificationRepository.save(any(Notification.class))).thenAnswer(invocation -> invocation.getArgument(0));
         ResponseEntity<ResponseWrapper<AttendanceDto>> attendanceDtoResponseEntity = this.attendanceController.saveAttendances(attendanceDtoList.get(0));
         assertEquals(HttpStatus.OK, attendanceDtoResponseEntity.getStatusCode());
     }

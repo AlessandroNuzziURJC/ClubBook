@@ -7,11 +7,11 @@ import java.util.Objects;
 @Embeddable
 public class NotificationTokenId {
     private String token;
-    private Long userId;
+    private int userId;
 
     public NotificationTokenId() {}
 
-    public NotificationTokenId(String token, Long userId) {
+    public NotificationTokenId(String token, int userId) {
         this.token = token;
         this.userId = userId;
     }
@@ -24,11 +24,11 @@ public class NotificationTokenId {
         this.token = token;
     }
 
-    public Long getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

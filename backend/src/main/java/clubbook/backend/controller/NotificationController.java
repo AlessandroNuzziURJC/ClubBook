@@ -7,6 +7,7 @@ import clubbook.backend.service.NotificationService;
 import clubbook.backend.service.NotificationTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,13 +33,18 @@ public class NotificationController {
 
     @GetMapping("/token/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> existToken(@PathVariable int id, @RequestParam String notificationToken) {
-        return ResponseEntity.ok( this.notificationTokenService.find(id, notificationToken));
+    public ResponseEntity<Void> existToken(@PathVariable int id, @RequestParam String notificationToken) {
+        boolean exists = this.notificationTokenService.find(id, notificationToken);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/token")
     public ResponseEntity<Boolean> postToken(@RequestBody @Valid NotificationTokenId notificationTokenid) {
-        return ResponseEntity.ok(this.notificationTokenService.save(notificationTokenid) != null);
+        NotificationToken savedNotificationToken = this.notificationTokenService.save(notificationTokenid);
+        return ResponseEntity.ok(savedNotificationToken != null);
     }
 
     @GetMapping("/{id}")
@@ -46,6 +52,5 @@ public class NotificationController {
     public ResponseEntity<List<Notification>> getNotifications(@PathVariable int id) {
         return ResponseEntity.ok(this.notificationService.findByUserId(id));
     }
-
 
 }

@@ -17,7 +17,7 @@ public class NotificationTokenService {
     }
 
     public Boolean find(int id, String notificationToken) {
-        return this.notificationRepository.existsById(new NotificationTokenId(notificationToken, (long) id));
+        return this.notificationRepository.existsById(new NotificationTokenId(notificationToken, id));
     }
 
     public NotificationToken save(NotificationTokenId notificationTokenid) {
