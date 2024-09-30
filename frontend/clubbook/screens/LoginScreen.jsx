@@ -4,6 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
+import PushNotificationConfiguration from '../functions/PushNotifications';
 
 import Toast from '../components/Toast';
 
@@ -12,7 +13,6 @@ export default function LogIn() {
     const [password, onChangePassword] = React.useState('');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isValidEmail, setIsValidEmail] = React.useState(true);
-    const [showNotificationAlert, setShowNotificationAlert] = useState(false);
     const navigation = useNavigation();
 
     const emailRegex = /\S+@\S+\.\S+/;
@@ -49,19 +49,39 @@ export default function LogIn() {
                 await AsyncStorage.setItem('phoneNumber', result.data.user.phoneNumber);
                 await AsyncStorage.setItem('birthday', result.data.user.birthday);
                 await AsyncStorage.setItem('role', result.data.user.role.name);
+                await AsyncStorage.setItem('address', result.data.user.address);
+                await AsyncStorage.setItem('idCard', result.data.user.idCard);
+                await AsyncStorage.setItem('partner', result.data.user.partner.toString());
+
 
                 const role = result.data.user.role.name;
                 setToastMessage(result.message);
                 showToast();
 
-                
                 //Generar token unico unica vez y almacenarlo en AsynStorage
-                //Contrastar si el usuario consta de ese token en la BBDD
-                //ServerRequests.checkNotificationToken(user, token);
-                //Lo que devuelva guardarlo en showNotificationAlert
-                setShowNotificationAlert(true);
-
-                // Crear ventanita que pregunte si desea recibir notificaciones de este usuario en este dispositivo si no está registrado ya en la BBDD
+                const pushToken = await PushNotificationConfiguration.getPushToken();
+                console.log(pushToken);
+                const responsePushToken = await ServerRequests.checkPushNotificationToken(pushToken);
+        
+                if (responsePushToken.status === 404) {
+                    Alert.alert(
+                        "Activar notificaciones",
+                        "¿Deseas recibir notificaciones de este usuario en este dispositivo?",
+                        [
+                            {
+                                text: "No",
+                                onPress: () => null,
+                                style: "cancel"
+                            },
+                            {
+                                text: "Sí", onPress: async () => {
+                                    await sendNotificationTokenToServer();
+                                }
+                            }
+                        ],
+                        { cancelable: false }
+                    )
+                }
 
                 switch (role) {
                     case 'ADMINISTRATOR':
@@ -98,9 +118,15 @@ export default function LogIn() {
         }
     };
 
-    const sendNotificationTokenToServer = () => {
+    const sendNotificationTokenToServer = async () => {
         /* Enviar token y usuario al servidor */
-        console.log("Notificaciones activadas.")
+        console.log("Notificaciones activadas.");
+        const pushToken = await PushNotificationConfiguration.getPushToken();
+        const response = await ServerRequests.postPushNotificationToken(pushToken);
+        
+        if (!response.ok) {
+            Alert.alert('Error', 'Se ha producido un error');
+        }
     }
 
     return (
@@ -145,20 +171,6 @@ export default function LogIn() {
                     onClose={() => setIsToastVisible(false)}
                 />
             </View>
-            {showNotificationAlert &&
-                Alert.alert(
-                    "Activar notificaciones",
-                    "¿Deseas recibir notificaciones de este usuario en este dispositivo?",
-                    [
-                        {
-                            text: "No",
-                            onPress: () => null,
-                            style: "cancel"
-                        },
-                        { text: "Sí", onPress: () => sendNotificationTokenToServer() }
-                    ],
-                    { cancelable: false }
-                )}
         </KeyboardAwareScrollView>
     );
 }

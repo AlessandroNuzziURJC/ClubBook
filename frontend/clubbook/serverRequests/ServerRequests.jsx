@@ -3,6 +3,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ServerRequest = {
 
+    checkPushNotificationToken: async (pushToken) => {
+        const data = await ServerRequest.getTokenAndId();
+        return await fetch(`${Configuration.API_URL}/notification/token/${data.id}?notificationToken=${pushToken}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            }
+        })
+    },
+
+    postPushNotificationToken: async (pushToken) => {
+        const data = await ServerRequest.getTokenAndId();
+        return await fetch(`${Configuration.API_URL}/notification/token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${data.token}`,
+            },
+            body: JSON.stringify({
+                    'userId': Number(data.id),
+                    'token': "hola"  // Cambié "hola" por el token real
+            })
+        })
+    },
+
     logIn: async (email, password) => {
         return await fetch(`${Configuration.API_URL}/auth/login`, {
             method: 'POST',
@@ -191,15 +217,19 @@ const ServerRequest = {
                 'Authorization': `Bearer ${data.token}`,
             }
         });
-        await AsyncStorage.removeItem('id');
         await AsyncStorage.removeItem('userToken');
+        await AsyncStorage.removeItem('email');
+        await AsyncStorage.removeItem('userPassword');
+        await AsyncStorage.removeItem('id');
         await AsyncStorage.removeItem('firstName');
         await AsyncStorage.removeItem('lastName');
         await AsyncStorage.removeItem('phoneNumber');
         await AsyncStorage.removeItem('birthday');
+        await AsyncStorage.removeItem('role');
         await AsyncStorage.removeItem('address');
         await AsyncStorage.removeItem('idCard');
         await AsyncStorage.removeItem('partner');
+
     },
 
     getClassGroups: async () => {
@@ -353,7 +383,20 @@ const ServerRequest = {
             });
         });
         return response;
-    }
+    },
+
+    getNotificationsByUserId: async () => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notification/${data.id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
 }
 
 export default ServerRequest;

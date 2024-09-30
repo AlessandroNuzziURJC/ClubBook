@@ -60,8 +60,6 @@ public class AttendanceService {
             attendance.setAttendanceDate(attendanceDto.getDate());
             attendance.setAttended(false);
             attendanceList.add(attendance);
-            //Crear notificacion y enviar push
-
             NotificationFactory notificationFactory = new AttendanceNotificationFactory(attendanceDto.getDate(), user);
             notificationFactory.createNotification();
             this.notificationService.save(notificationFactory.getNotification());

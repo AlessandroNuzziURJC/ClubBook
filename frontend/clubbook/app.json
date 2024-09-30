@@ -19,7 +19,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sandro.nuzzi.clubbook"
+      "package": "com.sandro.nuzzi.clubbook",
+      "permissions": ["INTERNET"],
+      "networkSecurityConfig": "./android/res/xml/network_security_config.xml"
     },
     "web": {
       "favicon": "./assets/favicon.png"

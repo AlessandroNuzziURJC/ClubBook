@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import FormFooter from "../../components/FormFooter";
 import ServerRequests from "../../serverRequests/ServerRequests";
+import Functions from "../../functions/Functions";
 
 const EditProfile = () => {
     const [profilePicture, setProfilePicture] = useState(null);
@@ -83,7 +84,6 @@ const EditProfile = () => {
             navigation.goBack();
         } else {
             Alert.alert("Error al almacenar las modificaciones del usuario");
-            console.log(user);
         }
     }
 
@@ -292,7 +292,7 @@ const EditProfile = () => {
                             <Text style={styles.label}>Fecha de nacimiento:</Text>
                             <View style={styles.dataContainer}>
                                 <TouchableOpacity onPress={showDatePicker}>
-                                    <Text>{user.birthday}</Text>
+                                    <Text>{Functions.convertDateEngToSpa(user.birthday)}</Text>
                                 </TouchableOpacity>
                                 <DateTimePickerModal
                                     value={selectedDate}

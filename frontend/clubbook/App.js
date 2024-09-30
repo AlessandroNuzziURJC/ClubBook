@@ -8,6 +8,7 @@ import StudentMainScreen from './screens/mainScreens/StudentMainScreen';
 import TeacherMainScreen from './screens/mainScreens/TeacherMainScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 export default function App() {
   const [userRole, setUserRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
