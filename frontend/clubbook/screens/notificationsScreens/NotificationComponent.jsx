@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Functions from "../../functions/Functions";
 
 const Notification = ({ data }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const calculateTimeRemaining = (timestamp) => {
+        //Preguntar al servidor
         const now = new Date();
         const notificationDate = new Date(timestamp);
-        const daysRemaining = Math.max(0, Math.ceil((notificationDate - now) / (1000 * 60 * 60 * 24)));
+        const deleteDate = new Date(notificationDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+        //deleteDate.setDate(notificationDate.getDate() + 30);
+        const daysRemaining = Math.max(0, Math.ceil((deleteDate - now) / (1000 * 60 * 60 * 24)));
         return daysRemaining;
     };
 
-    const timeRemaining = calculateTimeRemaining(data.timestamp);
+    const timeRemaining = calculateTimeRemaining(data.date);
 
     return (
         <View style={styles.notificationContainer}>
@@ -33,7 +37,7 @@ const Notification = ({ data }) => {
 
 
 
-                <Text style={styles.notificationTimestamp}>{data.timestamp}</Text>
+                <Text style={styles.notificationTimestamp}>{Functions.convertDateEngToSpa(data.date)}</Text>
                 {data.content.length > 80 &&
                 <TouchableOpacity onPress={() => setIsExpanded(!isExpanded)} style={styles.centerButton}>
 

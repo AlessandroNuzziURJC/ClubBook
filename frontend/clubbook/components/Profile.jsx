@@ -2,6 +2,7 @@ import React from "react";
 import { ScrollView, View, Text, StyleSheet, Image, RefreshControl } from "react-native";
 import EditProfileButton from "./EditProfileButton";
 import CloseSessionButton from "./CloseSession";
+import Functions from "../functions/Functions";
 
 const Profile = ({ editButton, onEditPress, refreshing, onRefresh, profilePicture, user }) => {
     return (
@@ -11,23 +12,20 @@ const Profile = ({ editButton, onEditPress, refreshing, onRefresh, profilePictur
             <View>
                 <View style={styles.header}>
                     <View style={styles.columnContainer}>
-                        <View style={styles.subheader}>
-                            <Text style={styles.pageTitle}>Perfil</Text>
-                            
-                        </View>
+                        <Text style={styles.pageTitle}>Perfil</Text>
                         {user.partner && (
                             <View style={styles.partnerContainer}>
                                 <Text style={styles.partner}>Socio</Text>
                             </View>
                         )}
-                        <EditProfileButton visible={editButton} functionClick={onEditPress}/>
+                        <EditProfileButton visible={editButton} functionClick={onEditPress} />
                     </View>
                     <Image
                         source={profilePicture ? profilePicture : require('../assets/loading.gif')}
                         style={styles.image}
                     />
                 </View>
-                
+
                 <View style={styles.infoContainer}>
                     <View style={styles.labelDataContainer}>
                         <Text style={styles.label}>Nombre:</Text>
@@ -68,7 +66,7 @@ const Profile = ({ editButton, onEditPress, refreshing, onRefresh, profilePictur
                     <View style={styles.labelDataContainer}>
                         <Text style={styles.label}>Fecha de nacimiento:</Text>
                         <View style={styles.dataContainer}>
-                            <Text style={styles.data}>{user.birthday}</Text>
+                            <Text style={styles.data}>{Functions.convertDateEngToSpa(user.birthday)}</Text>
                         </View>
                     </View>
                     <View style={styles.labelDataContainer}>
@@ -77,7 +75,7 @@ const Profile = ({ editButton, onEditPress, refreshing, onRefresh, profilePictur
                             <Text style={styles.data}>4R-123123123</Text>
                         </View>
                     </View>
-                    <CloseSessionButton visible={editButton}/>
+                    <CloseSessionButton visible={editButton} />
                 </View>
             </View>
         </ScrollView>

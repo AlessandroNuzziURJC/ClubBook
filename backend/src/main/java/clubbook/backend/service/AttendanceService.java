@@ -3,9 +3,7 @@ package clubbook.backend.service;
 import clubbook.backend.dtos.AttendanceDto;
 import clubbook.backend.dtos.ClassGroupAttendanceDto;
 import clubbook.backend.dtos.UserAttendanceDto;
-import clubbook.backend.model.Attendance;
-import clubbook.backend.model.ClassGroup;
-import clubbook.backend.model.User;
+import clubbook.backend.model.*;
 import clubbook.backend.repository.AttendanceRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -27,13 +25,15 @@ public class AttendanceService {
     private final UserService userService;
     private final ClassGroupService classGroupService;
     private final SeasonService seasonService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public AttendanceService(AttendanceRepository attendanceRepository, UserService userService, ClassGroupService classGroupService, SeasonService seasonService) {
+    public AttendanceService(AttendanceRepository attendanceRepository, UserService userService, ClassGroupService classGroupService, SeasonService seasonService, NotificationService notificationService) {
         this.attendanceRepository = attendanceRepository;
         this.userService = userService;
         this.classGroupService = classGroupService;
         this.seasonService = seasonService;
+        this.notificationService = notificationService;
     }
 
 
@@ -60,6 +60,9 @@ public class AttendanceService {
             attendance.setAttendanceDate(attendanceDto.getDate());
             attendance.setAttended(false);
             attendanceList.add(attendance);
+            NotificationFactory notificationFactory = new AttendanceNotificationFactory(attendanceDto.getDate(), user);
+            notificationFactory.createNotification();
+            this.notificationService.save(notificationFactory.getNotification());
         }
         if (!userSet.isEmpty()) {
             throw new RuntimeException();

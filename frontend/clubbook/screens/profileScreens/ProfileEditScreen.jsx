@@ -6,6 +6,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import FormFooter from "../../components/FormFooter";
+import ServerRequests from "../../serverRequests/ServerRequests";
+import Functions from "../../functions/Functions";
 
 const EditProfile = () => {
     const [profilePicture, setProfilePicture] = useState(null);
@@ -75,17 +77,14 @@ const EditProfile = () => {
             token: await AsyncStorage.getItem("userToken"),
             id: await AsyncStorage.getItem("id")
         }
-        await fetch(`${Configuration.API_URL}/${data.id}/updateUser`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${data.token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user),
-        });
-        saveInAsyncStorage(user);
-        navigation.goBack();
+        const response = await ServerRequests.updateUser(user);
 
+        if (response.ok) {
+            saveInAsyncStorage(user);
+            navigation.goBack();
+        } else {
+            Alert.alert("Error al almacenar las modificaciones del usuario");
+        }
     }
 
     const getUserPhoto = async (data) => {
@@ -143,7 +142,7 @@ const EditProfile = () => {
 
             updateScreenData(userData);
 
-            const responseImage = await getUserPhoto(data);
+            const responseImage = await ServerRequests.getUserPhoto(data.id);
 
             if (responseImage.ok) {
                 const blob = await responseImage.blob();
@@ -293,7 +292,7 @@ const EditProfile = () => {
                             <Text style={styles.label}>Fecha de nacimiento:</Text>
                             <View style={styles.dataContainer}>
                                 <TouchableOpacity onPress={showDatePicker}>
-                                    <Text>{user.birthday}</Text>
+                                    <Text>{Functions.convertDateEngToSpa(user.birthday)}</Text>
                                 </TouchableOpacity>
                                 <DateTimePickerModal
                                     value={selectedDate}

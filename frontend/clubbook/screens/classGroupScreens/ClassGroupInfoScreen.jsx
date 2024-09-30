@@ -181,7 +181,7 @@ const ClassInfo = () => {
                         }
                     </View>
 
-                    <UsersFlatListNotPaged usersList={classGroup.students} />
+                    <UsersFlatListNotPaged users={classGroup.students} />
                 </View>
             ) : (
                 <View style={styles.emptyContainer}>

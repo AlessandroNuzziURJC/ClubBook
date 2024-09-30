@@ -55,10 +55,8 @@ const SeasonControlScreen = () => {
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.seasonStarted();
-            console.log(response);
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
                 if (data.active) {
                     setSeasonStatus(true);
                     setStartDate(data.init);

@@ -51,7 +51,6 @@ const ProfileScreen = () => {
     const getFromServer = async () => {
         try {
             const response = await ServerRequest.getUserData();
-
             if (response.ok) {
                 const result = await response.json();
                 updateScreenData(result.data);

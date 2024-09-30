@@ -4,6 +4,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
+import PushNotificationConfiguration from '../functions/PushNotifications';
 
 import Toast from '../components/Toast';
 
@@ -47,12 +48,40 @@ export default function LogIn() {
                 await AsyncStorage.setItem('lastName', result.data.user.lastName);
                 await AsyncStorage.setItem('phoneNumber', result.data.user.phoneNumber);
                 await AsyncStorage.setItem('birthday', result.data.user.birthday);
+                await AsyncStorage.setItem('role', result.data.user.role.name);
+                await AsyncStorage.setItem('address', result.data.user.address);
+                await AsyncStorage.setItem('idCard', result.data.user.idCard);
+                await AsyncStorage.setItem('partner', result.data.user.partner.toString());
+
 
                 const role = result.data.user.role.name;
                 setToastMessage(result.message);
                 showToast();
 
-                //ServerRequests.checkNotificationToken(token);
+                //Generar token unico unica vez y almacenarlo en AsynStorage
+                const pushToken = await PushNotificationConfiguration.getPushToken();
+                console.log(pushToken);
+                const responsePushToken = await ServerRequests.checkPushNotificationToken(pushToken);
+        
+                if (responsePushToken.status === 404) {
+                    Alert.alert(
+                        "Activar notificaciones",
+                        "¿Deseas recibir notificaciones de este usuario en este dispositivo?",
+                        [
+                            {
+                                text: "No",
+                                onPress: () => null,
+                                style: "cancel"
+                            },
+                            {
+                                text: "Sí", onPress: async () => {
+                                    await sendNotificationTokenToServer();
+                                }
+                            }
+                        ],
+                        { cancelable: false }
+                    )
+                }
 
                 switch (role) {
                     case 'ADMINISTRATOR':
@@ -88,6 +117,17 @@ export default function LogIn() {
             setIsSubmitting(false);
         }
     };
+
+    const sendNotificationTokenToServer = async () => {
+        /* Enviar token y usuario al servidor */
+        console.log("Notificaciones activadas.");
+        const pushToken = await PushNotificationConfiguration.getPushToken();
+        const response = await ServerRequests.postPushNotificationToken(pushToken);
+        
+        if (!response.ok) {
+            Alert.alert('Error', 'Se ha producido un error');
+        }
+    }
 
     return (
         <KeyboardAwareScrollView style={styles.container}>
