@@ -17,6 +17,9 @@ import AdministratorHomeScreen from "../homeScreens/AdministratorHomeScreen";
 import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSelectorScreen";
 import AttendanceData from "../attendanceScreens/AttendanceData";
 import SeasonControlScreen from "../seasonScreens/SeasonControlScreen";
+import CalendarScreen from "../eventsScreens/CalendarScreen";
+import EventForm from "../eventsScreens/EventForm";
+import EventList from "../eventsScreens/EventList";
 
 const ClassStack = createNativeStackNavigator();
 
@@ -71,6 +74,9 @@ const HomeStackNavigator = () => {
             <HomeStack.Screen name="Season" component={SeasonControlScreen} />
             <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: false }}/>
             <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
+            <HomeStack.Screen name="Calendar" component={CalendarScreen} initialParams={{ editAndDelete: true }}/>
+            <HomeStack.Screen name="NewEvent" component={EventForm} initialParams={{ edit: false}} />
+            <HomeStack.Screen name="EventList" component={EventList} initialParams={{ editAndDelete: true }}/>
         </HomeStack.Navigator>
     );
 };

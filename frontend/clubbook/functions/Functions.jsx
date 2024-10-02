@@ -27,6 +27,32 @@ const Functions = {
     convertDateSpaToEng: (date) => {
         const [day, month, year] = date.split('/');
         return `${year}-${month}-${day}`;
+    },
+
+    translateEngToSpaMonth: (month) => {
+        switch (month){
+            case 'January': return 'Enero';
+            case 'February': return 'Febrero';
+            case 'March': return 'Marzo';
+            case 'April': return 'Abril';
+            case 'May': return 'Mayo';
+            case 'June': return 'Junio';
+            case 'July': return 'Julio';
+            case 'August': return 'Agosto';
+            case 'September': return 'Septiembre';
+            case 'October': return 'Octubre';
+            case 'November': return 'Noviembre';
+            case 'December': return 'Diciembre';
+        }
+    },
+
+    translateEventTypes: (eventType) => {
+        switch (eventType.toUpperCase()) {
+            case 'COMPETITION': return 'Competición';
+            case 'EXHIBITION': return 'Exhibición';
+            case 'TRAINING': return 'Entrenamiento';
+            default: return '';
+        }
     }
 
 }

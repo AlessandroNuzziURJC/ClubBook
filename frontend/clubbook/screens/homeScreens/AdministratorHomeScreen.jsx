@@ -24,10 +24,10 @@ const AdministratorHomeScreen = () => {
                     <Ionicons name="swap-horizontal-outline" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Gestionar sustituciones</Text>
                 </View>
-                <View style={styles.element}>
+                <TouchableOpacity  style={styles.element} onPress={() => navigation.navigate('Calendar')}>
                     <Ionicons name="calendar" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Eventos</Text>
-                </View>
+                </TouchableOpacity >
             </View>
         </View>
     );

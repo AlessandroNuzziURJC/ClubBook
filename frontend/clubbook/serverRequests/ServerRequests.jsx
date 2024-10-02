@@ -397,6 +397,34 @@ const ServerRequest = {
         });
         return response;
     },
+
+    getEventTypes: async () => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/types`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    postNewEvent: async (newEventDto) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/new`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(newEventDto)
+            });
+        });
+        return response;
+    }
 }
 
 export default ServerRequest;

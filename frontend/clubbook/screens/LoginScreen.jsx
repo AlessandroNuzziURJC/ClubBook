@@ -130,7 +130,8 @@ export default function LogIn() {
     }
 
     return (
-        <KeyboardAwareScrollView style={styles.container}>
+        <KeyboardAwareScrollView style={styles.container} enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled">
             <View>
                 <Text style={styles.welcome}>¡Bienvenido!</Text>
                 <Image source={require('./images/ClubBook_logo.png')}
