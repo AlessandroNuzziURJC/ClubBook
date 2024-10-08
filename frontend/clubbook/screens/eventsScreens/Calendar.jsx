@@ -1,20 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
+import { useFocusEffect,} from "@react-navigation/native";
 import Functions from "../../functions/Functions";
-import EventCard from "./EventCard"; 
+import EventCard from "./EventCard";
 import { Ionicons } from "@expo/vector-icons";
+import ServerRequests from "../../serverRequests/ServerRequests";
 
 const Calendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [calendarTable, setCalendarTable] = useState([]);
     const [selectedDay, setSelectedDay] = useState(null);
     const [isModalVisible, setModalVisible] = useState(false);
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState({});
     const weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
+    const getFromServer = async () => {
+        try {
+            const response = await ServerRequests.getMonthEvents(currentDate.getMonth() + 1, currentDate.getFullYear());
+            const result = await response.json();
+            if (response.ok) {
+                setEvents(result.data);
+            }
+        } catch (error) {
+            console.error("Error al obtener los eventos del servidor", error);
+        }
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const getData = async () => {
+                await getFromServer();
+            };
+    
+            getData();
+
+            return () => {
+
+            };
+        }, []) 
+    );
+
     useEffect(() => {
-        generateCalendar();
+        const fetchEventsAndGenerateCalendar = async () => {
+            generateCalendar();
+            await getFromServer();
+        };
+    
+        fetchEventsAndGenerateCalendar();
     }, [currentDate]);
+    
 
     const generateCalendar = () => {
         const year = currentDate.getFullYear();
@@ -41,18 +75,13 @@ const Calendar = () => {
     };
 
     const changeMonth = (direction) => {
+        setEvents({});
         const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1);
         setCurrentDate(newDate);
     };
 
     const showEvents = (day) => {
-        const mockEvents = [
-            { id: '1', title: 'Evento A', type: "Prueba", description: 'Descripción A', date: day },
-            { id: '2', title: 'Evento B', type: "Prueba", description: 'Descripción B', date: day }
-        ];
-
         setSelectedDay(day);
-        setEvents(mockEvents);
         setModalVisible(true);
     };
 
@@ -61,7 +90,9 @@ const Calendar = () => {
         setSelectedDay(null);
     };
 
-    const renderEventCard = ({ item }) => <EventCard editAndDelete={false} data={item} />;
+    const renderEventCard = ({ item }) => (
+        <EventCard editAndDelete={false} data={item} onCloseModal={closeModal}/>
+    );
 
     const monthName = currentDate.toLocaleString("default", { month: "long" });
     const year = currentDate.getFullYear();
@@ -81,24 +112,34 @@ const Calendar = () => {
 
                 {calendarTable.map((week, index) => (
                     <View key={index} style={styles.week}>
-                        {week.map((day, dayIndex) => (
-                            <TouchableOpacity
-                                key={dayIndex}
-                                onPress={() => day && showEvents(day)}
-                                style={styles.dayButton}
-                            >
-                                <Text
+                        {week.map((day, dayIndex) => {
+                            const hasEvents = events[day]?.length > 0;
+                            return (
+                                <TouchableOpacity
+                                    key={dayIndex}
+                                    onPress={() => day && showEvents(day)}
                                     style={[
-                                        styles.day,
+                                        styles.dayButton,
                                         day === today && currentDate.getMonth() === new Date().getMonth() && currentDate.getFullYear() === new Date().getFullYear()
-                                            ? styles.currentDay
-                                            : null
+                                                ? styles.currentDayContainer
+                                                : null,
+                                        hasEvents ? styles.eventDay : null  // Aplicar fondo rojo si hay eventos
                                     ]}
                                 >
-                                    {day !== null ? day : ""}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                                    <Text
+                                        style={[
+                                            styles.day,
+                                            day === today && currentDate.getMonth() === new Date().getMonth() && currentDate.getFullYear() === new Date().getFullYear()
+                                                ? styles.currentDay
+                                                : null,
+                                            hasEvents ? styles.eventDayText : null
+                                        ]}
+                                    >
+                                        {day !== null ? day : ""}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
                     </View>
                 ))}
             </View>
@@ -128,11 +169,11 @@ const Calendar = () => {
                             </TouchableOpacity>
                         </View>
 
-                        {events.length > 0 ? (
+                        {events[selectedDay]?.length > 0 ? (
                             <FlatList
-                                data={events}
+                                data={events[selectedDay]}
                                 renderItem={renderEventCard}
-                                keyExtractor={(item) => item.id}
+                                keyExtractor={(item) => item.id.toString()}
                                 style={styles.list}
                             />
                         ) : (
@@ -184,23 +225,37 @@ const styles = StyleSheet.create({
     },
     dayButton: {
         width: "14%",
-        justifyContent: "center",  // Centrar verticalmente
-        alignItems: "center",      // Centrar horizontalmente
+        justifyContent: "center",
+        alignItems: "center",
     },
     day: {
         textAlign: "center",
         padding: 10,
         fontSize: 13
     },
+    currentDayContainer: {
+        borderRadius: 40,
+        borderWidth: 1,
+        borderColor: "#0f3b69"
+    },
     currentDay: {
-        backgroundColor: '#ddeeff',
-        borderRadius: 1,
+        fontWeight: 'bold',
+        color: "#0f3b69",
+        textDecorationLine: 'underline',
     },
     dayName: {
         color: "#1162BF",
         width: "14%",
         textAlign: "center",
         padding: 10,
+        fontWeight: 'bold'
+    },
+    eventDay: {
+        backgroundColor: "#ffc459", 
+        borderRadius: 40,
+    },
+    eventDayText: {
+        color: '#634000',
         fontWeight: 'bold'
     },
     modalContainer: {
@@ -211,8 +266,8 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         backgroundColor: 'white',
-        width: '90%',  // Deja margen de 20 en los laterales
-        height: '80%', // Deja margen de 20 en la parte superior e inferior
+        width: '90%',
+        height: '80%',
         padding: 20,
         borderRadius: 10,
         alignItems: 'center',
@@ -233,7 +288,7 @@ const styles = StyleSheet.create({
     noEventsContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center', 
+        alignItems: 'center',
     },
     noEventsText: {
         fontSize: 16,

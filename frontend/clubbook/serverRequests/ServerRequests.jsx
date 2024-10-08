@@ -23,8 +23,8 @@ const ServerRequest = {
                 'Authorization': `Bearer ${data.token}`,
             },
             body: JSON.stringify({
-                    'userId': Number(data.id),
-                    'token': "hola"  // Cambié "hola" por el token real
+                'userId': Number(data.id),
+                'token': "hola"  // Cambié "hola" por el token real
             })
         })
     },
@@ -421,6 +421,140 @@ const ServerRequest = {
                     'Authorization': `Bearer ${data.token}`,
                 },
                 body: JSON.stringify(newEventDto)
+            });
+        });
+        return response;
+    },
+
+    editEvent: async (event) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/edit`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(event)
+            });
+        });
+        return response;
+    },
+
+    getAllFutureEvents: async () => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/all`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getAllPastEvents: async() => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/past`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getMonthEvents: async(month, year) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/month/${month}/${year}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getNextEvent: async () => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/next`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    deleteEvent: async (id) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getEventStudentsAttendance: async (eventId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event_attendance/${eventId}/students`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getEventTeachersAttendance: async (eventId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event_attendance/${eventId}/teachers`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getEventAttendanceByUserId: async (eventId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event_attendance/${eventId}/${data.id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    updateAttendance: async (updateEventAttendance) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event_attendance/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(updateEventAttendance)
             });
         });
         return response;

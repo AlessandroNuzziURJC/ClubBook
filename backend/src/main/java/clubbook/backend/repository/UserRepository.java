@@ -1,12 +1,15 @@
 package clubbook.backend.repository;
 
+import clubbook.backend.model.Role;
 import clubbook.backend.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,4 +45,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             nativeQuery = true
     )
     List<User> findAllStudentsWithoutClassGroup();
+
+    @Query(
+            value = "SELECT u.* FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id " +
+                    "WHERE r.name = :roleName AND u.birthday BETWEEN :birthYearStart AND :birthYearEnd ;",
+            nativeQuery = true
+    )
+    List<User> findAllUsersBornBetweenWithRole(@Param("birthYearStart") LocalDate birthYearStart,
+                                               @Param("birthYearEnd") LocalDate birthYearEnd,
+                                               @Param("roleName") String roleName);
+
 }

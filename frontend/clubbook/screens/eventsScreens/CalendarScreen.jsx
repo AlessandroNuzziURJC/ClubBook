@@ -1,20 +1,42 @@
 import Calendar from "./Calendar";
 import React, { useState, useEffect } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import EventCard from "./EventCard";
-
-const nextEvent = {
-    "title": "Campeonato del Mundo Kata 2024",
-    "type": "Competición",
-    "date": "09/11/2024"
-};
+import ServerRequests from "../../serverRequests/ServerRequests";
 
 const CalendarScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { editAndDelete } = route.params;
+    const [nextEvent, setNextEvent] = useState(null);
+    const [message, setMessage] = useState("");
+
+    const getFromServer = async () => {
+        const response = await ServerRequests.getNextEvent();
+        const result = await response.json();     
+        if (response.ok) {
+            setNextEvent(result.data);
+        } else {
+            setNextEvent(null);
+        }
+        setMessage(result.message);
+    }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const getData = async () => {
+                await getFromServer();
+            };
+    
+            getData();
+
+            return () => {
+
+            };
+        }, []) 
+    );
 
     return (
         <View style={styles.container}>
@@ -27,14 +49,15 @@ const CalendarScreen = () => {
                 }
             </View>
             <TouchableOpacity style={styles.futureEventsButton} onPress={() => navigation.navigate("EventList")}>
-                <Text style={styles.futureEvents}>Ver todos los eventos futuros</Text>
+                <Text style={styles.futureEvents}>Ver todos los eventos</Text>
             </TouchableOpacity>
             <Calendar />
             <View style={styles.header}>
                 <Text style={styles.pageTitle}>Próximo evento</Text>
             </View>
-            
-            <EventCard editAndDelete={false} data={nextEvent}/>
+            {nextEvent
+                ? <EventCard editAndDelete={false} data={nextEvent} />
+                : <Text style={styles.noEvents}>{message}</Text>}
         </View>
     )
 }
@@ -61,10 +84,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     futureEventsButton: {
-        backgroundColor: "#1162BF", 
+        backgroundColor: "#1162BF",
         padding: 15,
-        borderRadius: 10, 
-        alignItems: "center", 
+        borderRadius: 10,
+        alignItems: "center",
         justifyContent: "center",
         marginVertical: 10,
     },
@@ -73,4 +96,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+    noEvents: {
+        color: 'darkgray',
+        alignSelf: 'center',
+        marginTop: 20
+    }
 });

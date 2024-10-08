@@ -2,6 +2,7 @@ package clubbook.backend.service;
 
 import clubbook.backend.model.Season;
 import clubbook.backend.repository.SeasonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ public class SeasonService {
     private final SeasonRepository seasonRepository;
     private final UserService userService;
 
+    @Autowired
     public SeasonService(SeasonRepository seasonRepository, UserService userService) {
         this.seasonRepository = seasonRepository;
         this.userService = userService;

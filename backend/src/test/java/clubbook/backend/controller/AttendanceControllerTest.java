@@ -30,9 +30,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Sql({"/scripts/roles_dataset.sql", "/scripts/dataset.sql"})
 class AttendanceControllerTest {
 
     @Mock

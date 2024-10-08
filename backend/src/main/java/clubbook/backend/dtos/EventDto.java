@@ -1,29 +1,22 @@
-package clubbook.backend.model;
+package clubbook.backend.dtos;
 
-import jakarta.persistence.*;
+import clubbook.backend.model.Event;
+import clubbook.backend.model.EventType;
 
 import java.time.LocalDate;
-import java.util.List;
 
-@Entity
-@Table(name = "T_Event")
-public class Event {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class EventDto {
     private int id;
 
     private String title;
     private String additionalInfo;
     private String address;
-    @ManyToOne
     private EventType type;
     private LocalDate date;
     private LocalDate birthYearStart;
     private LocalDate birthYearEnd;
 
-
-    public Event(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd) {
+    public EventDto(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd) {
         this.id = id;
         this.title = title;
         this.additionalInfo = additionalInfo;
@@ -34,7 +27,18 @@ public class Event {
         this.birthYearEnd = birthYearEnd;
     }
 
-    public Event() {
+    public EventDto() {
+    }
+
+    public EventDto(Event event) {
+        this.id= event.getId();
+        this.title = event.getTitle();
+        this.additionalInfo = event.getAdditionalInfo();
+        this.address = event.getAddress();
+        this.type = event.getType();
+        this.date = event.getDate();
+        this.birthYearStart = event.getBirthYearStart();
+        this.birthYearEnd = event.getBirthYearEnd();
     }
 
     public int getId() {

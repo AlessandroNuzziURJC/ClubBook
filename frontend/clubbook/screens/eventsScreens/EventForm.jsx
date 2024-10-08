@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, FlatList, Alert } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -9,9 +9,10 @@ import ServerRequests from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 import Toast from "../../components/Toast";
 
-const EventForm = ({ edit }) => {
+const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
     const navigation = useNavigation();
-    const [event, setEvent] = useState(new NewEventDto());
+
+    const [event, setEvent] = useState(eventReceived);
     const [nameError, setNameError] = useState(false);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTypePickerVisible, setTypePickerVisibility] = useState(false);
@@ -89,7 +90,7 @@ const EventForm = ({ edit }) => {
     const handleSave = async () => {
         if (validateFields()) {
             //console.log("Evento guardado:", event);
-            const response = await ServerRequests.postNewEvent(event);
+            const response = await saveFunction(event);
             const result = await response.json();
             const message = result.message;
             setToastMessage(message);
@@ -125,11 +126,18 @@ const EventForm = ({ edit }) => {
 
     const handleTypeSelect = (type) => {
         setSelectedType(Functions.translateEventTypes(type.name));
-        setEvent({ ...event, type: type.eventTypeId });
+        if (edit)
+            setEvent({ ...event, type: type });
+        else
+            setEvent({ ...event, type: type.eventTypeId });
         hideTypePicker();
     };
 
     const getFromServer = async () => {
+        if (edit) {
+            setInitYear(event.birthYearStart.substring(0, 4));
+            setEndYear(event.birthYearEnd.substring(0, 4))
+        }
         const response = await ServerRequests.getEventTypes();
         if (response.ok) {
             const eventTypesJSON = await response.json();
@@ -178,7 +186,7 @@ const EventForm = ({ edit }) => {
                 <View style={styles.inputMargin}>
                     <Text style={styles.label}>Fecha:</Text>
                     <TouchableOpacity onPress={showDatePicker} style={[styles.input, errors.date && styles.errorInput]}>
-                        <Text>{event.date ? event.date.toLocaleDateString() : "Seleccionar fecha"}</Text>
+                        <Text>{event.date ? Functions.convertDateEngToSpa(event.date) : "Seleccionar fecha"}</Text>
                     </TouchableOpacity>
                     <DateTimePickerModal
                         isVisible={isDatePickerVisible}
@@ -191,7 +199,10 @@ const EventForm = ({ edit }) => {
                 <View style={styles.inputMargin}>
                     <Text style={styles.label}>Tipo de evento:</Text>
                     <TouchableOpacity onPress={showTypePicker} style={[styles.input, errors.type && styles.errorInput]}>
-                        <Text>{selectedType ? selectedType : "Seleccionar tipo de evento"}</Text>
+                        {edit 
+                            ? <Text>{event.type ? Functions.translateEventTypes(event.type.name) : "Seleccionar tipo de evento"}</Text>
+                            : <Text>{selectedType ? selectedType : "Seleccionar tipo de evento"}</Text>
+                        }
                     </TouchableOpacity>
                 </View>
 
@@ -227,7 +238,7 @@ const EventForm = ({ edit }) => {
                 />
 
                 <Text style={styles.label}>Años de nacimiento límite para inscripciones (incluidos):</Text>
-
+                {edit && <Text style={styles.alertMessage}>¡Editar el rango de edad admitido permitirá inscribirse al evento a nuevos alumnos!</Text>}
                 <View style={styles.row}>
                     <TextInput
                         style={[styles.input, styles.smallInput, errors.birthYearStart && styles.errorInput]}
@@ -380,5 +391,9 @@ const styles = StyleSheet.create({
     },
     errorInput: {
         borderColor: 'red'
+    },
+    alertMessage: {
+        color: 'red',
+        marginBottom: 20
     }
 });

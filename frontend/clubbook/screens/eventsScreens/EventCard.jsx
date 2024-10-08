@@ -1,24 +1,79 @@
-import React, { useState, useEffect } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Functions from "../../functions/Functions";
+import ServerRequests from "../../serverRequests/ServerRequests";
+import Toast from "../../components/Toast";
 
-const EventCard = ({ editAndDelete, data }) => {
+const EventCard = ({ editAndDelete, data, onCloseModal }) => {
+    const navigation = useNavigation();
 
-    const handleEdit = () => {
-        console.log("Hola :)");
-    }
+    const [isToastVisible, setIsToastVisible] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
 
-    const handleDelete = () => {
-        console.log("Hola :)");
-    }
+    const showToast = () => {
+        setIsToastVisible(true);
+        setTimeout(() => {
+            setIsToastVisible(false);
+        }, 1000);
+    };
 
-    const handleSeeMore = () => {
-        console.log("Hola :)");
-    }
+    const handleEdit = (data) => {
+        navigation.navigate("EditEvent", { data });
+    };
+
+    const handleDelete = async () => {
+        const response = await ServerRequests.deleteEvent(data.id);
+        const result = await response.json();
+        setIsToastVisible(true);
+        setToastMessage(result.message);
+        showToast();
+    };
+
+    // Función para mostrar el alert de confirmación
+    const confirmDelete = () => {
+        Alert.alert(
+            "Confirmar eliminación",
+            "¿Estás seguro de que deseas eliminar este evento?",
+            [
+                {
+                    text: "Cancelar",
+                    onPress: () => null,
+                    style: "cancel",
+                },
+                {
+                    text: "Eliminar",
+                    onPress: handleDelete,
+                    style: "destructive",
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
+    const handleSeeMore = (data) => {
+        navigation.navigate("EventInfoScreen", { event: data });
+        if (onCloseModal){
+            onCloseModal();
+        }
+    };
+
+    const getBackgroundColor = (eventTypeId) => {
+        switch (eventTypeId) {
+            case 1:
+                return "#ffedbd";
+            case 2:
+                return "#cffcd0";
+            case 3:
+                return "#eed1ff";
+            default:
+                return "#f8f9fa";
+        }
+    };
 
     return (
-        <View style={styles.eventContainer}>
+        <View style={[styles.eventContainer, { backgroundColor: getBackgroundColor(data.type.eventTypeId) }]}>
             <View style={styles.header}>
                 <Text style={styles.title}>{data.title.length > 20
                     ? data.title.substring(0, 20) + '...'
@@ -26,32 +81,36 @@ const EventCard = ({ editAndDelete, data }) => {
                 }</Text>
                 {editAndDelete &&
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={handleEdit} style={styles.iconButton}>
+                        <TouchableOpacity onPress={() => handleEdit(data)} style={styles.iconButton}>
                             <Ionicons name="pencil-outline" size={20} color="#1162BF" />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={handleDelete} style={styles.iconButton}>
+                        <TouchableOpacity onPress={confirmDelete} style={styles.iconButton}>
                             <Ionicons name="trash-outline" size={20} color="red" />
                         </TouchableOpacity>
                     </View>
                 }
             </View>
-            <Text style={styles.eventType}>{data.type}</Text>
+            <Text style={styles.eventType}>{Functions.translateEventTypes(data.type.name)}</Text>
             <View style={styles.info}>
-                <Text style={styles.date}>{data.date}</Text>
-                <TouchableOpacity onPress={handleSeeMore} style={styles.iconButton}>
+                <Text style={styles.date}>{Functions.convertDateEngToSpa(data.date)}</Text>
+                <TouchableOpacity onPress={() => handleSeeMore(data)} style={styles.iconButton}>
                     <Text style={styles.seeMore}>Ver más</Text>
                 </TouchableOpacity>
             </View>
+            <Toast
+                visible={isToastVisible}
+                message={toastMessage}
+                onClose={() => setIsToastVisible(false)}
+            />
         </View>
     );
-}
+};
 
 export default EventCard;
 
 const styles = StyleSheet.create({
     eventContainer: {
         flexDirection: "column",
-        backgroundColor: "#f8f9fa",
         padding: 15,
         marginBottom: 10,
         borderRadius: 10,
@@ -90,4 +149,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: "#1162BF"
     }
-})
+});

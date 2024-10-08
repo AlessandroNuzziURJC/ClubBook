@@ -18,8 +18,11 @@ import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSel
 import AttendanceData from "../attendanceScreens/AttendanceData";
 import SeasonControlScreen from "../seasonScreens/SeasonControlScreen";
 import CalendarScreen from "../eventsScreens/CalendarScreen";
-import EventForm from "../eventsScreens/EventForm";
-import EventList from "../eventsScreens/EventList";
+import EventListScreen from "../eventsScreens/EventListScreen";
+import EventInfoScreen from "../eventsScreens/EventInfoScreen";
+import NewEventFormScreen from "../eventsScreens/NewEventFormScreen";
+import EditEventFormScreen from "../eventsScreens/EditEventFormScreen";
+import AttendanceEventListScreen from "../eventsScreens/AttendanceEventListScreen";
 
 const ClassStack = createNativeStackNavigator();
 
@@ -75,8 +78,12 @@ const HomeStackNavigator = () => {
             <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: false }}/>
             <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
             <HomeStack.Screen name="Calendar" component={CalendarScreen} initialParams={{ editAndDelete: true }}/>
-            <HomeStack.Screen name="NewEvent" component={EventForm} initialParams={{ edit: false}} />
-            <HomeStack.Screen name="EventList" component={EventList} initialParams={{ editAndDelete: true }}/>
+            <HomeStack.Screen name="NewEvent" component={NewEventFormScreen} />
+            <HomeStack.Screen name="EditEvent" component={EditEventFormScreen}/>
+            <HomeStack.Screen name="EventList" component={EventListScreen} initialParams={{ editAndDelete: true, fetchFutureEvents: true }}/>
+            <HomeStack.Screen name="PastEventsList" component={EventListScreen} initialParams={{ editAndDelete: false, fetchFutureEvents: false }}/>
+            <HomeStack.Screen name="EventInfoScreen" component={EventInfoScreen} initialParams={{ admin: true, teacher: false }}/>
+            <HomeStack.Screen name="AttendanceEvent" component={AttendanceEventListScreen} />
         </HomeStack.Navigator>
     );
 };
