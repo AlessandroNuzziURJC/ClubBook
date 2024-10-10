@@ -1,7 +1,6 @@
 package clubbook.backend.controller;
 
-import clubbook.backend.model.RoleEnum;
-import clubbook.backend.service.RoleService;
+import clubbook.backend.model.enumClasses.RoleEnum;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;

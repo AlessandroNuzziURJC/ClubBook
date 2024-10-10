@@ -1,4 +1,4 @@
-package clubbook.backend.model;
+package clubbook.backend.model.enumClasses;
 
 public enum RoleEnum {
     STUDENT,

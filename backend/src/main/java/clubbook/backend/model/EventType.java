@@ -1,5 +1,6 @@
 package clubbook.backend.model;
 
+import clubbook.backend.model.enumClasses.EventTypeEnum;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 

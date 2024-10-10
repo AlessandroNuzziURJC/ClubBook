@@ -1,9 +1,5 @@
 package clubbook.backend.dtos;
 
-import clubbook.backend.model.WeekDayEnum;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalTime;

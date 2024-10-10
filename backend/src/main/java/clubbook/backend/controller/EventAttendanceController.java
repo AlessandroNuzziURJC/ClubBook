@@ -38,7 +38,7 @@ public class EventAttendanceController {
     }
 
     @GetMapping("/{eventId}/{userId}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
     public ResponseEntity<ResponseWrapper<EventAttendance>> getUserAttendance(@PathVariable int eventId, @PathVariable int userId) {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.eventAttendanceService.getEventAttendanceByUser(eventId, userId)));
     }

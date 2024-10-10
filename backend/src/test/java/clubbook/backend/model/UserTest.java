@@ -1,5 +1,6 @@
 package clubbook.backend.model;
 
+import clubbook.backend.model.enumClasses.RoleEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.GrantedAuthority;

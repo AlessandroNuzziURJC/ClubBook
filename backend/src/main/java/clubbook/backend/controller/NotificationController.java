@@ -1,15 +1,14 @@
 package clubbook.backend.controller;
 
-import clubbook.backend.model.Notification;
-import clubbook.backend.model.NotificationToken;
-import clubbook.backend.model.NotificationTokenId;
+import clubbook.backend.model.notification.Notification;
+import clubbook.backend.model.notification.NotificationToken;
+import clubbook.backend.model.notification.NotificationTokenId;
 import clubbook.backend.service.NotificationService;
 import clubbook.backend.service.NotificationTokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

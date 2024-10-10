@@ -1,12 +1,11 @@
 package clubbook.backend.model;
 
+import clubbook.backend.model.enumClasses.RoleEnum;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Table(name = "T_Role")
 @Entity

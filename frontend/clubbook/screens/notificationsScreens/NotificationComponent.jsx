@@ -16,7 +16,7 @@ const Notification = ({ data }) => {
         return daysRemaining;
     };
 
-    const timeRemaining = calculateTimeRemaining(data.date);
+    const timeRemaining = calculateTimeRemaining(data.createdAt);
 
     return (
         <View style={styles.notificationContainer}>

@@ -6,12 +6,24 @@ import ProfileScreen from "../profileScreens/ProfileScreen";
 import ProfileEdit from '../profileScreens/ProfileEditScreen';
 import { Ionicons } from "@expo/vector-icons";
 import NotificationsScreen from "../notificationsScreens/NotificationScreen";
+import StudentHomeScreen from "../homeScreens/StudentHomeScreen";
+import CalendarScreen from "../eventsScreens/CalendarScreen";
+import EventListScreen from "../eventsScreens/EventListScreen";
+import EventInfoScreen from "../eventsScreens/EventInfoScreen";
+
+const HomeStack = createNativeStackNavigator();
 
 const HomeStackScreen = () => {
     return (
-        <View>
-            <Text>Este es el home student</Text>
-        </View>
+        <HomeStack.Navigator screenOptions={{
+            headerShown: false
+        }} initialRouteName="Home">
+            <HomeStack.Screen name="Home" component={StudentHomeScreen} />
+            <HomeStack.Screen name="Calendar" component={CalendarScreen} initialParams={{ editAndDelete: false }}/>
+            <HomeStack.Screen name="EventList" component={EventListScreen} initialParams={{ editAndDelete: false, fetchFutureEvents: true }}/>
+            <HomeStack.Screen name="PastEventsList" component={EventListScreen} initialParams={{ editAndDelete: false, fetchFutureEvents: false }}/>
+            <HomeStack.Screen name="EventInfoScreen" component={EventInfoScreen} initialParams={{ admin: false, teacher: false }}/>
+        </HomeStack.Navigator>
     );
 };
 

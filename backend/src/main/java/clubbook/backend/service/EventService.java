@@ -3,10 +3,17 @@ package clubbook.backend.service;
 import clubbook.backend.dtos.EventDto;
 import clubbook.backend.dtos.NewEventDto;
 import clubbook.backend.model.Event;
+import clubbook.backend.model.EventAttendance;
 import clubbook.backend.model.EventType;
+import clubbook.backend.model.User;
+import clubbook.backend.model.notification.DeleteEventNotificationFactory;
+import clubbook.backend.model.notification.EventReminderNotificationFactory;
+import clubbook.backend.model.notification.NotificationFactory;
 import clubbook.backend.repository.EventRepository;
 import clubbook.backend.repository.EventTypeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,12 +28,16 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EventTypeRepository eventTypeRepository;
     private final EventAttendanceService eventAttendanceService;
+    private final UserService userService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, EventTypeRepository eventTypeRepository, EventAttendanceService eventAttendanceService) {
+    public EventService(EventRepository eventRepository, EventTypeRepository eventTypeRepository, EventAttendanceService eventAttendanceService, UserService userService, NotificationService notificationService) {
         this.eventRepository = eventRepository;
         this.eventTypeRepository = eventTypeRepository;
         this.eventAttendanceService = eventAttendanceService;
+        this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     public List<Event> getAllEvents() {
@@ -60,8 +71,6 @@ public class EventService {
     }
 
     public Boolean saveEdited(EventDto editEventDto) {
-        Event prevEvent = this.eventRepository.findById(editEventDto.getId()).orElseThrow();
-
         Event event = this.eventRepository.findById(editEventDto.getId()).orElseThrow();
         event.setTitle(editEventDto.getTitle());
         event.setAddress(editEventDto.getAddress());
@@ -71,13 +80,13 @@ public class EventService {
         event.setDate(editEventDto.getDate());
         event.setAdditionalInfo(editEventDto.getAdditionalInfo());
         event.setType(this.eventTypeRepository.findById(editEventDto.getType().getEventTypeId()).orElseThrow());
+        if (!event.getBirthYearStart().isEqual(editEventDto.getBirthYearStart()) || !event.getBirthYearEnd().isEqual(editEventDto.getBirthYearEnd())) {
+            this.eventAttendanceService.updateAttendance(event, editEventDto);
+        }
         event.setBirthYearStart(editEventDto.getBirthYearStart());
         event.setBirthYearEnd(editEventDto.getBirthYearEnd());
         this.eventRepository.save(event);
 
-        if (!prevEvent.getBirthYearStart().isEqual(editEventDto.getBirthYearStart()) || !prevEvent.getBirthYearEnd().isEqual(editEventDto.getBirthYearEnd())) {
-            this.eventAttendanceService.updateAttendance(prevEvent, event);
-        }
         return true;
     }
 
@@ -94,6 +103,12 @@ public class EventService {
     }
 
     public boolean deleteEvent(Integer eventId) {
+        Event event = this.eventRepository.findById(eventId).orElseThrow();
+        for(EventAttendance eventAttendance : event.getAttendances()) {
+            NotificationFactory notificationFactory = new DeleteEventNotificationFactory(event.getDate(), eventAttendance.getUser());
+            notificationFactory.createNotification();
+            this.notificationService.save(notificationFactory.getNotification());
+        }
         this.eventRepository.deleteById(eventId);
         return true;
     }
@@ -130,5 +145,47 @@ public class EventService {
 
     public Event findEvent(int eventId) {
         return this.eventRepository.findById(eventId).orElseThrow();
+    }
+
+    public List<EventDto> findStudentFutureEvents(int userId) {
+        User user = this.userService.findById(userId);
+        List<Event> allEventsThatAdmit = this.eventRepository.findAllEventsThatAdmit(user.getBirthday());
+        List<EventDto> output = new ArrayList<>(allEventsThatAdmit.size());
+
+        for (Event e: allEventsThatAdmit) {
+            output.add(new EventDto(e));
+        }
+        return output;
+    }
+
+    public EventDto findNextEventStudent(int userId) {
+        User user = this.userService.findById(userId);
+        Event nextEvent = this.eventRepository.findNextEventThatAdmit(user.getBirthday());
+        return new EventDto(nextEvent);
+    }
+
+    public Map<Integer, List<EventDto>> findActualMonthEventsStudent(int monthValue, int year, int userId) {
+        User user = this.userService.findById(userId);
+        List<Event> futureEvents = this.eventRepository.findAllByCurrentMonthForStudent(monthValue, year, user.getBirthday());
+        Map<Integer, List<EventDto>> map = new HashMap<>(futureEvents.size());
+        for (Event e: futureEvents) {
+            if (!map.containsKey(e.getDate().getDayOfMonth()))
+                map.put(e.getDate().getDayOfMonth(), new ArrayList<>());
+            map.get(e.getDate().getDayOfMonth()).add(new EventDto(e));
+        }
+        return map;
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 5 12 * * ?")
+    public void scheduleEventReminderNotifications() {
+        List<Event> events = this.eventRepository.findAllEventsInNextTwoDays(LocalDate.now(), LocalDate.now().plusDays(2));
+        for (Event e: events) {
+            for (EventAttendance eventAttendance: e.getAttendances()) {
+                NotificationFactory notificationFactory = new EventReminderNotificationFactory(e.getDate(), eventAttendance.getUser());
+                notificationFactory.createNotification();
+                this.notificationService.save(notificationFactory.getNotification());
+            }
+        }
     }
 }

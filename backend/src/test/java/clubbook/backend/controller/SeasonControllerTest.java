@@ -1,7 +1,7 @@
 package clubbook.backend.controller;
 
 import clubbook.backend.model.Role;
-import clubbook.backend.model.RoleEnum;
+import clubbook.backend.model.enumClasses.RoleEnum;
 import clubbook.backend.model.Season;
 import clubbook.backend.model.User;
 import clubbook.backend.repository.*;
@@ -35,6 +35,9 @@ class SeasonControllerTest {
 
     @Mock
     private EventService eventService;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private SeasonService seasonService; //Done
@@ -75,7 +78,7 @@ class SeasonControllerTest {
         this.outputSeasonActive.setInit(LocalDate.of(2024, 9, 1));
         this.outputSeasonActive.setAdminCreator(administrator);
 
-        this.seasonController = new SeasonController(seasonService, attendanceService, eventService);
+        this.seasonController = new SeasonController(seasonService, attendanceService, eventService, notificationService);
     }
 
     @Test

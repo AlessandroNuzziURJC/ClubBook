@@ -3,7 +3,7 @@ package clubbook.backend.controller;
 import clubbook.backend.dtos.LoginUserDto;
 import clubbook.backend.dtos.RegisterUserDto;
 import clubbook.backend.model.Role;
-import clubbook.backend.model.RoleEnum;
+import clubbook.backend.model.enumClasses.RoleEnum;
 import clubbook.backend.model.User;
 import clubbook.backend.repository.UserRepository;
 import clubbook.backend.responses.LoginResponse;

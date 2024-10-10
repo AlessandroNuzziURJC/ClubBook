@@ -5,7 +5,7 @@ import clubbook.backend.dtos.ScheduleDto;
 import clubbook.backend.model.ClassGroup;
 import clubbook.backend.model.Schedule;
 import clubbook.backend.model.User;
-import clubbook.backend.model.WeekDayEnum;
+import clubbook.backend.model.enumClasses.WeekDayEnum;
 import clubbook.backend.repository.ClassGroupRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;

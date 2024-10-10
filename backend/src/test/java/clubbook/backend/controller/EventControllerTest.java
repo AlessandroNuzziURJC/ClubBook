@@ -3,12 +3,13 @@ package clubbook.backend.controller;
 import clubbook.backend.dtos.NewEventDto;
 import clubbook.backend.model.Event;
 import clubbook.backend.model.EventType;
-import clubbook.backend.model.EventTypeEnum;
+import clubbook.backend.model.enumClasses.EventTypeEnum;
 import clubbook.backend.repository.EventRepository;
 import clubbook.backend.repository.EventTypeRepository;
 import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.EventAttendanceService;
 import clubbook.backend.service.EventService;
+import clubbook.backend.service.SeasonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,6 +36,9 @@ class EventControllerTest {
 
     @Mock
     private EventAttendanceService eventAttendanceService;
+
+    @Mock
+    private SeasonService seasonService;
 
     @InjectMocks
     private EventService eventService;
@@ -104,7 +108,7 @@ class EventControllerTest {
         this.eventDto = new NewEventDto("Title Event", "Address Event", 1,
                 LocalDate.of(2024,12,3), "Additional Info 1", LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31));
 
-        this.eventController = new EventController(this.eventService);
+        this.eventController = new EventController(this.eventService, this.seasonService);
     }
 
     @Test

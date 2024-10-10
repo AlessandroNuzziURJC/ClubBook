@@ -33,6 +33,9 @@ const EventInfoScreen = () => {
                             <AttendanceEventSelector dataEvent={event} />
                         </View>
                     }
+                    {!admin && !teacher &&
+                        <AttendanceEventSelector dataEvent={event} />
+                    }
                 </View>
                 <Text style={styles.infoHeader}>Información general</Text>
                 <ScrollView>

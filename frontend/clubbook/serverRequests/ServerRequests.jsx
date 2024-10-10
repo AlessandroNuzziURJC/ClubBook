@@ -97,6 +97,36 @@ const ServerRequest = {
         return response;
     },
 
+    updateProfilePicture: async (imageUri) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+
+            const formData = new FormData();
+
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+
+            formData.append('image', {
+                uri: imageUri,
+                type: blob.type,  
+                name: 'profilePicture.jpg' 
+            });
+
+            const token = await AsyncStorage.getItem('userToken');
+
+            return await fetch(`${Configuration.API_URL}/${data.id}/uploadProfilePicture`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data' 
+                },
+                body: formData
+            });
+
+        });
+        return response;
+    },
+
     getStudentsPage: async (page) => {
         const response = await ServerRequest.manageToken(async () => {
             const data = await ServerRequest.getTokenAndId();
@@ -444,7 +474,7 @@ const ServerRequest = {
     getAllFutureEvents: async () => {
         const response = await ServerRequest.manageToken(async () => {
             const data = await ServerRequest.getTokenAndId();
-            return await fetch(`${Configuration.API_URL}/event/all`, {
+            return await fetch(`${Configuration.API_URL}/event/all/${data.id}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${data.token}`,
@@ -454,7 +484,7 @@ const ServerRequest = {
         return response;
     },
 
-    getAllPastEvents: async() => {
+    getAllPastEvents: async () => {
         const response = await ServerRequest.manageToken(async () => {
             const data = await ServerRequest.getTokenAndId();
             return await fetch(`${Configuration.API_URL}/event/past`, {
@@ -467,10 +497,10 @@ const ServerRequest = {
         return response;
     },
 
-    getMonthEvents: async(month, year) => {
+    getMonthEvents: async (month, year) => {
         const response = await ServerRequest.manageToken(async () => {
             const data = await ServerRequest.getTokenAndId();
-            return await fetch(`${Configuration.API_URL}/event/month/${month}/${year}`, {
+            return await fetch(`${Configuration.API_URL}/event/month/${month}/${year}/${data.id}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${data.token}`,
@@ -483,7 +513,7 @@ const ServerRequest = {
     getNextEvent: async () => {
         const response = await ServerRequest.manageToken(async () => {
             const data = await ServerRequest.getTokenAndId();
-            return await fetch(`${Configuration.API_URL}/event/next`, {
+            return await fetch(`${Configuration.API_URL}/event/next/${data.id}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${data.token}`,

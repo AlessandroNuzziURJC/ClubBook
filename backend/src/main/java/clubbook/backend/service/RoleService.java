@@ -1,7 +1,7 @@
 package clubbook.backend.service;
 
 import clubbook.backend.model.Role;
-import clubbook.backend.model.RoleEnum;
+import clubbook.backend.model.enumClasses.RoleEnum;
 import clubbook.backend.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

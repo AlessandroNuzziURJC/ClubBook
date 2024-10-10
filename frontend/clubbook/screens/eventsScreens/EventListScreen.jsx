@@ -11,6 +11,8 @@ const EventListScreen = () => {
     const route = useRoute();
     const { editAndDelete, fetchFutureEvents } = route.params;
     const [refreshing, setRefreshing] = useState(false);
+    const [message, setMessage] = useState("");
+    const [showMessage, setShowMessage] = useState(false);
 
     const fetchEvents = fetchFutureEvents
         ? ServerRequests.getAllFutureEvents
@@ -22,17 +24,18 @@ const EventListScreen = () => {
 
     const getFromServer = async () => {
         const response = await fetchEvents();
+        const result = await response.json();
         if (response.ok) {
-            const result = await response.json();
             setEvents(result.data);
         } else {
-            Alert.alert("Error en la comunicación con el servidor");
+            if (result.message) {
+                setShowMessage(true);
+                setMessage(result.message);
+            } else {
+                Alert.alert("Error en la comunicación con el servidor");
+            }
         }
     }
-
-    useEffect(() => {
-        getFromServer();
-    }, []);
 
     const refreshData = () => {
         setRefreshing(true);
@@ -69,17 +72,20 @@ const EventListScreen = () => {
                     <Text style={styles.pastEvents}>Ver eventos pasados</Text>
                 </TouchableOpacity>
             }
-            <FlatList
-                data={events}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={refreshData}
-                    />
-                }
-                style={styles.alignTop} />
+            {!showMessage ?
+                <FlatList
+                    data={events}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={refreshData}
+                        />
+                    }
+                    style={styles.alignTop} />
+                : <Text style={styles.noEvents}>{message}</Text>
+            }
         </View>
     );
 }
@@ -120,5 +126,10 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 16,
         fontWeight: "bold",
+    },
+    noEvents: {
+        color: 'darkgray',
+        alignSelf: 'center',
+        marginTop: 20
     }
 })

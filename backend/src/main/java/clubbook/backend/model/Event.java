@@ -1,8 +1,10 @@
 package clubbook.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,8 +24,12 @@ public class Event {
     private LocalDate birthYearStart;
     private LocalDate birthYearEnd;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventAttendance> attendances = new ArrayList<>();
 
-    public Event(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd) {
+
+    public Event(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd, List<EventAttendance> attendances) {
         this.id = id;
         this.title = title;
         this.additionalInfo = additionalInfo;
@@ -32,6 +38,7 @@ public class Event {
         this.date = date;
         this.birthYearStart = birthYearStart;
         this.birthYearEnd = birthYearEnd;
+        this.attendances = attendances;
     }
 
     public Event() {
@@ -99,5 +106,13 @@ public class Event {
 
     public void setBirthYearEnd(LocalDate birthYearEnd) {
         this.birthYearEnd = birthYearEnd;
+    }
+
+    public List<EventAttendance> getAttendances() {
+        return attendances;
+    }
+
+    public void setAttendances(List<EventAttendance> attendances) {
+        this.attendances = attendances;
     }
 }

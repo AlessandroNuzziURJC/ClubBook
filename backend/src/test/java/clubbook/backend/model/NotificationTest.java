@@ -1,5 +1,9 @@
 package clubbook.backend.model;
 
+import clubbook.backend.model.enumClasses.RoleEnum;
+import clubbook.backend.model.notification.AttendanceNotificationFactory;
+import clubbook.backend.model.notification.Notification;
+import clubbook.backend.model.notification.NotificationFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 

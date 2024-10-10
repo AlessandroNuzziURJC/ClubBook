@@ -3,6 +3,7 @@ package clubbook.backend.controller;
 import clubbook.backend.model.Season;
 import clubbook.backend.service.AttendanceService;
 import clubbook.backend.service.EventService;
+import clubbook.backend.service.NotificationService;
 import clubbook.backend.service.SeasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,14 @@ public class SeasonController {
     private final SeasonService seasonService;
     private final AttendanceService attendanceService;
     private final EventService eventService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public SeasonController(SeasonService seasonService, AttendanceService attendanceService, EventService eventService) {
+    public SeasonController(SeasonService seasonService, AttendanceService attendanceService, EventService eventService, NotificationService notificationService) {
         this.seasonService = seasonService;
         this.attendanceService = attendanceService;
         this.eventService = eventService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/started")
@@ -48,6 +51,7 @@ public class SeasonController {
         boolean output = seasonService.finishSeason(adminId);
         this.attendanceService.deleteAll();
         this.eventService.deleteAll();
+        this.notificationService.deleteAll();
         return ResponseEntity.ok(output);
     }
 

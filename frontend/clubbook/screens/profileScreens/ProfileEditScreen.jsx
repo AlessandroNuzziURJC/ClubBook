@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ScrollView, View, Text, StyleSheet, Image, TextInput, Alert, TouchableOpacity } from "react-native";
 import Configuration from '../../config/Configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import FormFooter from "../../components/FormFooter";
@@ -195,6 +196,21 @@ const EditProfile = () => {
         handleInputChange("birthday", dateValid);
     };
 
+    const selectImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        if (!result.canceled) {
+            setProfilePicture(result.assets[0].uri);
+            const response = await ServerRequests.updateProfilePicture(result.assets[0].uri);
+            if (!response.ok) {
+                Alert.alert("Error al cambiar la foto de perfil.");
+            }
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -211,10 +227,16 @@ const EditProfile = () => {
                                 </View>
                             )}
                         </View>
-                        <Image
-                            source={profilePicture ? { uri: profilePicture } : require('../../assets/loading.gif')}
-                            style={styles.image}
-                        />
+                        <TouchableOpacity onPress={selectImage} style={styles.imageContainer}>
+                            <Image
+                                source={profilePicture ? { uri: profilePicture } : require('../../assets/loading.gif')}
+                                style={styles.image}
+                            />
+                            <View style={styles.overlay}>
+                                {/* Icono de lápiz blanco */}
+                                <Ionicons name="pencil" size={32} color="white" />
+                            </View>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.labelDataContainer}>
@@ -290,17 +312,8 @@ const EditProfile = () => {
                         </View>
                         <View style={styles.labelDataContainer}>
                             <Text style={styles.label}>Fecha de nacimiento:</Text>
-                            <View style={styles.dataContainer}>
-                                <TouchableOpacity onPress={showDatePicker}>
-                                    <Text>{Functions.convertDateEngToSpa(user.birthday)}</Text>
-                                </TouchableOpacity>
-                                <DateTimePickerModal
-                                    value={selectedDate}
-                                    isVisible={datePickerVisible}
-                                    mode="date"
-                                    onConfirm={handleConfirm}
-                                    onCancel={hideDatePicker}
-                                />
+                            <View style={styles.dataContainerNotMod}>
+                                <Text>{Functions.convertDateEngToSpa(user.birthday)}</Text>
                             </View>
                         </View>
                         <View style={styles.labelDataContainer}>
@@ -333,11 +346,26 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20
     },
+    imageContainer: {
+        position: 'relative',
+        width: 124,
+        height: 124,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     image: {
         width: 124,
         height: 124,
-        justifyContent: 'flex-end',
-        borderRadius: 100
+        borderRadius: 100,
+    },
+    overlay: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)', // Filtro gris transparente
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 100,
     },
     header: {
         width: '100%',
