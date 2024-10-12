@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import Toast from "../../components/Toast";
 import ServerRequests from "../../serverRequests/ServerRequests";
 
-const AttendanceEventSelector = ({ dataEvent }) => {
+const AttendanceEventSelector = ({ dataEvent, blocked }) => {
     const [attendanceEventId, setAttendanceEventId] = useState();
     const [attendance, setAttendance] = useState(null);
     const [isToastVisible, setIsToastVisible] = useState(false);
@@ -33,6 +33,8 @@ const AttendanceEventSelector = ({ dataEvent }) => {
     };
 
     const handleAttendanceSelection = async (selection) => {
+        if (blocked) return; // Si está bloqueado, no hacer nada
+
         const data = await ServerRequests.getTokenAndId();
         const output = {
             eventAttendanceId: attendanceEventId,
@@ -50,6 +52,8 @@ const AttendanceEventSelector = ({ dataEvent }) => {
     };
 
     const handleSelection = (selection) => {
+        if (blocked) return; // Si está bloqueado, no hacer nada
+
         Alert.alert(
             "Confirmar asistencia",
             `¿Estás seguro de cambiar tu asistencia a "${selection === true ? 'Sí' : selection === false ? 'No' : '?'}"?`,
@@ -79,6 +83,7 @@ const AttendanceEventSelector = ({ dataEvent }) => {
                         attendance === true && styles.selectedButton,
                     ]}
                     onPress={() => handleSelection(true)}
+                    disabled={blocked} // Deshabilitar el botón si está bloqueado
                 >
                     <Text style={styles.buttonText}>Sí</Text>
                 </TouchableOpacity>
@@ -88,6 +93,7 @@ const AttendanceEventSelector = ({ dataEvent }) => {
                         attendance === null && styles.selectedButton,
                     ]}
                     onPress={() => handleSelection(null)}
+                    disabled={blocked} // Deshabilitar el botón si está bloqueado
                 >
                     <Text style={styles.buttonText}>?</Text>
                 </TouchableOpacity>
@@ -97,6 +103,7 @@ const AttendanceEventSelector = ({ dataEvent }) => {
                         attendance === false && styles.selectedButton,
                     ]}
                     onPress={() => handleSelection(false)}
+                    disabled={blocked} // Deshabilitar el botón si está bloqueado
                 >
                     <Text style={styles.buttonText}>No</Text>
                 </TouchableOpacity>
@@ -142,6 +149,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
         textAlign: "center",
-        alignSelf: 'center'
+        alignSelf: 'center',
+    },
+    disabledButton: {
+        backgroundColor: "#A9A9A9", // Color gris para los botones deshabilitados
     },
 });

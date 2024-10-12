@@ -23,13 +23,14 @@ public class Event {
     private LocalDate date;
     private LocalDate birthYearStart;
     private LocalDate birthYearEnd;
+    private LocalDate deadline;
 
     @JsonIgnore
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventAttendance> attendances = new ArrayList<>();
 
 
-    public Event(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd, List<EventAttendance> attendances) {
+    public Event(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd, LocalDate deadline, List<EventAttendance> attendances) {
         this.id = id;
         this.title = title;
         this.additionalInfo = additionalInfo;
@@ -38,6 +39,7 @@ public class Event {
         this.date = date;
         this.birthYearStart = birthYearStart;
         this.birthYearEnd = birthYearEnd;
+        this.deadline = deadline;
         this.attendances = attendances;
     }
 
@@ -106,6 +108,14 @@ public class Event {
 
     public void setBirthYearEnd(LocalDate birthYearEnd) {
         this.birthYearEnd = birthYearEnd;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
     }
 
     public List<EventAttendance> getAttendances() {

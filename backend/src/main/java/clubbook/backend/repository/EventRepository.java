@@ -31,4 +31,9 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     @Query("SELECT e FROM Event e WHERE e.date BETWEEN :today AND :dayAfterTomorrow")
     List<Event> findAllEventsInNextTwoDays(@Param("today") LocalDate today, @Param("dayAfterTomorrow") LocalDate dayAfterTomorrow);
 
+    @Query("SELECT e FROM Event e WHERE e.deadline = :today")
+    List<Event> findAllEventsDeadlineToday(LocalDate today);
+
+    @Query("SELECT e FROM Event e WHERE e.deadline = :yesterday")
+    List<Event> findAllEventsInscriptionFinished(LocalDate yesterday);
 }

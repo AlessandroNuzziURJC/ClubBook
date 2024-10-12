@@ -47,13 +47,14 @@ const EventListScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
-            getFromServer();
+            setEvents([]);
+            refreshData();
         }, [])
     );
 
     const renderItem = ({ item }) => {
         return (
-            <EventCard editAndDelete={editAndDelete} data={item} />
+            <EventCard editAndDelete={editAndDelete} data={item} updateScreenWhenDelete={refreshData}/>
         );
     }
 

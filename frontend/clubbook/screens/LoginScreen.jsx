@@ -59,11 +59,11 @@ export default function LogIn() {
                 showToast();
 
                 //Generar token unico unica vez y almacenarlo en AsynStorage
-                const pushToken = await PushNotificationConfiguration.getPushToken();
-                console.log(pushToken);
-                const responsePushToken = await ServerRequests.checkPushNotificationToken(pushToken);
+                //const pushToken = await PushNotificationConfiguration.getPushToken();
+                //console.log(pushToken);
+                //const responsePushToken = await ServerRequests.checkPushNotificationToken(pushToken);
         
-                if (responsePushToken.status === 404) {
+                /*if (responsePushToken.status === 404) {
                     Alert.alert(
                         "Activar notificaciones",
                         "¿Deseas recibir notificaciones de este usuario en este dispositivo?",
@@ -81,7 +81,7 @@ export default function LogIn() {
                         ],
                         { cancelable: false }
                     )
-                }
+                }*/
 
                 switch (role) {
                     case 'ADMINISTRATOR':

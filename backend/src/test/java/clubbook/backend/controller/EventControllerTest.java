@@ -106,7 +106,7 @@ class EventControllerTest {
         this.eventList.add(event3);
 
         this.eventDto = new NewEventDto("Title Event", "Address Event", 1,
-                LocalDate.of(2024,12,3), "Additional Info 1", LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31));
+                LocalDate.of(2024,12,3), "Additional Info 1", LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31), LocalDate.of(2018,12,25));
 
         this.eventController = new EventController(this.eventService, this.seasonService);
     }

@@ -15,6 +15,7 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
     const [event, setEvent] = useState(eventReceived);
     const [nameError, setNameError] = useState(false);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isDeadlinePickerVisible, setDeadlinePickerVisibility] = useState(false); // Para la fecha límite de inscripción
     const [isTypePickerVisible, setTypePickerVisibility] = useState(false);
     const [selectedType, setSelectedType] = useState('');
     const [eventTypes, setEventTypes] = useState([]);
@@ -24,11 +25,12 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
         title: false,
         address: false,
         date: false,
+        deadline: false, // Error para la fecha límite de inscripción
         type: false,
         birthYearStart: false,
         birthYearEnd: false,
     });
-    
+
     const [isToastVisible, setIsToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const showToast = () => {
@@ -40,7 +42,7 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
 
     const validateFields = () => {
         let isValid = true;
-        const newErrors = { title: false, address: false, date: false, type: false, birthYearStart: false, birthYearEnd: false };
+        const newErrors = { title: false, address: false, date: false, deadline: false, type: false, birthYearStart: false, birthYearEnd: false };
 
         // Validar el nombre
         if (!event.title) {
@@ -54,9 +56,15 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
             isValid = false;
         }
 
-        // Validar la fecha
+        // Validar la fecha del evento
         if (!event.date || event.date <= new Date()) {
             newErrors.date = true;
+            isValid = false;
+        }
+
+        // Validar la fecha límite de inscripción
+        if (!event.deadline || event.deadline < new Date() || event.deadline > event.date) {
+            newErrors.deadline = true;
             isValid = false;
         }
 
@@ -66,12 +74,14 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
             isValid = false;
         }
 
-        if (!initYear) {
+        if (!initYear || initYear.toString().length !== 4) {
+            console.log(initYear.length);
             newErrors.birthYearStart = true;
             isValid = false;
         }
 
-        if (!endYear) {
+        if (!endYear || endYear.toString().length !== 4) {
+            console.log('Entro');
             newErrors.birthYearEnd = true;
             isValid = false;
         }
@@ -89,7 +99,6 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
 
     const handleSave = async () => {
         if (validateFields()) {
-            //console.log("Evento guardado:", event);
             const response = await saveFunction(event);
             const result = await response.json();
             const message = result.message;
@@ -116,6 +125,19 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
         hideDatePicker();
     };
 
+    const showDeadlinePicker = () => {
+        setDeadlinePickerVisibility(true); // Mostrar el picker para la fecha límite de inscripción
+    };
+
+    const hideDeadlinePicker = () => {
+        setDeadlinePickerVisibility(false); // Ocultar el picker para la fecha límite de inscripción
+    };
+
+    const handleDeadlineConfirm = (date) => {
+        setEvent({ ...event, deadline: date }); // Guardar la fecha límite de inscripción
+        hideDeadlinePicker();
+    };
+
     const showTypePicker = () => {
         setTypePickerVisibility(true);
     };
@@ -136,7 +158,7 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
     const getFromServer = async () => {
         if (edit) {
             setInitYear(event.birthYearStart.substring(0, 4));
-            setEndYear(event.birthYearEnd.substring(0, 4))
+            setEndYear(event.birthYearEnd.substring(0, 4));
         }
         const response = await ServerRequests.getEventTypes();
         if (response.ok) {
@@ -174,6 +196,7 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
 
                 <View style={styles.inputMargin}>
                     <Text style={styles.label}>Dirección:</Text>
+                    <Text style={styles.info}>Añadir la dirección donde se desarrollará el evento.</Text>
                     <TextInput
                         style={[styles.input, errors.address && styles.errorInput]}
                         placeholder="Dirección del evento"
@@ -182,9 +205,9 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
                     />
                 </View>
 
-
                 <View style={styles.inputMargin}>
                     <Text style={styles.label}>Fecha:</Text>
+                    <Text style={styles.info}>La fecha del evento puede ser cualquier día posterior a hoy.</Text>
                     <TouchableOpacity onPress={showDatePicker} style={[styles.input, errors.date && styles.errorInput]}>
                         <Text>{event.date ? Functions.convertDateEngToSpa(event.date) : "Seleccionar fecha"}</Text>
                     </TouchableOpacity>
@@ -196,10 +219,26 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
                     />
                 </View>
 
+                {/* Fecha límite de inscripción */}
+                <View style={styles.inputMargin}>
+                    <Text style={styles.label}>Fecha límite de inscripción:</Text>
+                    <Text style={styles.info}>El límite de inscripción debe ser posterior a la fecha actual y anterior o igual al evento.</Text>
+                    <TouchableOpacity onPress={showDeadlinePicker} style={[styles.input, errors.deadline && styles.errorInput]}>
+                        <Text>{event.deadline ? Functions.convertDateEngToSpa(event.deadline) : "Seleccionar fecha límite"}</Text>
+                    </TouchableOpacity>
+                    <DateTimePickerModal
+                        isVisible={isDeadlinePickerVisible}
+                        mode="date"
+                        onConfirm={handleDeadlineConfirm}
+                        onCancel={hideDeadlinePicker}
+                    />
+                </View>
+
                 <View style={styles.inputMargin}>
                     <Text style={styles.label}>Tipo de evento:</Text>
+                    <Text style={styles.info}>Seleccionar el tipo de evento que se está registrando.</Text>
                     <TouchableOpacity onPress={showTypePicker} style={[styles.input, errors.type && styles.errorInput]}>
-                        {edit 
+                        {edit
                             ? <Text>{event.type ? Functions.translateEventTypes(event.type.name) : "Seleccionar tipo de evento"}</Text>
                             : <Text>{selectedType ? selectedType : "Seleccionar tipo de evento"}</Text>
                         }
@@ -228,6 +267,7 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
                 </Modal>
 
                 <Text style={styles.label}>Información adicional:</Text>
+                <Text style={styles.info}>Añadir cualquier aspecto que sea de interés para el resto de usuarios.</Text>
                 <TextInput
                     style={styles.multilineInput}
                     placeholder="Información adicional"
@@ -280,15 +320,16 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
                 <FormFooter cancel={{ function: navigation.goBack, text: "Cancelar" }} save={{ function: handleSave, text: "Guardar" }} />
             </View>
             <Toast
-                    visible={isToastVisible}
-                    message={toastMessage}
-                    onClose={() => setIsToastVisible(false)}
-                />
+                visible={isToastVisible}
+                message={toastMessage}
+                onClose={() => setIsToastVisible(false)}
+            />
         </View>
     );
 };
 
 export default EventForm;
+
 
 const styles = StyleSheet.create({
     container: {
@@ -395,5 +436,10 @@ const styles = StyleSheet.create({
     alertMessage: {
         color: 'red',
         marginBottom: 20
+    },
+    info: { 
+        fontSize: 14, 
+        color: 'gray', 
+        marginBottom: 10 
     }
 });

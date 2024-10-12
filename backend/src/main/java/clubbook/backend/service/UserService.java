@@ -86,4 +86,7 @@ public class UserService {
         return this.userRepository.findAllUsersBornBetweenWithRole(birthYearStart, birthYearEnd, role.getName().name());
     }
 
+    public List<User> findAllAdministrators() {
+        return userRepository.findAllAdministrators();
+    }
 }

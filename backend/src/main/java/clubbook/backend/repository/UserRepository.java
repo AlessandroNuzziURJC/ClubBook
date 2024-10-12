@@ -55,4 +55,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                                                @Param("birthYearEnd") LocalDate birthYearEnd,
                                                @Param("roleName") String roleName);
 
+    @Query("SELECT u FROM User u WHERE u.role.name ='ADMINISTRATOR' ORDER BY unaccent(u.firstName) ASC")
+    List<User> findAllAdministrators();
 }

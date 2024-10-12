@@ -5,13 +5,13 @@ import clubbook.backend.model.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class EventInscriptionLimitNotificationFactory extends NotificationFactory{
+public class EventInscriptionFinishedNotificationFactory extends NotificationFactory {
 
     private static final String TITLE = "¡Fin de inscripción!";
-    private static final String CONTENT_PART_1 = "¡Está a punto de finalizar el plazo de inscripción para el evento del día ";
-    private static final String CONTENT_PART_2 = "! ¡Inscríbete!";
+    private static final String CONTENT_PART_1 = "Ha finalizado la inscripción al evento del día ";
+    private static final String CONTENT_PART_2 = ". Consulta los asistentes en la pestaña de eventos.";
 
-    public EventInscriptionLimitNotificationFactory(LocalDate date, User user) {
+    public EventInscriptionFinishedNotificationFactory(LocalDate date, User user) {
         super.notification = new Notification();
         super.notification.setTitle(TITLE);
         super.notification.setDate(date);

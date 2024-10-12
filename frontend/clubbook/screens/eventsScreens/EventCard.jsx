@@ -6,7 +6,7 @@ import Functions from "../../functions/Functions";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import Toast from "../../components/Toast";
 
-const EventCard = ({ editAndDelete, data, onCloseModal }) => {
+const EventCard = ({ editAndDelete, data, onCloseModal, updateScreenWhenDelete }) => {
     const navigation = useNavigation();
 
     const [isToastVisible, setIsToastVisible] = useState(false);
@@ -29,6 +29,9 @@ const EventCard = ({ editAndDelete, data, onCloseModal }) => {
         setIsToastVisible(true);
         setToastMessage(result.message);
         showToast();
+        if (editAndDelete) {
+            updateScreenWhenDelete()
+        }
     };
 
     // Función para mostrar el alert de confirmación

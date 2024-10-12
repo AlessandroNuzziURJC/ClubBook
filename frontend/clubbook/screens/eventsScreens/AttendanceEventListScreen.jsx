@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
-import { View, Text, StyleSheet, SectionList, RefreshControl, Alert } from "react-native";
+import { View, Text, StyleSheet, SectionList, RefreshControl, Alert, TouchableOpacity } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import AttendanceEventStatusComponent from "./AttendanceEventStatusComponent";
 import ServerRequest from "../../serverRequests/ServerRequests";
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const AttendanceEventListScreen = () => {
     const route = useRoute();
@@ -31,7 +33,7 @@ const AttendanceEventListScreen = () => {
 
         const responseTeachers = await ServerRequest.getEventTeachersAttendance(eventId);
         if (responseTeachers.ok) {
-            const responseTeachersData = await responseTeachers.json(); 
+            const responseTeachersData = await responseTeachers.json();
             usersData.teachers = responseTeachersData.data;
         } else {
             Alert.alert('Error en la comunicación al cargar los profesores.');
@@ -65,10 +67,40 @@ const AttendanceEventListScreen = () => {
         </View>
     );
 
+    const handleDownload = async () => {
+        try {
+            const response = await ServerRequest.downloadPdfEventAttendance(eventId);
+            const blobData = await response.blob();
+            
+            const path = `${FileSystem.documentDirectory}attendance_${eventId}.pdf`;
+            const reader = new FileReader();
+    
+            reader.onloadend = async () => {
+                const base64Data = reader.result.split(',')[1];
+                await FileSystem.writeAsStringAsync(path, base64Data, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+    
+                if (await Sharing.isAvailableAsync()) {
+                    await Sharing.shareAsync(path);
+                } else {
+                    console.log('Compartir no disponible');
+                }
+            };
+            reader.readAsDataURL(blobData);
+    
+        } catch (error) {
+            console.error('Error al descargar o abrir el PDF:', error);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.pageTitle}>Asistencia</Text>
+                <TouchableOpacity style={styles.button} onPress={handleDownload}>
+                    <Text style={styles.buttonText}>Descargar PDF</Text>
+                </TouchableOpacity>
             </View>
             <SectionList
                 sections={categorizeUsers(users)}
@@ -127,5 +159,19 @@ const styles = StyleSheet.create({
     },
     listContent: {
         paddingBottom: 20,
-    }
+    },
+    button: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 20,
+        borderColor: '#1162BF',
+        alignItems: 'center',
+        borderWidth: 1
+    },
+    buttonText: {
+        color: '#1162BF',
+        fontSize: 16,
+        fontWeight: '700'
+    },
 });

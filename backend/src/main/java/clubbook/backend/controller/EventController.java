@@ -2,6 +2,8 @@ package clubbook.backend.controller;
 
 import clubbook.backend.dtos.EventDto;
 import clubbook.backend.dtos.NewEventDto;
+import clubbook.backend.model.ClassGroup;
+import clubbook.backend.model.Event;
 import clubbook.backend.model.EventAttendance;
 import clubbook.backend.model.EventType;
 import clubbook.backend.responses.ResponseMessages;
@@ -10,6 +12,8 @@ import clubbook.backend.service.EventAttendanceService;
 import clubbook.backend.service.EventService;
 import clubbook.backend.service.SeasonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -155,5 +159,34 @@ public class EventController {
             return ResponseEntity.badRequest().body(new ResponseWrapper<>(ResponseMessages.EVENT_NOT_FOUND, false));
         }
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.EVENT_DELETED_SUCCESS, true));
+    }
+
+    @GetMapping("/generatepdf/{eventId}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMINISTRATOR')")
+    public ResponseEntity<byte[]> generatePdf(@PathVariable String eventId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String role = authentication.getAuthorities().stream()
+                .findFirst().orElseThrow()
+                .getAuthority();
+
+        byte[] output = new byte[0];
+        if (role.equals("ROLE_ADMINISTRATOR")) {
+            output = this.eventService.generatePdf(Integer.parseInt(eventId));
+        } else if (role.equals("ROLE_TEACHER")) {
+            if (!this.seasonService.seasonStarted()) {
+                return ResponseEntity.badRequest().build();
+            }
+            output = this.eventService.generatePdf(Integer.parseInt(eventId));
+        }
+
+        
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        Event event = eventService.findEvent(Integer.parseInt(eventId));
+        headers.setContentDispositionFormData("filename", "Attendance_Event_" + event.getTitle() + ".pdf");
+
+        return ResponseEntity.ok().headers(headers).body(output);
+
     }
 }

@@ -15,8 +15,9 @@ public class EventDto {
     private LocalDate date;
     private LocalDate birthYearStart;
     private LocalDate birthYearEnd;
+    private LocalDate deadline;
 
-    public EventDto(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd) {
+    public EventDto(int id, String title, String additionalInfo, String address, EventType type, LocalDate date, LocalDate birthYearStart, LocalDate birthYearEnd, LocalDate deadline) {
         this.id = id;
         this.title = title;
         this.additionalInfo = additionalInfo;
@@ -25,6 +26,7 @@ public class EventDto {
         this.date = date;
         this.birthYearStart = birthYearStart;
         this.birthYearEnd = birthYearEnd;
+        this.deadline = deadline;
     }
 
     public EventDto() {
@@ -39,6 +41,7 @@ public class EventDto {
         this.date = event.getDate();
         this.birthYearStart = event.getBirthYearStart();
         this.birthYearEnd = event.getBirthYearEnd();
+        this.deadline = event.getDeadline();
     }
 
     public int getId() {
@@ -103,5 +106,13 @@ public class EventDto {
 
     public void setBirthYearEnd(LocalDate birthYearEnd) {
         this.birthYearEnd = birthYearEnd;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
     }
 }

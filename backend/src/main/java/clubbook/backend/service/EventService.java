@@ -6,21 +6,23 @@ import clubbook.backend.model.Event;
 import clubbook.backend.model.EventAttendance;
 import clubbook.backend.model.EventType;
 import clubbook.backend.model.User;
-import clubbook.backend.model.notification.DeleteEventNotificationFactory;
-import clubbook.backend.model.notification.EventReminderNotificationFactory;
-import clubbook.backend.model.notification.NotificationFactory;
+import clubbook.backend.model.notification.*;
 import clubbook.backend.repository.EventRepository;
 import clubbook.backend.repository.EventTypeRepository;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -53,17 +55,22 @@ public class EventService {
     }
 
     public Boolean save(NewEventDto newEventDto) {
-        Event event = new Event();
-        event.setTitle(newEventDto.getTitle());
-        event.setAddress(newEventDto.getAddress());
         if (newEventDto.getDate().isBefore(LocalDate.now())) {
             return false;
         }
+        if (newEventDto.getDeadline().isBefore(LocalDate.now()) || newEventDto.getDeadline().isAfter(newEventDto.getDate())) {
+            return false;
+        }
+
+        Event event = new Event();
+        event.setTitle(newEventDto.getTitle());
+        event.setAddress(newEventDto.getAddress());
         event.setDate(newEventDto.getDate());
         event.setAdditionalInfo(newEventDto.getAdditionalInfo());
         event.setType(this.eventTypeRepository.findById(newEventDto.getType()).orElseThrow());
         event.setBirthYearStart(newEventDto.getBirthYearStart());
         event.setBirthYearEnd(newEventDto.getBirthYearEnd());
+        event.setDeadline(newEventDto.getDeadline());
         this.eventRepository.save(event);
         this.eventAttendanceService.initializeAttendance(event);
 
@@ -71,15 +78,20 @@ public class EventService {
     }
 
     public Boolean saveEdited(EventDto editEventDto) {
-        Event event = this.eventRepository.findById(editEventDto.getId()).orElseThrow();
-        event.setTitle(editEventDto.getTitle());
-        event.setAddress(editEventDto.getAddress());
         if (editEventDto.getDate().isBefore(LocalDate.now())) {
             return false;
         }
+        if (editEventDto.getDeadline().isBefore(LocalDate.now()) || editEventDto.getDeadline().isAfter(editEventDto.getDate())) {
+            return false;
+        }
+
+        Event event = this.eventRepository.findById(editEventDto.getId()).orElseThrow();
+        event.setTitle(editEventDto.getTitle());
+        event.setAddress(editEventDto.getAddress());
         event.setDate(editEventDto.getDate());
         event.setAdditionalInfo(editEventDto.getAdditionalInfo());
         event.setType(this.eventTypeRepository.findById(editEventDto.getType().getEventTypeId()).orElseThrow());
+        event.setDeadline(editEventDto.getDeadline());
         if (!event.getBirthYearStart().isEqual(editEventDto.getBirthYearStart()) || !event.getBirthYearEnd().isEqual(editEventDto.getBirthYearEnd())) {
             this.eventAttendanceService.updateAttendance(event, editEventDto);
         }
@@ -177,7 +189,7 @@ public class EventService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 5 12 * * ?")
+    @Scheduled(cron = "0 0 12 * * ?")
     public void scheduleEventReminderNotifications() {
         List<Event> events = this.eventRepository.findAllEventsInNextTwoDays(LocalDate.now(), LocalDate.now().plusDays(2));
         for (Event e: events) {
@@ -187,5 +199,120 @@ public class EventService {
                 this.notificationService.save(notificationFactory.getNotification());
             }
         }
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 11 * * ?")
+    public void scheduleEventReminderAttendanceNotifications() {
+        List<Event> events = this.eventRepository.findAllEventsDeadlineToday(LocalDate.now());
+        for (Event e: events) {
+            for (EventAttendance eventAttendance: e.getAttendances()) {
+                NotificationFactory notificationFactory = new EventInscriptionLimitNotificationFactory(e.getDate(), eventAttendance.getUser());
+                notificationFactory.createNotification();
+                this.notificationService.save(notificationFactory.getNotification());
+            }
+        }
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 1 0 * * ?")
+    public void scheduleEventFinishInscriptionNotifications() {
+        List<Event> events = this.eventRepository.findAllEventsInscriptionFinished(LocalDate.now().minusDays(1));
+        List<User> administrators = this.userService.findAllAdministrators();
+        List<User> teachers = this.userService.getAllTeachers();
+
+        for (Event e: events) {
+            for (EventAttendance eventAttendance: e.getAttendances()) {
+                if (eventAttendance.getStatus() == null)
+                    eventAttendance.setStatus(false);
+            }
+            eventRepository.save(e);
+
+            for (User u: administrators) {
+                NotificationFactory notificationFactory = new EventInscriptionFinishedNotificationFactory(e.getDate(), u);
+                notificationFactory.createNotification();
+                this.notificationService.save(notificationFactory.getNotification());
+            }
+
+            for (User u: teachers) {
+                NotificationFactory notificationFactory = new EventInscriptionFinishedNotificationFactory(e.getDate(), u);
+                notificationFactory.createNotification();
+                this.notificationService.save(notificationFactory.getNotification());
+            }
+        }
+
+
+
+    }
+
+    public byte[] generatePdf(int eventId) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4);
+
+        try {
+            Event event = this.eventRepository.findById(eventId).orElseThrow();
+
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            List<EventAttendance> eventAttendances = event.getAttendances();
+
+            List<EventAttendance> attendances = eventAttendances.stream()
+                    .filter(att -> att.getStatus() != null && att.getStatus()).toList();
+
+            List<EventAttendance> pendingAttendances = eventAttendances.stream()
+                    .filter(att -> att.getStatus() == null).toList();
+
+            List<EventAttendance> notAttendances = eventAttendances.stream()
+                    .filter(att -> att.getStatus() != null && !att.getStatus())
+                    .toList();
+
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK);
+            Font subtitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLACK);
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
+            Font indentFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.DARK_GRAY);
+
+            Paragraph eventTitle = new Paragraph("Evento: " + event.getTitle(), titleFont);
+            document.add(eventTitle);
+
+            Paragraph eventDate = new Paragraph("Fecha: " + event.getDate(), normalFont);
+            document.add(eventDate);
+
+            document.add(new Paragraph(" "));
+
+            Paragraph attendeesTitle = new Paragraph("Asistentes:", subtitleFont);
+            document.add(attendeesTitle);
+            for (EventAttendance att : attendances) {
+                Paragraph attendeeName = new Paragraph("-" + att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
+                attendeeName.setIndentationLeft(20);
+                document.add(attendeeName);
+            }
+
+            document.newPage();
+
+            Paragraph pendingAttendeesTitle = new Paragraph("Sin confirmar:", subtitleFont);
+            document.add(pendingAttendeesTitle);
+            for (EventAttendance att : pendingAttendances) {
+                Paragraph attendeeName = new Paragraph("-" + att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
+                attendeeName.setIndentationLeft(20);
+                document.add(attendeeName);
+            }
+
+            document.newPage();
+
+            Paragraph nonAttendeesTitle = new Paragraph("No Asistentes:", subtitleFont);
+            document.add(nonAttendeesTitle);
+            for (EventAttendance att : notAttendances) {
+                Paragraph nonAttendeeName = new Paragraph("-" +  att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
+                nonAttendeeName.setIndentationLeft(20);
+                document.add(nonAttendeeName);
+            }
+
+            document.close();
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+
+        return out.toByteArray();
     }
 }

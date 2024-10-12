@@ -18,7 +18,9 @@ public class NewEventDto {
 
     private LocalDate birthYearEnd;
 
-    public NewEventDto(String title, String address, int type, LocalDate date, String additionalInfo, LocalDate birthYearStart, LocalDate birthYearEnd) {
+    private LocalDate deadline;
+
+    public NewEventDto(String title, String address, int type, LocalDate date, String additionalInfo, LocalDate birthYearStart, LocalDate birthYearEnd, LocalDate deadline) {
         this.title = title;
         this.address = address;
         this.type = type;
@@ -26,6 +28,7 @@ public class NewEventDto {
         this.additionalInfo = additionalInfo;
         this.birthYearStart = birthYearStart;
         this.birthYearEnd = birthYearEnd;
+        this.deadline = deadline;
     }
 
     public NewEventDto() {
@@ -85,5 +88,13 @@ public class NewEventDto {
 
     public void setBirthYearEnd(LocalDate birthYearEnd) {
         this.birthYearEnd = birthYearEnd;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
     }
 }

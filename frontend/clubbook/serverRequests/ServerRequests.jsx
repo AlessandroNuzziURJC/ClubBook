@@ -588,7 +588,20 @@ const ServerRequest = {
             });
         });
         return response;
-    }
+    },
+
+    downloadPdfEventAttendance: async (eventId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/event/generatepdf/${eventId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
 }
 
 export default ServerRequest;

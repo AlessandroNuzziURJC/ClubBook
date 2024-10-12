@@ -11,6 +11,17 @@ const EventInfoScreen = () => {
     const admin = route.params.admin;
     const teacher = route.params.teacher;
 
+    const calculateTimeRemaining = (timestamp) => {
+        const now = new Date();
+        const notificationDate = new Date(timestamp);
+        const daysRemaining = Math.ceil((notificationDate - now) / (1000 * 60 * 60 * 24));
+        return daysRemaining;
+    };
+
+    const isDeadline = () => {
+        return calculateTimeRemaining(event.deadline) < 0;
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -30,11 +41,31 @@ const EventInfoScreen = () => {
                             <TouchableOpacity style={styles.attendanceControlButton} onPress={() => navigation.navigate("AttendanceEvent", { eventId: event.id })}>
                                 <Text style={styles.attendanceControl}>Ver confirmación de asistencia</Text>
                             </TouchableOpacity>
-                            <AttendanceEventSelector dataEvent={event} />
+                            {isDeadline()
+                                ? <View>
+                                    <Text style={styles.deadline}>El periodo de inscripción finalizó</Text>
+                                    <AttendanceEventSelector dataEvent={event} blocked={true}/>
+                                </View>
+                                : <View>
+                                    <Text style={styles.deadline}>¡Quedan {calculateTimeRemaining(event.deadline)} días para inscribirse!</Text>
+                                    <AttendanceEventSelector dataEvent={event} blocked={false}/>
+                                </View>
+                            }
                         </View>
                     }
                     {!admin && !teacher &&
-                        <AttendanceEventSelector dataEvent={event} />
+                        <View>
+                            {isDeadline()
+                                ? <View>
+                                    <Text style={styles.deadline}>El periodo de inscripción finalizó</Text>
+                                    <AttendanceEventSelector dataEvent={event} blocked={true}/>
+                                </View>
+                                : <View>
+                                    <Text style={styles.deadline}>¡Quedan {calculateTimeRemaining(event.deadline)} días para inscribirse!</Text>
+                                    <AttendanceEventSelector dataEvent={event} blocked={false}/>
+                                </View>
+                            }
+                        </View>
                     }
                 </View>
                 <Text style={styles.infoHeader}>Información general</Text>
@@ -68,7 +99,7 @@ const EventInfoScreen = () => {
                 </ScrollView>
 
             </View>
-        </View>
+        </View >
     );
 }
 
@@ -141,5 +172,10 @@ const styles = StyleSheet.create({
     attendanceContainer: {
         backgroundColor: '#ddeeff',
         paddingBottom: 10
+    },
+    deadline: {
+        fontWeight: 'bold',
+        color: 'red',
+        textAlign: 'center'
     }
 });
