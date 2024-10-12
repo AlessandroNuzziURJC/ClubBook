@@ -41,7 +41,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findAllTeachers();
 
     @Query(
-            value = "SELECT * FROM T_USER LEFT OUTER JOIN T_CLASS_GROUP_STUDENTS ON students_id = id WHERE role_fk_id = 1 AND class_group_id IS NULL",
+            value = "SELECT * FROM T_USER LEFT OUTER JOIN T_CLASS_GROUP_STUDENTS ON students_id = id WHERE role_fk_id = 1 AND class_group_id IS NULL ORDER BY first_name; ",
             nativeQuery = true
     )
     List<User> findAllStudentsWithoutClassGroup();

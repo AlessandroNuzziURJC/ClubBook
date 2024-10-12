@@ -184,6 +184,21 @@ const ServerRequest = {
         return response;
     },
 
+    removeStudentsInClassGroup: async (id, studentsIds) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/${id}/removeStudents`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(studentsIds),
+            });
+        });
+        return response;
+    },
+
     getTeachersPage: async (page) => {
         const response = await ServerRequest.manageToken(async () => {
             const data = await ServerRequest.getTokenAndId();

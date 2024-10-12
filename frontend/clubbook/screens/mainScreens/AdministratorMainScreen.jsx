@@ -24,6 +24,8 @@ import NewEventFormScreen from "../eventsScreens/NewEventFormScreen";
 import EditEventFormScreen from "../eventsScreens/EditEventFormScreen";
 import AttendanceEventListScreen from "../eventsScreens/AttendanceEventListScreen";
 import NotificationsScreen from "../notificationsScreens/NotificationScreen";
+import ModifyClassGroupStudent from "../classGroupScreens/ModifyClassGroupStudentsScreen";
+import ClassGroupDeleteStudentScreen from "../classGroupScreens/ClassGroupDeleteStudentScreen";
 
 const HomeStack = createNativeStackNavigator();
 
@@ -69,7 +71,9 @@ const ClassGroupNavigator = () => {
             <ClassStack.Screen name="ClassGroupInfo" component={ClassGroupInfo} />
             <ClassStack.Screen name="UserProfile" component={UserInfoScreen}/>
             <ClassStack.Screen name="EditClassGroup" component={EditClassGroup}/>
+            <ClassStack.Screen name="ModifyClassGroupStudent" component={ModifyClassGroupStudent} />
             <ClassStack.Screen name="ClassGroupAddStudent" component={ClassGroupAddStudent}/>
+            <ClassStack.Screen name="ClassGroupDeleteStudent" component={ClassGroupDeleteStudentScreen} />
         </ClassStack.Navigator>
     );
 };

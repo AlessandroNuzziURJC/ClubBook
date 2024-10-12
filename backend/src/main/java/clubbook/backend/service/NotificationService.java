@@ -31,7 +31,7 @@ public class NotificationService {
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?")
     public void scheduleDeleteOldNotifications() {
-        notificationRepository.deleteByCreatedAtBefore(LocalDate.now().minusDays(30));
+        notificationRepository.deleteByCreatedAtBefore(LocalDate.now().minusDays(7));
     }
 
     public void deleteAll() {

@@ -9,7 +9,7 @@ const Notification = ({ data }) => {
     const calculateTimeRemaining = (timestamp) => {
         const now = new Date();
         const notificationDate = new Date(timestamp.split('T')[0]);
-        const deleteDate = new Date(notificationDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const deleteDate = new Date(notificationDate.getTime() + 7 * 24 * 60 * 60 * 1000);
         const daysRemaining = Math.max(0, Math.ceil((deleteDate - now) / (1000 * 60 * 60 * 24)));
         return daysRemaining;
     };

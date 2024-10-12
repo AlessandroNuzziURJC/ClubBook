@@ -129,4 +129,27 @@ public class ClassGroupService {
         classGroupRepository.save(classGroup);
         return students;
     }
+
+    public List<User> removeStudentsClassGroup(int id, List<Integer> studentsIds) {
+
+        ClassGroup classGroup = classGroupRepository.findById(id).orElseThrow();
+        List<User> students = classGroup.getStudents();
+
+        if (studentsIds.isEmpty()) {
+            return students;
+        }
+
+        Set<Integer> studentsIdsSet = new HashSet<>(studentsIds);
+        Set<User> usersRemove = new HashSet<>();
+
+        for (User user : students) {
+            if (studentsIdsSet.contains(user.getId())) {
+                usersRemove.add(user);
+            }
+        }
+
+        students.removeAll(usersRemove);
+        this.classGroupRepository.save(classGroup);
+        return students;
+    }
 }

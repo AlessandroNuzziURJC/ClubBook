@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ScrollView } from "react-native";
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -5,7 +6,7 @@ import UserCheckboxList from "../../components/UserCheckboxList";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import FormFooter from "../../components/FormFooter";
 
-const ClassGroupAddStudents = () => {
+const ClassGroupDeleteStudentScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { item } = route.params;
@@ -24,22 +25,6 @@ const ClassGroupAddStudents = () => {
             }));
     };
 
-    const getFromServer = async () => {
-        try {
-            const response = await ServerRequests.getAllStudentsWithoutClassGroup();
-
-            if (response.ok) {
-                const result = await response.json();
-                setTotalStudents(result.data);
-            } else {
-                Alert.alert('Error de comunicación con el servidor.');
-            }
-        } catch (error) {
-            Alert.alert('Error de comunicación con el servidor.');
-            console.log(error);
-        }
-    }
-
     const handleSave = async () => {
         const newStudents = totalStudents.filter(item => item.selected);
 
@@ -50,7 +35,7 @@ const ClassGroupAddStudents = () => {
 
         try {
             const updatedClassGroup = { ...classGroup, students: [...classGroup.students, ...newStudents] };
-            const response = await ServerRequests.postNewStudentsInClassGroup(classGroup.id, newStudents.map(item => item.id));
+            const response = await ServerRequests.removeStudentsInClassGroup(classGroup.id, newStudents.map(item => item.id));
 
             if (response.ok) {
                 setClassGroup(updatedClassGroup);
@@ -63,15 +48,14 @@ const ClassGroupAddStudents = () => {
         }
     }
 
-
     useEffect(() => {
-        getFromServer();
+        setTotalStudents(classGroup.students);
     }, [])
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.pageTitle}>Añadir alumno</Text>
+                <Text style={styles.pageTitle}>Quitar alumnos</Text>
             </View>
             <ScrollView style={styles.content}>
                 <UserCheckboxList users={totalStudents} usersError={false} handleSelectUser={handleSelectStudent} />
@@ -81,7 +65,8 @@ const ClassGroupAddStudents = () => {
     );
 }
 
-export default ClassGroupAddStudents;
+export default ClassGroupDeleteStudentScreen;
+
 
 const styles = StyleSheet.create({
     container: {
