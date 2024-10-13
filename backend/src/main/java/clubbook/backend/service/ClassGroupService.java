@@ -11,10 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ClassGroupService {
@@ -144,8 +141,13 @@ public class ClassGroupService {
 
         for (User user : students) {
             if (studentsIdsSet.contains(user.getId())) {
+                studentsIdsSet.remove(user.getId());
                 usersRemove.add(user);
             }
+        }
+
+        if (!studentsIdsSet.isEmpty()) {
+            throw new NoSuchElementException();
         }
 
         students.removeAll(usersRemove);

@@ -1,14 +1,19 @@
 package clubbook.backend.controller;
 
+import clubbook.backend.dtos.EventDto;
 import clubbook.backend.dtos.NewEventDto;
 import clubbook.backend.model.Event;
 import clubbook.backend.model.EventType;
 import clubbook.backend.model.enumClasses.EventTypeEnum;
+import clubbook.backend.model.notification.DeleteEventNotificationFactory;
+import clubbook.backend.model.notification.Notification;
+import clubbook.backend.model.notification.NotificationFactory;
 import clubbook.backend.repository.EventRepository;
 import clubbook.backend.repository.EventTypeRepository;
 import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.EventAttendanceService;
 import clubbook.backend.service.EventService;
+import clubbook.backend.service.NotificationService;
 import clubbook.backend.service.SeasonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,13 +22,15 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class EventControllerTest {
@@ -39,6 +46,9 @@ class EventControllerTest {
 
     @Mock
     private SeasonService seasonService;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private EventService eventService;
@@ -106,7 +116,7 @@ class EventControllerTest {
         this.eventList.add(event3);
 
         this.eventDto = new NewEventDto("Title Event", "Address Event", 1,
-                LocalDate.of(2024,12,3), "Additional Info 1", LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31), LocalDate.of(2018,12,25));
+                LocalDate.now().plusDays(10), "Additional Info 1", LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31), LocalDate.now().plusDays(5));
 
         this.eventController = new EventController(this.eventService, this.seasonService);
     }
@@ -121,7 +131,7 @@ class EventControllerTest {
     }
 
     @Test
-    void saveNewEvent() {
+    void saveNewEventTest() {
         when(this.eventRepository.save(any(Event.class))).thenReturn(null);
         when(this.eventTypeRepository.findById(any(Integer.class))).thenReturn(Optional.of(this.eventTypeMap.get(EventTypeEnum.COMPETITION)));
         ResponseEntity<ResponseWrapper<Boolean>> response = this.eventController.saveNewEvent(this.eventDto);
@@ -129,4 +139,87 @@ class EventControllerTest {
         assertTrue(response.getBody().getData());
     }
 
+    @Test
+    void editEventTest() {
+        EventDto eventDto = new EventDto();
+        eventDto.setId(1);
+        eventDto.setTitle("Title 1");
+        eventDto.setAddress("Address 1");
+        eventDto.setDate(LocalDate.now().plusDays(50));
+        eventDto.setAdditionalInfo("AdditionalInfo 1");
+        eventDto.setBirthYearStart(LocalDate.of(2010, 1, 1));
+        eventDto.setBirthYearEnd(LocalDate.of(2018, 12, 31));
+        eventDto.setType(this.eventTypeMap.get(EventTypeEnum.COMPETITION));
+        eventDto.setDeadline(LocalDate.now().plusDays(20));
+
+        Event event = new Event();
+        event.setId(eventDto.getId());
+        event.setTitle(eventDto.getTitle());
+        event.setAddress(eventDto.getAddress());
+        event.setDate(eventDto.getDate());
+        event.setAdditionalInfo(eventDto.getAdditionalInfo());
+        event.setBirthYearStart(eventDto.getBirthYearStart());
+        event.setBirthYearEnd(eventDto.getBirthYearEnd());
+        event.setType(this.eventTypeMap.get(EventTypeEnum.EXHIBITION));
+        event.setDeadline(eventDto.getDeadline());
+        when(this.eventRepository.save(any(Event.class))).thenReturn(event);
+
+        when(this.eventRepository.findById(eventDto.getId())).thenReturn(Optional.of(event));
+        when(this.eventTypeRepository.findById(eventDto.getType().getEventTypeId())).thenReturn(Optional.of(this.eventTypeMap.get(EventTypeEnum.COMPETITION)));
+
+        ResponseEntity<ResponseWrapper<Boolean>> responseWrapperResponseEntity = this.eventController.editEvent(eventDto);
+        assertEquals(HttpStatus.OK, responseWrapperResponseEntity.getStatusCode());
+        assertTrue(responseWrapperResponseEntity.getBody().getData());
+    }
+
+/*    @Test
+    void getAllEventsTest_Administrator() {
+        when(seasonService.seasonStarted()).thenReturn(true);
+        GrantedAuthority administratorAuthority = mock(GrantedAuthority.class);
+        when(administratorAuthority.getAuthority()).thenReturn("ROLE_ADMINISTRATOR");
+        when(authentication.getAuthorities()).thenReturn((Collection) List.of(administratorAuthority));
+        List<EventDto> eventDtoList = new ArrayList<>();
+        generateEventDtoList(eventDtoList);
+        when(this.eventService.findAllFutureEvents()).thenReturn(eventDtoList);
+
+        ResponseEntity<ResponseWrapper<List<EventDto>>> responseWrapperResponseEntity = this.eventController.getAllEvents(1);
+        assertEquals(HttpStatus.OK, responseWrapperResponseEntity.getStatusCode());
+        assertEquals(eventDtoList, responseWrapperResponseEntity.getBody().getData());
+    }
+
+    private void generateEventDtoList(List<EventDto> eventDtoList) {
+        EventDto eventDto;
+        for (int i = 1; i < 10; i++) {
+            eventDto = new EventDto();
+            eventDto.setId(i);
+            eventDto.setTitle("Title " + i);
+            eventDto.setAddress("Address " + i);
+            eventDto.setDate(LocalDate.now().plusDays(50));
+            eventDto.setAdditionalInfo("AdditionalInfo " + i);
+            eventDto.setBirthYearStart(LocalDate.of(2010, 1, 1));
+            eventDto.setBirthYearEnd(LocalDate.of(2018, 12, 31));
+            eventDto.setType(this.eventTypeMap.get(EventTypeEnum.COMPETITION));
+            eventDto.setDeadline(LocalDate.now().plusDays(20));
+            eventDtoList.add(eventDto);
+        }
+    }*/
+
+    @Test
+    void getAllPastEventsTest() {
+        when(this.eventRepository.findAllByDateBeforeOrderByDateAsc(LocalDate.now())).thenReturn(eventList);
+        ResponseEntity<ResponseWrapper<List<EventDto>>> allPastEvents = this.eventController.getAllPastEvents();
+        assertEquals(HttpStatus.OK, allPastEvents.getStatusCode());
+    }
+
+    @Test
+    void deleteEventTest() {
+        Event event = eventList.get(0);
+        when(this.eventRepository.findById(1)).thenReturn(Optional.of(event));
+        when(this.notificationService.save(any(Notification.class))).thenReturn(null);
+        doNothing().when(this.eventRepository).deleteById(1);
+
+        ResponseEntity<ResponseWrapper<Boolean>> responseWrapperResponseEntity = this.eventController.deleteEvent(1);
+        assertEquals(HttpStatus.OK, responseWrapperResponseEntity.getStatusCode());
+        assertTrue(responseWrapperResponseEntity.getBody().getData());
+    }
 }
