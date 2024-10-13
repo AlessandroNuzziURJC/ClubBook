@@ -1,4 +1,4 @@
-package clubbook.backend.model;
+package clubbook.backend.model.notification;
 
 import jakarta.persistence.*;
 

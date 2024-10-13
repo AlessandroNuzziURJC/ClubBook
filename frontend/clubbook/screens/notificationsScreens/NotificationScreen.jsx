@@ -4,17 +4,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import Notification from "./NotificationComponent";
 import ServerRequest from "../../serverRequests/ServerRequests";
 
-// Mock notification data
-/*const initialNotifications = [
-    { id: 1, title: "Falta de asistencia", date: "2024-09-04T10:00:00Z", content: "El alumno Pedro Pérez Arnautovich no ha asistido a la clase de MMA el día 18 de agosto de 2024." },
-    { id: 2, title: "Título", date: "2024-09-03T10:00:00Z", content: "Lorem Ipsum " },
-    { id: 3, title: "Título", date: "2024-09-02T10:00:00Z", content: "Lorem Ipsum " },
-    { id: 4, title: "Título", date: "2024-09-03T10:00:00Z", content: "Lorem Ipsum " },
-    { id: 5, title: "Título", date: "2024-09-02T10:00:00Z", content: "Lorem Ipsum " },
-    { id: 6, title: "Título", date: "2024-09-03T10:00:00Z", content: "Lorem Ipsum " },
-    { id: 7, title: "Título", date: "2024-09-02T10:00:00Z", content: "Lorem Ipsum " }
-];*/
-
 const NotificationsScreen = () => {
     const [notifications, setNotifications] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -29,8 +18,8 @@ const NotificationsScreen = () => {
     const categorizeNotifications = (notifications) => {
         const today = new Date().toDateString();
 
-        const todayNotifications = notifications.filter(notification => formatDate(notification.date) === today);
-        const previousNotifications = notifications.filter(notification => formatDate(notification.date) !== today);
+        const todayNotifications = notifications.filter(notification => formatDate(notification.createdAt) === today);
+        const previousNotifications = notifications.filter(notification => formatDate(notification.createdAt) !== today);
 
         return [
             { title: "Hoy", data: todayNotifications },

@@ -15,7 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
@@ -110,6 +109,17 @@ public class ClassGroupController {
         }
 
         List<User> users = classGroupService.addNewStudentsClassGroup(id, studentsIds);
+        return ResponseEntity.ok(users);
+    }
+
+    @PutMapping("/{id}/removeStudents")
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
+    public ResponseEntity<List<User>> removeStudentsClassGroup(@PathVariable int id, @RequestBody List<Integer> studentsIds) {
+        if (!this.seasonService.seasonStarted()){
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<User> users = classGroupService.removeStudentsClassGroup(id, studentsIds);
         return ResponseEntity.ok(users);
     }
 }

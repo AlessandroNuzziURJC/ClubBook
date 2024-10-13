@@ -4,6 +4,8 @@ import clubbook.backend.dtos.AttendanceDto;
 import clubbook.backend.dtos.ClassGroupAttendanceDto;
 import clubbook.backend.dtos.UserAttendanceDto;
 import clubbook.backend.model.*;
+import clubbook.backend.model.notification.AttendanceNotificationFactory;
+import clubbook.backend.model.notification.NotificationFactory;
 import clubbook.backend.repository.AttendanceRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;

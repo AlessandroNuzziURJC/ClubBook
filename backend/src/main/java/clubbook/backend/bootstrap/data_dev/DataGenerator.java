@@ -1,9 +1,8 @@
 package clubbook.backend.bootstrap.data_dev;
 
-import clubbook.backend.model.Role;
-import clubbook.backend.model.RoleEnum;
-import clubbook.backend.model.User;
+import clubbook.backend.model.*;
 import clubbook.backend.repository.RoleRepository;
+import clubbook.backend.service.EventService;
 import clubbook.backend.service.RoleService;
 import clubbook.backend.service.UserService;
 import jakarta.annotation.PostConstruct;
@@ -21,10 +20,20 @@ public class DataGenerator {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private EventService eventService;
 
     @PostConstruct
     public void init() {
-        /*
+        /*EventTypeEnum [] eventTypes = EventTypeEnum.values();
+        EventType eventType;
+        for (EventTypeEnum eventTypeEnum : eventTypes) {
+            eventType = new EventType();
+            eventType.setName(eventTypeEnum);
+            eventType.setCreatedAt(new Date());
+            this.eventService.saveEventType(eventType);
+        }
+
         RoleEnum[] rolesEnum = RoleEnum.values();
         Role role;
         for (RoleEnum roleEnumValue : rolesEnum) {

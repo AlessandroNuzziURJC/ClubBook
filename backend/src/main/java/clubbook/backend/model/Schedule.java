@@ -1,5 +1,6 @@
 package clubbook.backend.model;
 
+import clubbook.backend.model.enumClasses.WeekDayEnum;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;

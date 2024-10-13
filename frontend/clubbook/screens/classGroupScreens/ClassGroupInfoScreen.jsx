@@ -110,8 +110,8 @@ const ClassInfo = () => {
     };
 
     // Handle add student action
-    const handleAddStudent = (item) => {
-        navigation.navigate('ClassGroupAddStudent', { item });
+    const handleModifyStudent = (item) => {
+        navigation.navigate('ModifyClassGroupStudent', { item });
     };
 
     return (
@@ -174,8 +174,8 @@ const ClassInfo = () => {
                     <View style={styles.studentsListHeader}>
                         <Text style={styles.labelStudentsList}>Lista de alumnos</Text>
                         {editAndDelete &&
-                            <TouchableOpacity onPress={() => handleAddStudent(classGroup)} style={styles.addButton}>
-                                <Text style={styles.addButtonText}>Añadir alumnos</Text>
+                            <TouchableOpacity onPress={() => handleModifyStudent(classGroup)} style={styles.addButton}>
+                                <Text style={styles.addButtonText}>Modificar alumnos</Text>
                                 <Ionicons name="add-circle-outline" size={20} color="#1162BF" />
                             </TouchableOpacity>
                         }

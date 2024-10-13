@@ -1,7 +1,6 @@
 package clubbook.backend.service;
 
-import clubbook.backend.model.Notification;
-import clubbook.backend.model.User;
+import clubbook.backend.model.notification.Notification;
 import clubbook.backend.repository.NotificationRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +25,16 @@ public class NotificationService {
     }
 
     public List<Notification> findByUserId(int userId) {
-        return this.notificationRepository.findByUserIdOrderByDateDesc(userId);
+        return this.notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * ?")
     public void scheduleDeleteOldNotifications() {
-        System.out.println("Ejecutando...");
-        notificationRepository.deleteByDateBefore(LocalDate.now().minusDays(30));
+        notificationRepository.deleteByCreatedAtBefore(LocalDate.now().minusDays(7));
+    }
+
+    public void deleteAll() {
+        this.notificationRepository.deleteAll();
     }
 }

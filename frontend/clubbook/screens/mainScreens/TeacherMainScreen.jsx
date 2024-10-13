@@ -13,7 +13,42 @@ import TeacherHomeScreen from "../homeScreens/TeacherHomeScreen";
 import AttendanceControlSelector from "../attendanceScreens/AttendanceControlSelectorScreen"
 import AttendanceData from "../attendanceScreens/AttendanceData";
 import AttendanceCheckList from "../attendanceScreens/AttendanceCheckList";
+import CalendarScreen from "../eventsScreens/CalendarScreen";
+import EventListScreen from "../eventsScreens/EventListScreen";
+import EventInfoScreen from "../eventsScreens/EventInfoScreen";
+import AttendanceEventListScreen from "../eventsScreens/AttendanceEventListScreen";
+import NotificationsScreen from "../notificationsScreens/NotificationScreen";
 
+
+const HomeStack = createNativeStackNavigator();
+
+const HomeStackNavigator = () => {
+    return (
+        <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
+            <HomeStack.Screen name="Home" component={TeacherHomeScreen} />
+            <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: true }}/>
+            <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
+            <HomeStack.Screen name='AttendanceCheckList' component={AttendanceCheckList} />
+            <HomeStack.Screen name="Calendar" component={CalendarScreen} initialParams={{ editAndDelete: false }}/>
+            <HomeStack.Screen name="EventList" component={EventListScreen} initialParams={{ editAndDelete: false, fetchFutureEvents: true }}/>
+            <HomeStack.Screen name="PastEventsList" component={EventListScreen} initialParams={{ editAndDelete: false, fetchFutureEvents: false }}/>
+            <HomeStack.Screen name="EventInfoScreen" component={EventInfoScreen} initialParams={{ admin: false, teacher: true }}/>
+            <HomeStack.Screen name="AttendanceEvent" component={AttendanceEventListScreen} />
+        </HomeStack.Navigator>
+    );
+};
+
+const NotificationsStack = createNativeStackNavigator();
+
+const NotificationsStackNavigator = () => {
+    return (
+        <NotificationsStack.Navigator screenOptions={{
+            headerShown: false
+        }} initialRouteName="Notifications">
+            <NotificationsStack.Screen name="Notifications" component={NotificationsScreen} />
+        </NotificationsStack.Navigator>
+    );
+}
 
 const ClassStack = createNativeStackNavigator();
 
@@ -57,18 +92,7 @@ const ProfileStackNavigator = () => {
     );
 };
 
-const HomeStack = createNativeStackNavigator();
 
-const HomeStackNavigator = () => {
-    return (
-        <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
-            <HomeStack.Screen name="Home" component={TeacherHomeScreen} />
-            <HomeStack.Screen name="AttendanceControlSelector" component={AttendanceControlSelector} initialParams={{ checkList: true }}/>
-            <HomeStack.Screen name="AttendanceData" component={AttendanceData} />
-            <HomeStack.Screen name='AttendanceCheckList' component={AttendanceCheckList} />
-        </HomeStack.Navigator>
-    );
-};
 
 const TeacherMainScreen = () => {
     const Tab = createBottomTabNavigator();
@@ -88,7 +112,7 @@ const TeacherMainScreen = () => {
                     <Ionicons name="home" color={color} size={size} />
                 ),
             }} />
-            <Tab.Screen name="Notificaciones" component={HomeStackNavigator} options={{
+            <Tab.Screen name="Notificaciones" component={NotificationsStackNavigator} options={{
                 tabBarIcon: ({ color, size }) => (
                     <Ionicons name="notifications-outline" color={color} size={size} />
                 ),

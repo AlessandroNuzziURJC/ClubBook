@@ -71,8 +71,7 @@ const ClassGroupAddStudents = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.pageTitle}>Añadir alumno: </Text>
-                <Text style={styles.classGroupName}>{classGroup.name}</Text>
+                <Text style={styles.pageTitle}>Añadir alumno</Text>
             </View>
             <ScrollView style={styles.content}>
                 <UserCheckboxList users={totalStudents} usersError={false} handleSelectUser={handleSelectStudent} />

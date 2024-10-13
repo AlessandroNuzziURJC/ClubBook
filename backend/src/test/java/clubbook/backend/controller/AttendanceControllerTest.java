@@ -3,21 +3,19 @@ package clubbook.backend.controller;
 import clubbook.backend.dtos.AttendanceDto;
 import clubbook.backend.dtos.ClassGroupAttendanceDto;
 import clubbook.backend.model.*;
+import clubbook.backend.model.enumClasses.RoleEnum;
+import clubbook.backend.model.notification.Notification;
 import clubbook.backend.repository.AttendanceRepository;
 import clubbook.backend.repository.NotificationRepository;
-import clubbook.backend.responses.AttendanceResponse;
 import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,9 +28,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Sql({"/scripts/roles_dataset.sql", "/scripts/dataset.sql"})
 class AttendanceControllerTest {
 
     @Mock

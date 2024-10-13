@@ -1,7 +1,7 @@
 package clubbook.backend.service;
 
-import clubbook.backend.model.NotificationToken;
-import clubbook.backend.model.NotificationTokenId;
+import clubbook.backend.model.notification.NotificationToken;
+import clubbook.backend.model.notification.NotificationTokenId;
 import clubbook.backend.repository.NotificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,10 @@
-package clubbook.backend.model;
+package clubbook.backend.model.notification;
 
+import clubbook.backend.model.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "T_Notification")
@@ -14,6 +16,8 @@ public class Notification {
 
     private String title;
 
+    private LocalDateTime createdAt;
+
     private LocalDate date;
 
     private String content;
@@ -23,9 +27,10 @@ public class Notification {
 
     public Notification() {}
 
-    public Notification(int id, String title, LocalDate date, String content, User user) {
+    public Notification(int id, String title, LocalDateTime createdAt, LocalDate date, String content, User user) {
         this.id = id;
         this.title = title;
+        this.createdAt = createdAt;
         this.date = date;
         this.content = content;
         this.user = user;
@@ -45,6 +50,14 @@ public class Notification {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDate getDate() {

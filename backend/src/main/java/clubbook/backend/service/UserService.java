@@ -1,5 +1,6 @@
 package clubbook.backend.service;
 
+import clubbook.backend.model.Role;
 import clubbook.backend.model.User;
 import clubbook.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,5 +80,13 @@ public class UserService {
 
     public List<User> addNewStudentsClassGroup() {
         return null;
+    }
+
+    public List<User> findUserBornBetween(LocalDate birthYearStart, LocalDate birthYearEnd, Role role) {
+        return this.userRepository.findAllUsersBornBetweenWithRole(birthYearStart, birthYearEnd, role.getName().name());
+    }
+
+    public List<User> findAllAdministrators() {
+        return userRepository.findAllAdministrators();
     }
 }

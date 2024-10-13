@@ -5,16 +5,13 @@ import clubbook.backend.dtos.ScheduleDto;
 import clubbook.backend.model.ClassGroup;
 import clubbook.backend.model.Schedule;
 import clubbook.backend.model.User;
-import clubbook.backend.model.WeekDayEnum;
+import clubbook.backend.model.enumClasses.WeekDayEnum;
 import clubbook.backend.repository.ClassGroupRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ClassGroupService {
@@ -127,6 +124,34 @@ public class ClassGroupService {
         }
         classGroup.setStudents(students);
         classGroupRepository.save(classGroup);
+        return students;
+    }
+
+    public List<User> removeStudentsClassGroup(int id, List<Integer> studentsIds) {
+
+        ClassGroup classGroup = classGroupRepository.findById(id).orElseThrow();
+        List<User> students = classGroup.getStudents();
+
+        if (studentsIds.isEmpty()) {
+            return students;
+        }
+
+        Set<Integer> studentsIdsSet = new HashSet<>(studentsIds);
+        Set<User> usersRemove = new HashSet<>();
+
+        for (User user : students) {
+            if (studentsIdsSet.contains(user.getId())) {
+                studentsIdsSet.remove(user.getId());
+                usersRemove.add(user);
+            }
+        }
+
+        if (!studentsIdsSet.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        students.removeAll(usersRemove);
+        this.classGroupRepository.save(classGroup);
         return students;
     }
 }

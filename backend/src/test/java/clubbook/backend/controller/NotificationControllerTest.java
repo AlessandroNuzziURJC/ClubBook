@@ -1,6 +1,8 @@
 package clubbook.backend.controller;
 
 import clubbook.backend.model.*;
+import clubbook.backend.model.enumClasses.RoleEnum;
+import clubbook.backend.model.notification.*;
 import clubbook.backend.repository.NotificationRepository;
 import clubbook.backend.repository.NotificationTokenRepository;
 import clubbook.backend.service.NotificationService;
@@ -18,6 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
 
 class NotificationControllerTest {
 

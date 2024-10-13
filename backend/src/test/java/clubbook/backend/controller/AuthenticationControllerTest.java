@@ -3,7 +3,7 @@ package clubbook.backend.controller;
 import clubbook.backend.dtos.LoginUserDto;
 import clubbook.backend.dtos.RegisterUserDto;
 import clubbook.backend.model.Role;
-import clubbook.backend.model.RoleEnum;
+import clubbook.backend.model.enumClasses.RoleEnum;
 import clubbook.backend.model.User;
 import clubbook.backend.repository.UserRepository;
 import clubbook.backend.responses.LoginResponse;
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 class AuthenticationControllerTest {
 
     @Mock

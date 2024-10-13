@@ -86,7 +86,8 @@ const SeasonControlScreen = () => {
             </View>
             <View style={styles.infoSection}>
                 <Text style={styles.description}>
-                    Gestiona el inicio y la finalización de una temporada fácilmente. Si la temporada no está en curso, gran parte de la funcionalidad del sistema estará inaccesible para los usuarios profesores y alumnos.
+                    Gestiona el inicio y la finalización de una temporada. Si la temporada no está en curso, gran parte de la funcionalidad del sistema estará inaccesible para los usuarios profesores y alumnos.
+                    Finalizar una temporada conlleva el borrado de todas las notificaciones pendientes de eliminar, todos los eventos y todas la asistencias registradas en el sistema.
                 </Text>
             </View>
             <View>

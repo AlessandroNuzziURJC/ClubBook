@@ -1,5 +1,7 @@
 package clubbook.backend.model;
 
+import clubbook.backend.model.enumClasses.RoleEnum;
+import clubbook.backend.model.enumClasses.WeekDayEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 

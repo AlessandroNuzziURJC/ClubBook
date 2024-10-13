@@ -2,7 +2,6 @@ package clubbook.backend.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import java.nio.file.Paths;
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql({"/scripts/roles_dataset.sql", "/scripts/dataset.sql"})
-class UsersControllerTest {
+class UsersControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

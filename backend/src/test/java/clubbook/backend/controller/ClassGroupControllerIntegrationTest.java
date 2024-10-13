@@ -416,4 +416,62 @@ public class ClassGroupControllerIntegrationTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void removeStudentsClassGroupUserNotLogged() throws Exception {
+        String jsonRequest = "[6, 7, 8]";
+        mockMvc.perform(post("/1/removeStudents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "teststudent1@gmail.com", roles = {"STUDENT"})
+    void removeStudentsClassGroupUserStudent() throws Exception {
+        String jsonRequest = "[6, 7, 8]";
+        mockMvc.perform(put("/1/removeStudents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "testteacher1@gmail.com", roles = {"TEACHER"})
+    void removeStudentsClassGroupUserTeacher() throws Exception {
+        String jsonRequest = "[6, 7, 8]";
+        mockMvc.perform(put("/1/removeStudents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
+    void removeStudentsClassGroupUserAdministrator() throws Exception {
+        String jsonRequest = "[6, 7, 8]";
+        mockMvc.perform(put("/1/removeStudents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
+    void removeStudentsClassGroupUserAdministrator_classgroupNotFound() throws Exception {
+        String jsonRequest = "[6, 7, 8]";
+        mockMvc.perform(put("/915/removeStudents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "testadministrator1@gmail.com", roles = {"ADMINISTRATOR"})
+    void removeStudentsClassGroupUserAdministrator_studentNotFound() throws Exception {
+        String jsonRequest = "[6, 7, 813484]";
+        mockMvc.perform(put("/1/removeStudents")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isNotFound());
+    }
 }
