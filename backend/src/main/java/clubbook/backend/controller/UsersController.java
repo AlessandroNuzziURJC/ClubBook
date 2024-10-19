@@ -8,6 +8,7 @@ import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.SeasonService;
 import clubbook.backend.service.UserService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -92,6 +93,21 @@ public class UsersController {
     public ResponseEntity<ResponseWrapper<List<User>>> getTeachersListFilteredByName(@RequestParam String search) {
         List<User> list = userService.getTeachersListFilteredByName(search);
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, list));
+    }
+
+    @PreAuthorize(("hasAnyRole('ADMINISTRATOR')"))
+    @GetMapping("/administrator/all/{id}")
+    public ResponseEntity<ResponseWrapper<List<User>>> getAllAdministrators(@PathVariable String id) {
+        return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.userService.findAllAdministratorsExceptId(Integer.parseInt(id))));
+    }
+
+    @PreAuthorize(("hasAnyRole('ADMINISTRATOR')"))
+    @DeleteMapping("/administrator/{id}")
+    public ResponseEntity<ResponseWrapper<Boolean>> deleteAdministrator(@PathVariable Integer id) {
+        if (this.seasonService.seasonStarted()) {
+            return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.userService.changeStatusUser(id)));
+        }
+        return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.userService.deleteAdministrator(id)));
     }
 
     @GetMapping("/{id}/me")

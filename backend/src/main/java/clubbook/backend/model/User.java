@@ -53,6 +53,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private boolean partner;
 
+    @Column(nullable = false)
+    private boolean allowedAccess = true;
+
     @JsonIgnore
     @Column(name = "profile_picture", columnDefinition="BYTEA", nullable = false)
     private byte[] profilePicture;
@@ -121,6 +124,10 @@ public class User implements UserDetails {
         return profilePicture;
     }
 
+    public boolean isAllowedAccess() {
+        return allowedAccess;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -167,6 +174,10 @@ public class User implements UserDetails {
 
     public void setProfilePicture(byte[] profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public void setAllowedAccess(boolean allowedAccess) {
+        this.allowedAccess = allowedAccess;
     }
 
     @Override

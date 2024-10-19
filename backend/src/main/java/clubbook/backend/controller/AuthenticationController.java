@@ -10,6 +10,7 @@ import clubbook.backend.service.AuthenticationService;
 import clubbook.backend.service.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +27,13 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     @PostMapping("/signup")
     public ResponseEntity<ResponseWrapper<User>> register(@Valid @RequestBody RegisterUserDto registerUserDto) {
+        System.out.println(registerUserDto.toString());
         User registeredUser = authenticationService.signup(registerUserDto);
         if (registeredUser == null)
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(new ResponseWrapper<>(ResponseMessages.INCORRECT_REGISTER, null));
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.CORRECT_REGISTER, registeredUser));
     }
 

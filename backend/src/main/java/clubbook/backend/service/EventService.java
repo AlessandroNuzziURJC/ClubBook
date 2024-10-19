@@ -207,9 +207,11 @@ public class EventService {
         List<Event> events = this.eventRepository.findAllEventsDeadlineToday(LocalDate.now());
         for (Event e: events) {
             for (EventAttendance eventAttendance: e.getAttendances()) {
+                if (eventAttendance.getStatus()) {
                 NotificationFactory notificationFactory = new EventInscriptionLimitNotificationFactory(e.getDate(), eventAttendance.getUser());
                 notificationFactory.createNotification();
                 this.notificationService.save(notificationFactory.getNotification());
+                }
             }
         }
     }

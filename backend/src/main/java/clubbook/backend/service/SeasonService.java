@@ -2,6 +2,7 @@ package clubbook.backend.service;
 
 import clubbook.backend.model.Season;
 import clubbook.backend.repository.SeasonRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +37,13 @@ public class SeasonService {
         return true;
     }
 
+    @Transactional
     public boolean finishSeason(int adminId) {
         Season season = this.seasonRepository.findByActive(true);
         season.setActive(false);
         season.setAdminFinisher(this.userService.findById(adminId));
         season.setFinish(LocalDate.now());
+        this.userService.removeUsers();
         this.seasonRepository.save(season);
         return true;
     }
