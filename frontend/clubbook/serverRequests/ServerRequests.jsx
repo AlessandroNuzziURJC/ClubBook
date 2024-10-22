@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ServerRequest = {
 
-    checkPushNotificationToken: async (pushToken) => {
+    /*checkPushNotificationToken: async (pushToken) => {
         const data = await ServerRequest.getTokenAndId();
         return await fetch(`${Configuration.API_URL}/notification/token/${data.id}?notificationToken=${pushToken}`, {
             method: 'GET',
@@ -27,7 +27,37 @@ const ServerRequest = {
                 'token': "hola"  // Cambié "hola" por el token real
             })
         })
+    },*/
+
+    signUpUser: async (newUser) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/auth/signup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(newUser),
+            });
+        });
+        return response;
+
     },
+
+    /*signUpCSV: async (formData) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/auth/signupcsv`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                },
+            });
+        });
+        return response;
+    },*/
 
     logIn: async (email, password) => {
         return await fetch(`${Configuration.API_URL}/auth/login`, {
@@ -108,8 +138,8 @@ const ServerRequest = {
 
             formData.append('image', {
                 uri: imageUri,
-                type: blob.type,  
-                name: 'profilePicture.jpg' 
+                type: blob.type,
+                name: 'profilePicture.jpg'
             });
 
             const token = await AsyncStorage.getItem('userToken');
@@ -118,7 +148,7 @@ const ServerRequest = {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data' 
+                    'Content-Type': 'multipart/form-data'
                 },
                 body: formData
             });
@@ -237,6 +267,33 @@ const ServerRequest = {
                     'Authorization': `Bearer ${data.token}`,
                 }
             });
+        });
+        return response;
+    },
+
+    getAllAdministrators: async () => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/administrator/all/${data.id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    deleteUser: async (id) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/user/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            })
         });
         return response;
     },

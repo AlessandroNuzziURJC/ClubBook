@@ -20,10 +20,10 @@ const AdministratorHomeScreen = () => {
                     <Ionicons name="checkmark-circle-outline" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Asistencias</Text>
                 </TouchableOpacity>
-                <View style={styles.element}>
+                <TouchableOpacity style={styles.element} onPress={() => navigation.navigate('UserManagementScreen')}>
                     <Ionicons name="swap-horizontal-outline" size={25} color="#1162BF" style={styles.icon} />
-                    <Text style={styles.elementText}>Gestionar sustituciones</Text>
-                </View>
+                    <Text style={styles.elementText}>Gestionar usuarios</Text>
+                </TouchableOpacity>
                 <TouchableOpacity  style={styles.element} onPress={() => navigation.navigate('Calendar')}>
                     <Ionicons name="calendar" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Eventos</Text>
@@ -61,8 +61,7 @@ const styles = StyleSheet.create({
         borderColor: '#1162BF',
         borderWidth: 1,
         borderRadius: 10,
-        marginTop: 10,
-        marginBottom: 10,
+        marginBottom: 20,
         alignItems: 'center',
     },
     elementText: {

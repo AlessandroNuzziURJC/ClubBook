@@ -11,12 +11,14 @@ const UserListSelector = () => {
             <View style={styles.header}>
                 <Text style={styles.pageTitle}>Listas disponibles</Text>
             </View>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UsersScreen', { key: 'teacher' })}>
-                <Text style={styles.buttonText}>Lista de profesores</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UsersScreen', { key: 'student' })}>
-                <Text style={styles.buttonText}>Lista de alumnos</Text>
-            </TouchableOpacity>
+            <View style={styles.content}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UsersScreen', { key: 'teacher' })}>
+                    <Text style={styles.buttonText}>Lista de profesores</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UsersScreen', { key: 'student' })}>
+                    <Text style={styles.buttonText}>Lista de alumnos</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -54,5 +56,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         color: '#1162BF'
+    },
+    content: {
+        marginTop: 20
     }
 });

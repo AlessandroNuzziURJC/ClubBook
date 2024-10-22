@@ -25,7 +25,26 @@ const Functions = {
     },
 
     convertDateSpaToEng: (date) => {
-        const [day, month, year] = date.split('/');
+        let [day, month, year] = date.split('/');
+        if (day.length === 1) {
+            day = '0' + day;
+        }
+
+        if (month.length === 1) {
+            month = '0' + month;
+        }
+        return `${year}-${month}-${day}`;
+    },
+
+    convertCSVDate: (date) => {
+        let [month, day, year] = date.split('/');
+        if (day.length === 1) {
+            day = '0' + day;
+        }
+
+        if (month.length === 1) {
+            month = '0' + month;
+        }
         return `${year}-${month}-${day}`;
     },
 
@@ -51,6 +70,18 @@ const Functions = {
             case 'COMPETITION': return 'Competición';
             case 'EXHIBITION': return 'Exhibición';
             case 'TRAINING': return 'Entrenamiento';
+            default: return '';
+        }
+    },
+    
+    translateRole: (role) => {
+        switch (role) {
+            case 'administrator':
+                return 'administrador';
+            case 'teacher':
+                return 'profesor';
+            case 'student':
+                return 'alumno';
             default: return '';
         }
     }

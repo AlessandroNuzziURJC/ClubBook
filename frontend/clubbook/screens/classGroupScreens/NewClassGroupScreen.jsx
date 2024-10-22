@@ -21,7 +21,7 @@ const NewClass = () => {
                 Alert.alert('Error de comunicación con el servidor.');
             } else {
                 const updatedClassGroup = await response.json();
-                navigation.navigate('ClassGroupLists', { classGroup: updatedClassGroup });
+                navigation.navigate('ClassGroupLists', { classGroup: updatedClassGroup.data });
             }
         } catch (error) {
             Alert.alert('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
