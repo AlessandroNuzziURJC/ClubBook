@@ -70,10 +70,6 @@ public class ClassGroupController {
     @PostMapping("/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ResponseWrapper<ClassGroup>> createClassGroup(@Valid @RequestBody RegisterClassGroupDto registerClassGroupDto) {
-        if (!this.seasonService.seasonStarted()){
-            return ResponseEntity.badRequest().body(new ResponseWrapper<>(ResponseMessages.SEASON_NOT_STARTED, null));
-        }
-
         ClassGroup classGroup = classGroupService.create(registerClassGroupDto);
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.CORRECT_REGISTER, classGroup));
     }
@@ -81,10 +77,6 @@ public class ClassGroupController {
     @DeleteMapping("/{id}/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity deleteClassGroup(@PathVariable int id) {
-        if (!this.seasonService.seasonStarted()){
-            return ResponseEntity.badRequest().build();
-        }
-
         classGroupService.delete(id);
         return ResponseEntity.ok().build();
     }
@@ -92,10 +84,6 @@ public class ClassGroupController {
     @PutMapping("/{id}/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ClassGroup> modifyClassGroup(@Valid @RequestBody RegisterClassGroupDto classGroupDto, @PathVariable int id) {
-        if (!this.seasonService.seasonStarted()){
-            return ResponseEntity.badRequest().build();
-        }
-
         ClassGroup classGroup = classGroupService.findById(id);
         ClassGroup newClassGroup = classGroupService.update(classGroup, classGroupDto);
         return ResponseEntity.ok(newClassGroup);
@@ -104,10 +92,6 @@ public class ClassGroupController {
     @PostMapping("/{id}/addStudents")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<User>> addNewStudentsClassGroup(@PathVariable int id, @RequestBody List<Integer> studentsIds) {
-        if (!this.seasonService.seasonStarted()){
-            return ResponseEntity.badRequest().build();
-        }
-
         List<User> users = classGroupService.addNewStudentsClassGroup(id, studentsIds);
         return ResponseEntity.ok(users);
     }
@@ -115,10 +99,6 @@ public class ClassGroupController {
     @PutMapping("/{id}/removeStudents")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<User>> removeStudentsClassGroup(@PathVariable int id, @RequestBody List<Integer> studentsIds) {
-        if (!this.seasonService.seasonStarted()){
-            return ResponseEntity.badRequest().build();
-        }
-
         List<User> users = classGroupService.removeStudentsClassGroup(id, studentsIds);
         return ResponseEntity.ok(users);
     }

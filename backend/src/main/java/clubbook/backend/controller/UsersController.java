@@ -102,12 +102,20 @@ public class UsersController {
     }
 
     @PreAuthorize(("hasAnyRole('ADMINISTRATOR')"))
-    @DeleteMapping("/administrator/{id}")
-    public ResponseEntity<ResponseWrapper<Boolean>> deleteAdministrator(@PathVariable Integer id) {
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<ResponseWrapper<Boolean>> deleteUser(@PathVariable Integer id) {
         if (this.seasonService.seasonStarted()) {
-            return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.userService.changeStatusUser(id)));
+            if (this.userService.changeStatusUser(id)) {
+                return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, true));
+            } else {
+                return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.UNABLE_TO_DELETE, false));
+            }
         }
-        return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.userService.deleteAdministrator(id)));
+        if (this.userService.deleteUser(id)) {
+            return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, true));
+        } else {
+            return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.UNABLE_TO_DELETE, false));
+        }
     }
 
     @GetMapping("/{id}/me")

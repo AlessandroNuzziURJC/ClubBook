@@ -32,10 +32,17 @@ public class DataGenerator {
     private EventService eventService;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private AuthenticationService authenticationService;
 
     @PostConstruct
     public void init() throws IOException {
+        if (roleRepository.count() != 0) {
+            return ;
+        }
+
         EventTypeEnum[] eventTypes = EventTypeEnum.values();
         EventType eventType;
         for (EventTypeEnum eventTypeEnum : eventTypes) {

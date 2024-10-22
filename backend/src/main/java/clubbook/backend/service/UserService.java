@@ -1,7 +1,9 @@
 package clubbook.backend.service;
 
+import clubbook.backend.model.ClassGroup;
 import clubbook.backend.model.Role;
 import clubbook.backend.model.User;
+import clubbook.backend.repository.ClassGroupRepository;
 import clubbook.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ClassGroupRepository classGroupRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -95,15 +100,35 @@ public class UserService {
         return this.userRepository.findAllAdministratorsExceptId(id);
     }
 
-    public Boolean changeStatusUser(Integer id) {
+    private User extractUser(Integer id) {
         User user = this.userRepository.findById(id).orElseThrow();
+        List<ClassGroup> classGroups;
+        classGroups = this.classGroupRepository.findByStudentId(id);
+        if (!classGroups.isEmpty()) {
+            return null;
+        }
+        classGroups = this.classGroupRepository.findByTeacherId(id);
+        if (!classGroups.isEmpty()) {
+            return null;
+        }
+        return user;
+    }
+
+    public Boolean changeStatusUser(Integer id) {
+        User user = this.extractUser(id);
+        if (user == null) {
+            return false;
+        }
         user.setAllowedAccess(false);
         this.userRepository.save(user);
         return true;
     }
 
-    public Boolean deleteAdministrator(Integer id) {
-        User user = this.userRepository.findById(id).orElseThrow();
+    public Boolean deleteUser(Integer id) {
+        User user = this.extractUser(id);
+        if (user == null) {
+            return false;
+        }
         this.userRepository.delete(user);
         return true;
     }

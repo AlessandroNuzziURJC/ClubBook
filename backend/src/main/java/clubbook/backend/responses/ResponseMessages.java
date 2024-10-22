@@ -15,5 +15,8 @@ public class ResponseMessages {
     public static final String EVENT_NOT_FOUND = "El evento no se ha encontrado";
     public static final String EVENT_DELETED_SUCCESS = "Evento eliminado correctamente";
     public static final String ATTENDANCE_UPDATED = "Asistencia actualizada";
-
+    public static final String UNABLE_TO_DELETE = "El usuario está enlazado a alguna clase como <rol>, " +
+            "impidiendo su eliminación. Retírelo de la clase para proceder a su eliminación.";
+    public static final String FILE_IS_EMPTY = "El archivo no se encontrado";
+    public static final String FILE_LOADED_SUCCESSFULLY = "Archivo guardado correctamente";
 }
