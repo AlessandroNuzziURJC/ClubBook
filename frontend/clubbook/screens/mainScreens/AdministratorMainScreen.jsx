@@ -26,6 +26,10 @@ import AttendanceEventListScreen from "../eventsScreens/AttendanceEventListScree
 import NotificationsScreen from "../notificationsScreens/NotificationScreen";
 import ModifyClassGroupStudent from "../classGroupScreens/ModifyClassGroupStudentsScreen";
 import ClassGroupDeleteStudentScreen from "../classGroupScreens/ClassGroupDeleteStudentScreen";
+import UserManagementScreen from "../administratorUserManagement/UserManagementScreen";
+import NewUserFormScreen from "../administratorUserManagement/NewUserFormScreen";
+import AdministratorListScreen from "../administratorUserManagement/AdministratorListScreen";
+import DeleteUsersListScreen from "../administratorUserManagement/DeleteUsersListScreen";
 
 const HomeStack = createNativeStackNavigator();
 
@@ -43,6 +47,10 @@ const HomeStackNavigator = () => {
             <HomeStack.Screen name="PastEventsList" component={EventListScreen} initialParams={{ editAndDelete: false, fetchFutureEvents: false }}/>
             <HomeStack.Screen name="EventInfoScreen" component={EventInfoScreen} initialParams={{ admin: true, teacher: false }}/>
             <HomeStack.Screen name="AttendanceEvent" component={AttendanceEventListScreen} />
+            <HomeStack.Screen name="UserManagementScreen" component={UserManagementScreen} />
+            <HomeStack.Screen name="NewUserFormScreen" component={NewUserFormScreen} />
+            <HomeStack.Screen name="AdministratorListScreen" component={AdministratorListScreen} />
+            <HomeStack.Screen name="DeleteUsersListScreen" component={DeleteUsersListScreen} />
         </HomeStack.Navigator>
     );
 };

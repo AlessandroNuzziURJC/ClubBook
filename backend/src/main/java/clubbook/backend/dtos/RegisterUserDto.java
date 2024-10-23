@@ -3,6 +3,7 @@ package clubbook.backend.dtos;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
@@ -25,6 +26,7 @@ public class RegisterUserDto {
     private String lastName;
 
     @NotBlank(message = "Phone number is mandatory")
+    @Pattern(regexp = "^[0-9]{9}$", message = "Phone number should be 9 digits")
     private String phoneNumber;
 
     @NotNull(message = "Birthday is mandatory")

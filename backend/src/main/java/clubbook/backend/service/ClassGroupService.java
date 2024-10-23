@@ -154,4 +154,12 @@ public class ClassGroupService {
         this.classGroupRepository.save(classGroup);
         return students;
     }
+
+    public List<ClassGroup> searchClassGroupByStudent(User user) {
+        return this.classGroupRepository.findByStudentId(user.getId());
+    }
+
+    public List<ClassGroup> searchClassGroupByTeacher(User user) {
+        return this.classGroupRepository.findByTeacherId(user.getId());
+    }
 }

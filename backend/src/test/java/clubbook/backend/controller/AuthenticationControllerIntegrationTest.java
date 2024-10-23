@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,6 +44,7 @@ public class AuthenticationControllerIntegrationTest {
 
     @Transactional
     @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
     public void testCreateUserCorrect() throws Exception {
         String userJson = "{"
                 + "\"email\": \"student@prueba.com\","
@@ -83,6 +85,7 @@ public class AuthenticationControllerIntegrationTest {
 
     @Transactional
     @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
     public void testLoginUserCorrect() throws Exception {
         String userJson = "{"
                 + "\"email\": \"student@prueba.com\","
@@ -115,6 +118,7 @@ public class AuthenticationControllerIntegrationTest {
 
     @Transactional
     @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
     public void testLoginUserIncorrect() throws Exception {
         String userJson = "{"
                 + "\"email\": \"student@prueba.com\","
@@ -148,6 +152,7 @@ public class AuthenticationControllerIntegrationTest {
 
     @Transactional
     @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
     public void testLogoutUserCorrect() throws Exception {
         String userJson = "{"
                 + "\"email\": \"student@prueba.com\","

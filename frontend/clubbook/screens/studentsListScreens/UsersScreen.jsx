@@ -34,10 +34,10 @@ const UsersScreen = () => {
                 setHasMore(!responseData.data.last);
             } else if (response.status === 400) {
                 const responseData = await response.json();
-                setEmptyMessage('No hay alumnos disponibles.\n' + responseData.message);
+                setEmptyMessage('No hay usuarios disponibles.\n' + responseData.message);
                 return;
             } else {
-                setEmptyMessage('No hay alumnos disponibles.\n');
+                setEmptyMessage('No hay usuarios disponibles.\n');
                 Alert.alert('Error', 'Error al cargar los datos.');
                 return;
             }

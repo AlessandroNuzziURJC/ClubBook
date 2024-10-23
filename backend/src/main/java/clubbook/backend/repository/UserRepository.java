@@ -17,44 +17,49 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u WHERE u.role.name ='STUDENT' ORDER BY unaccent(u.firstName) ASC")
+    @Query("SELECT u FROM User u WHERE u.role.name ='STUDENT' AND u.allowedAccess ORDER BY unaccent(u.firstName) ASC")
     Page<User> findAllStudentsByOrderByNameAsc(Pageable pageable);
 
     @Query(
-            value = "SELECT * FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'STUDENT' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod)) ORDER BY unaccent(u.first_name) ASC;",
-            countQuery = "SELECT count(*) FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'STUDENT' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod));",
+            value = "SELECT * FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'STUDENT' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod)) AND u.allowed_access ORDER BY unaccent(u.first_name) ASC;",
+            countQuery = "SELECT count(*) FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'STUDENT' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod)) AND u.allowed_access;",
             nativeQuery = true
     )
     List<User> findAllStudentsByOrderByNameAscWithSearch(String searchMod);
 
-    @Query("SELECT u FROM User u WHERE u.role.name ='TEACHER' ORDER BY unaccent(u.firstName) ASC")
+    @Query("SELECT u FROM User u WHERE u.role.name ='TEACHER' AND u.allowedAccess ORDER BY unaccent(u.firstName) ASC")
     Page<User> findAllTeachersByOrderByNameAsc(Pageable pageable);
 
     @Query(
-            value = "SELECT * FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'TEACHER' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod)) ORDER BY unaccent(u.first_name) ASC;",
-            countQuery = "SELECT count(*) FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'TEACHER' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod));",
+            value = "SELECT * FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'TEACHER' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod)) AND u.allowed_access ORDER BY unaccent(u.first_name) ASC;",
+            countQuery = "SELECT count(*) FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id WHERE r.name = 'TEACHER' AND (unaccent(u.first_name) ILIKE unaccent(:searchMod) OR unaccent(u.last_name) ILIKE unaccent(:searchMod)) AND u.allowed_access;",
             nativeQuery = true
     )
     List<User> findAllTeachersByOrderByNameAscWithSearch(String searchMod);
 
-    @Query("SELECT u FROM User u WHERE u.role.name ='TEACHER' ORDER BY unaccent(u.firstName) ASC")
+    @Query("SELECT u FROM User u WHERE u.role.name ='TEACHER' AND u.allowedAccess ORDER BY unaccent(u.firstName) ASC")
     List<User> findAllTeachers();
 
     @Query(
-            value = "SELECT * FROM T_USER LEFT OUTER JOIN T_CLASS_GROUP_STUDENTS ON students_id = id WHERE role_fk_id = 1 AND class_group_id IS NULL ORDER BY first_name; ",
+            value = "SELECT * FROM T_USER LEFT OUTER JOIN T_CLASS_GROUP_STUDENTS ON students_id = id WHERE role_fk_id = 1 AND class_group_id IS NULL AND allowed_access ORDER BY first_name; ",
             nativeQuery = true
     )
     List<User> findAllStudentsWithoutClassGroup();
 
     @Query(
             value = "SELECT u.* FROM T_user u JOIN T_role r ON u.role_fk_id = r.role_id " +
-                    "WHERE r.name = :roleName AND u.birthday BETWEEN :birthYearStart AND :birthYearEnd ;",
+                    "WHERE r.name = :roleName AND u.birthday BETWEEN :birthYearStart AND :birthYearEnd AND u.allowed_access;",
             nativeQuery = true
     )
     List<User> findAllUsersBornBetweenWithRole(@Param("birthYearStart") LocalDate birthYearStart,
                                                @Param("birthYearEnd") LocalDate birthYearEnd,
                                                @Param("roleName") String roleName);
 
-    @Query("SELECT u FROM User u WHERE u.role.name ='ADMINISTRATOR' ORDER BY unaccent(u.firstName) ASC")
+    @Query("SELECT u FROM User u WHERE u.role.name ='ADMINISTRATOR' AND u.allowedAccess ORDER BY unaccent(u.firstName) ASC")
     List<User> findAllAdministrators();
+
+    @Query("SELECT u FROM User u WHERE u.role.name ='ADMINISTRATOR' AND u.id != 1 AND u.id != :id AND u.allowedAccess ORDER BY unaccent(u.firstName) ASC")
+    List<User> findAllAdministratorsExceptId(int id);
+
+    void deleteByAllowedAccessFalse();
 }
