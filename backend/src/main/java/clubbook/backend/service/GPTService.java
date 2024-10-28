@@ -5,6 +5,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,11 +17,12 @@ import static com.theokanning.openai.utils.TikTokensUtil.ModelEnum.GPT_3_5_TURBO
 @Service
 public class GPTService {
 
-    private static final String TOKEN = "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";
+    @Value("${my.secret.token}")
+    private String token;
     private OpenAiService openAiService;
 
     public GPTService() {
-        this.openAiService = new OpenAiService(TOKEN);
+        this.openAiService = new OpenAiService(token);
     }
 
     public String generateResponse(String prompt) throws Exception {
