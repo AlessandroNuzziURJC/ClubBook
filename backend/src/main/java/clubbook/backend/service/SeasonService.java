@@ -1,5 +1,6 @@
 package clubbook.backend.service;
 
+import clubbook.backend.model.ClassGroup;
 import clubbook.backend.model.Season;
 import clubbook.backend.repository.SeasonRepository;
 import jakarta.transaction.Transactional;
@@ -7,17 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class SeasonService {
 
     private final SeasonRepository seasonRepository;
     private final UserService userService;
+    private final ClassGroupService classGroupService;
+    private final NotebookService notebookService;
 
     @Autowired
-    public SeasonService(SeasonRepository seasonRepository, UserService userService) {
+    public SeasonService(SeasonRepository seasonRepository, UserService userService, ClassGroupService classGroupService, NotebookService notebookService) {
         this.seasonRepository = seasonRepository;
         this.userService = userService;
+        this.classGroupService = classGroupService;
+        this.notebookService = notebookService;
     }
 
     public boolean seasonStarted() {
@@ -34,6 +40,11 @@ public class SeasonService {
         season.setActive(true);
         season.setAdminCreator(this.userService.findById(adminId));
         this.seasonRepository.save(season);
+
+        List<ClassGroup> allClassGroups = this.classGroupService.getAllClassGroups();
+        for (ClassGroup c : allClassGroups) {
+            this.notebookService.createNotebook(c);
+        }
         return true;
     }
 
@@ -45,6 +56,8 @@ public class SeasonService {
         season.setFinish(LocalDate.now());
         this.userService.removeUsers();
         this.seasonRepository.save(season);
+
+        this.notebookService.deleteAllNotebooks();
         return true;
     }
 }

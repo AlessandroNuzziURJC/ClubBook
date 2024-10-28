@@ -18,6 +18,10 @@ import EventListScreen from "../eventsScreens/EventListScreen";
 import EventInfoScreen from "../eventsScreens/EventInfoScreen";
 import AttendanceEventListScreen from "../eventsScreens/AttendanceEventListScreen";
 import NotificationsScreen from "../notificationsScreens/NotificationScreen";
+import NotebookMainScreen from "../notebookScreens/NotebookMainScreen";
+import ClassGroupAgendaScreen from "../notebookScreens/ClassGroupAgendaScreen";
+import VirtualAssistantConfigFormScreen from "../notebookScreens/VirtualAssistantConfigFormScreen";
+import AgendaScreen from "../notebookScreens/AgendaScreen";
 
 
 const HomeStack = createNativeStackNavigator();
@@ -34,6 +38,10 @@ const HomeStackNavigator = () => {
             <HomeStack.Screen name="PastEventsList" component={EventListScreen} initialParams={{ editAndDelete: false, fetchFutureEvents: false }}/>
             <HomeStack.Screen name="EventInfoScreen" component={EventInfoScreen} initialParams={{ admin: false, teacher: true }}/>
             <HomeStack.Screen name="AttendanceEvent" component={AttendanceEventListScreen} />
+            <HomeStack.Screen name="NotebookMainScreen" component={NotebookMainScreen} />
+            <HomeStack.Screen name="ClassGroupAgendaScreen" component={ClassGroupAgendaScreen} />
+            <HomeStack.Screen name="VirtualAssistantConfigFormScreen" component={VirtualAssistantConfigFormScreen} />
+            <HomeStack.Screen name={"AgendaScreen"} component={AgendaScreen} />
         </HomeStack.Navigator>
     );
 };

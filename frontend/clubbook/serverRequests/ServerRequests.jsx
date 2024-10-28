@@ -45,20 +45,6 @@ const ServerRequest = {
 
     },
 
-    /*signUpCSV: async (formData) => {
-        const response = await ServerRequest.manageToken(async () => {
-            const data = await ServerRequest.getTokenAndId();
-            return await fetch(`${Configuration.API_URL}/auth/signupcsv`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Authorization': `Bearer ${data.token}`,
-                },
-            });
-        });
-        return response;
-    },*/
-
     logIn: async (email, password) => {
         return await fetch(`${Configuration.API_URL}/auth/login`, {
             method: 'POST',
@@ -674,6 +660,146 @@ const ServerRequest = {
         });
         return response;
     },
+
+    getNotebooks: async () => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/all`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getNotebookById: async (notebookId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/${notebookId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    getTodayEntryByNotebookId: async (notebookId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/entry/today/${notebookId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            });
+        });
+        return response;
+    },
+
+    updateNotebookAIConfiguration: async (notebookData) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/config`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(notebookData)
+            });
+        });
+        return response;
+    },
+
+    addNotebookEntry: async (entry, notebookId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/entry/${notebookId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(entry)
+            });
+        });
+        return response;
+    },
+
+    getNotebookEntries: async (notebookId, page) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/entry/${notebookId}?pageNumber=${page}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+            });
+        });
+        return response;
+    },
+
+    deleteEntry: async (notebookEntryId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/entry/${notebookEntryId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${data.token}`,
+                }
+            })
+        });
+        return response;
+    },
+
+    editNotebookEntry: async (editEntry) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/entry`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+                body: JSON.stringify(editEntry),
+            });
+        });
+        return response;
+    },
+
+    getInvalidDates: async (notebookId) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/invalidDates/${notebookId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+            });
+        });
+        return response;
+    },
+
+    generateEntry: async (notebookId, date) => {
+        const response = await ServerRequest.manageToken(async () => {
+            const data = await ServerRequest.getTokenAndId();
+            return await fetch(`${Configuration.API_URL}/notebook/generateEntry/${notebookId}?date=${date}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${data.token}`,
+                },
+            });
+        });
+        return response;
+    }
+
 }
 
 export default ServerRequest;

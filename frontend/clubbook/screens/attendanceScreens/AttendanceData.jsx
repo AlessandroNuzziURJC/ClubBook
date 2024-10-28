@@ -41,7 +41,7 @@ const AttendanceData = () => {
     ]);
 
     const adaptNameView = (name) => {
-        if (name.length > 18)
+        if (name.length >= 18)
             return name.substring(0, 16) + '...'
         return name;
     }

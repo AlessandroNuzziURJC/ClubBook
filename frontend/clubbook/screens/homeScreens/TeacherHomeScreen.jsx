@@ -16,14 +16,10 @@ const TeacherHomeScreen = () => {
                     <Ionicons name="checkmark-circle-outline" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Control de asistencia</Text>
                 </TouchableOpacity>
-                <View style={styles.element}>
+                <TouchableOpacity style={styles.element} onPress={() => navigation.navigate('NotebookMainScreen')}>
                     <Ionicons name="book" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Agenda</Text>
-                </View>
-                <View style={styles.element}>
-                    <Ionicons name="swap-horizontal-outline" size={25} color="#1162BF" style={styles.icon} />
-                    <Text style={styles.elementText}>Solicitar sustitución</Text>
-                </View>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.element} onPress={() => navigation.navigate('Calendar')}>
                     <Ionicons name="calendar" size={25} color="#1162BF" style={styles.icon} />
                     <Text style={styles.elementText}>Eventos</Text>

@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 16,
-        color: '#555',
+        color: '#666',
         marginBottom: 10,
     },
     startButton: {

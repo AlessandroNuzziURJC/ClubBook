@@ -7,6 +7,7 @@ import clubbook.backend.model.Schedule;
 import clubbook.backend.model.User;
 import clubbook.backend.model.enumClasses.WeekDayEnum;
 import clubbook.backend.repository.ClassGroupRepository;
+import clubbook.backend.repository.NotebookRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,14 @@ public class ClassGroupService {
     private final ClassGroupRepository classGroupRepository;
     private final UserService userService;
     private final ScheduleService scheduleService;
+    private final NotebookService notebookService;
 
     @Autowired
-    public ClassGroupService(ClassGroupRepository classGroupRepository, UserService userService, ScheduleService scheduleService) {
+    public ClassGroupService(ClassGroupRepository classGroupRepository, UserService userService, ScheduleService scheduleService, NotebookService notebookService) {
         this.classGroupRepository = classGroupRepository;
         this.userService = userService;
         this.scheduleService = scheduleService;
+        this.notebookService = notebookService;
     }
 
     public List<ClassGroup> getAllClassGroups() {
@@ -54,7 +57,7 @@ public class ClassGroupService {
         classGroup.setSchedules(schedules);
         classGroup.setStudents(new ArrayList<>());
 
-        classGroupRepository.save(classGroup);
+        this.classGroupRepository.save(classGroup);
 
         return classGroup;
     }
