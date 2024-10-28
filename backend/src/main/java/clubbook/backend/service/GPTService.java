@@ -5,6 +5,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +18,16 @@ import static com.theokanning.openai.utils.TikTokensUtil.ModelEnum.GPT_3_5_TURBO
 @Service
 public class GPTService {
 
-    @Value("${my.secret.token}")
+    @Value("${token}")
     private String token;
     private OpenAiService openAiService;
 
-    public GPTService() {
+    @PostConstruct
+    public void init() {
         this.openAiService = new OpenAiService(token);
     }
 
-    public String generateResponse(String prompt) throws Exception {
+        public String generateResponse(String prompt) throws Exception {
         List<ChatMessage> messages = new ArrayList<>();
         String promptJsonFormat = "Devuelve únicamente un objeto JSON en español en el siguiente formato y sin ningún texto adicional ni caracteres especiales: " +
                 "{\n" +
