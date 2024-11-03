@@ -7,6 +7,7 @@ import clubbook.backend.model.enumClasses.RoleEnum;
 import clubbook.backend.model.notification.Notification;
 import clubbook.backend.repository.AttendanceRepository;
 import clubbook.backend.repository.NotificationRepository;
+import clubbook.backend.responses.ResponseMessages;
 import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -155,5 +156,25 @@ class AttendanceControllerTest {
         when(seasonService.seasonStarted()).thenReturn(Boolean.TRUE);
         ResponseEntity<ResponseWrapper<ClassGroupAttendanceDto>> attendances = this.attendanceController.getAttendances("1", "1");
         assertEquals(HttpStatus.OK, attendances.getStatusCode());
+    }
+
+    @Test
+    void seasonNOtStarted() {
+        when(seasonService.seasonStarted()).thenReturn(Boolean.FALSE);
+
+        ResponseEntity<ResponseWrapper<AttendanceDto>> responseWrapperResponseEntity = this.attendanceController.saveAttendances(new AttendanceDto());
+        assertEquals(HttpStatus.BAD_REQUEST, responseWrapperResponseEntity.getStatusCode());
+        assertNull(responseWrapperResponseEntity.getBody().getData());
+        assertEquals(ResponseMessages.SEASON_NOT_STARTED, responseWrapperResponseEntity.getBody().getMessage());
+
+        ResponseEntity<ResponseWrapper<ClassGroupAttendanceDto>> attendances = this.attendanceController.getAttendances("1", "1");
+        assertEquals(HttpStatus.BAD_REQUEST, attendances.getStatusCode());
+        assertNull(attendances.getBody().getData());
+        assertEquals(ResponseMessages.SEASON_NOT_STARTED, attendances.getBody().getMessage());
+
+        ResponseEntity<byte[]> responseEntity = this.attendanceController.generatePdf("1");
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+
+
     }
 }

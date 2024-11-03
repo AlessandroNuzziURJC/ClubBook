@@ -69,12 +69,16 @@ public class EventAttendanceService {
 
     public List<EventAttendance> getEventAttendanceStudents(int eventId) {
         Role role = roleService.findByName(RoleEnum.STUDENT);
-        return this.eventAttendanceRepository.findByEventIdAndUserRole(eventId, role);
+        List<EventAttendance> eventAttendances = this.eventAttendanceRepository.findByEventIdAndUserRole(eventId, role);
+
+        return eventAttendances.stream().filter(item -> item.getUser().isAllowedAccess()).toList();
     }
 
     public List<EventAttendance> getEventAttendanceTeachers(int eventId) {
         Role role = roleService.findByName(RoleEnum.TEACHER);
-        return this.eventAttendanceRepository.findByEventIdAndUserRole(eventId, role);
+        List<EventAttendance> eventAttendances = this.eventAttendanceRepository.findByEventIdAndUserRole(eventId, role);
+
+        return eventAttendances.stream().filter(item -> item.getUser().isAllowedAccess()).toList();
     }
 
     public void updateAttendance(Event event, EventDto eventDto) {

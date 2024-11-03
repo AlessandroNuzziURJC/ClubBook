@@ -11,10 +11,7 @@ import clubbook.backend.model.notification.NotificationFactory;
 import clubbook.backend.repository.EventRepository;
 import clubbook.backend.repository.EventTypeRepository;
 import clubbook.backend.responses.ResponseWrapper;
-import clubbook.backend.service.EventAttendanceService;
-import clubbook.backend.service.EventService;
-import clubbook.backend.service.NotificationService;
-import clubbook.backend.service.SeasonService;
+import clubbook.backend.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -46,6 +43,9 @@ class EventControllerTest {
 
     @Mock
     private SeasonService seasonService;
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private NotificationService notificationService;
@@ -140,6 +140,28 @@ class EventControllerTest {
     }
 
     @Test
+    void saveNewEventWrongTest() {
+        NewEventDto wrongEventDto = new NewEventDto("Title Event", "Address Event", 1,
+                LocalDate.now().minusDays(10), "Additional Info 1", LocalDate.of(2010, 1, 1), LocalDate.of(2018,12,31), LocalDate.now().plusDays(5));
+        when(this.eventRepository.save(any(Event.class))).thenReturn(null);
+        when(this.eventTypeRepository.findById(any(Integer.class))).thenReturn(Optional.of(this.eventTypeMap.get(EventTypeEnum.COMPETITION)));
+
+        ResponseEntity<ResponseWrapper<Boolean>> response = this.eventController.saveNewEvent(wrongEventDto);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+
+        wrongEventDto.setDate(LocalDate.now().plusDays(10));
+        wrongEventDto.setDeadline((LocalDate.now().minusDays(1)));
+
+        response = this.eventController.saveNewEvent(wrongEventDto);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+
+        wrongEventDto.setDeadline((LocalDate.now().plusDays(12)));
+
+        response = this.eventController.saveNewEvent(wrongEventDto);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
     void editEventTest() {
         EventDto eventDto = new EventDto();
         eventDto.setId(1);
@@ -170,6 +192,36 @@ class EventControllerTest {
         ResponseEntity<ResponseWrapper<Boolean>> responseWrapperResponseEntity = this.eventController.editEvent(eventDto);
         assertEquals(HttpStatus.OK, responseWrapperResponseEntity.getStatusCode());
         assertTrue(responseWrapperResponseEntity.getBody().getData());
+    }
+
+    @Test
+    void editEventWrongTest() {
+        EventDto eventDto = new EventDto();
+        eventDto.setId(1);
+        eventDto.setTitle("Title 1");
+        eventDto.setAddress("Address 1");
+        eventDto.setDate(LocalDate.now().minusDays(50));
+        eventDto.setAdditionalInfo("AdditionalInfo 1");
+        eventDto.setBirthYearStart(LocalDate.of(2010, 1, 1));
+        eventDto.setBirthYearEnd(LocalDate.of(2018, 12, 31));
+        eventDto.setType(this.eventTypeMap.get(EventTypeEnum.COMPETITION));
+        eventDto.setDeadline(LocalDate.now().plusDays(20));
+        when(this.eventRepository.save(any(Event.class))).thenReturn(null);
+        when(this.eventTypeRepository.findById(any(Integer.class))).thenReturn(Optional.of(this.eventTypeMap.get(EventTypeEnum.COMPETITION)));
+
+        ResponseEntity<ResponseWrapper<Boolean>> response = this.eventController.editEvent(eventDto);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+
+        eventDto.setDate(LocalDate.now().plusDays(10));
+        eventDto.setDeadline((LocalDate.now().minusDays(1)));
+
+        response = this.eventController.editEvent(eventDto);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+
+        eventDto.setDeadline((LocalDate.now().plusDays(12)));
+
+        response = this.eventController.editEvent(eventDto);
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 
 /*    @Test

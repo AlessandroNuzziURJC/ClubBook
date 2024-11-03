@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -40,10 +39,6 @@ public class EventService {
         this.eventAttendanceService = eventAttendanceService;
         this.userService = userService;
         this.notificationService = notificationService;
-    }
-
-    public List<Event> getAllEvents() {
-        return eventRepository.findAll();
     }
 
     public List<EventType> getEventTypes() {
@@ -114,7 +109,7 @@ public class EventService {
         return null;
     }
 
-    public boolean deleteEvent(Integer eventId) {
+    public void deleteEvent(Integer eventId) {
         Event event = this.eventRepository.findById(eventId).orElseThrow();
         for(EventAttendance eventAttendance : event.getAttendances()) {
             NotificationFactory notificationFactory = new DeleteEventNotificationFactory(event.getDate(), eventAttendance.getUser());
@@ -122,7 +117,6 @@ public class EventService {
             this.notificationService.save(notificationFactory.getNotification());
         }
         this.eventRepository.deleteById(eventId);
-        return true;
     }
 
     public List<EventDto> findAllPastEvents() {
@@ -260,13 +254,18 @@ public class EventService {
             List<EventAttendance> eventAttendances = event.getAttendances();
 
             List<EventAttendance> attendances = eventAttendances.stream()
-                    .filter(att -> att.getStatus() != null && att.getStatus()).toList();
+                    .filter(att -> att.getStatus() != null && att.getStatus())
+                    .filter(item -> item.getUser().isAllowedAccess())
+                    .toList();
 
             List<EventAttendance> pendingAttendances = eventAttendances.stream()
-                    .filter(att -> att.getStatus() == null).toList();
+                    .filter(att -> att.getStatus() == null)
+                    .filter(item -> item.getUser().isAllowedAccess())
+                    .toList();
 
             List<EventAttendance> notAttendances = eventAttendances.stream()
                     .filter(att -> att.getStatus() != null && !att.getStatus())
+                    .filter(item -> item.getUser().isAllowedAccess())
                     .toList();
 
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK);
@@ -285,7 +284,7 @@ public class EventService {
             Paragraph attendeesTitle = new Paragraph("Asistentes:", subtitleFont);
             document.add(attendeesTitle);
             for (EventAttendance att : attendances) {
-                Paragraph attendeeName = new Paragraph("-" + att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
+                Paragraph attendeeName = new Paragraph("-" + att.getUser().getRole().getName().name() + ": " + att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
                 attendeeName.setIndentationLeft(20);
                 document.add(attendeeName);
             }
@@ -295,7 +294,7 @@ public class EventService {
             Paragraph pendingAttendeesTitle = new Paragraph("Sin confirmar:", subtitleFont);
             document.add(pendingAttendeesTitle);
             for (EventAttendance att : pendingAttendances) {
-                Paragraph attendeeName = new Paragraph("-" + att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
+                Paragraph attendeeName = new Paragraph("-" + att.getUser().getRole().getName().name() + ": " + att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
                 attendeeName.setIndentationLeft(20);
                 document.add(attendeeName);
             }
@@ -305,7 +304,7 @@ public class EventService {
             Paragraph nonAttendeesTitle = new Paragraph("No Asistentes:", subtitleFont);
             document.add(nonAttendeesTitle);
             for (EventAttendance att : notAttendances) {
-                Paragraph nonAttendeeName = new Paragraph("-" +  att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
+                Paragraph nonAttendeeName = new Paragraph("-" + att.getUser().getRole().getName().name() + ": " + att.getUser().getFirstName() + " " + att.getUser().getLastName(), indentFont);
                 nonAttendeeName.setIndentationLeft(20);
                 document.add(nonAttendeeName);
             }

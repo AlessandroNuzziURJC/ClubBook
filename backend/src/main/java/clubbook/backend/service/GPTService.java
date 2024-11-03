@@ -27,7 +27,7 @@ public class GPTService {
         this.openAiService = new OpenAiService(token);
     }
 
-        public String generateResponse(String prompt) throws Exception {
+    public String generateResponse(String prompt) throws Exception {
         List<ChatMessage> messages = new ArrayList<>();
         String promptJsonFormat = "Devuelve únicamente un objeto JSON en español en el siguiente formato y sin ningún texto adicional ni caracteres especiales: " +
                 "{\n" +

@@ -154,10 +154,7 @@ public class EventController {
     @DeleteMapping("/{eventId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ResponseWrapper<Boolean>> deleteEvent(@PathVariable Integer eventId) {
-        boolean output = this.eventService.deleteEvent(eventId);
-        if (!output) {
-            return ResponseEntity.badRequest().body(new ResponseWrapper<>(ResponseMessages.EVENT_NOT_FOUND, false));
-        }
+        this.eventService.deleteEvent(eventId);
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.EVENT_DELETED_SUCCESS, true));
     }
 

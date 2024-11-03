@@ -73,23 +73,6 @@ public class AttendanceService {
         return attendanceDto;
     }
 
-    public Attendance saveAttendance(Attendance attendance) {
-        this.attendanceRepository.save(attendance);
-        return attendance;
-    }
-
-    private List<UserAttendanceDto> getUserAttendanceDtos(int year, int month, int classGroup) {
-        List<Object[]> results = attendanceRepository.findAllUserAttendanceDtoRaw(year, month, classGroup);
-        return results.stream().map(result ->
-                new UserAttendanceDto(
-                        (Integer) result[0],
-                        (String) result[1],
-                        (String) result[2],
-                        Arrays.asList((Boolean[]) result[3])
-                )
-        ).collect(Collectors.toList());
-    }
-
     private List<LocalDate> getClassDates(int month, int classGroup) {
         List<java.sql.Date> sqlDates = attendanceRepository.getClassDates(month, classGroup);
         return sqlDates.stream()

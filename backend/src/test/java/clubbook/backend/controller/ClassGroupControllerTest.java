@@ -8,6 +8,8 @@ import clubbook.backend.model.Schedule;
 import clubbook.backend.model.User;
 import clubbook.backend.model.enumClasses.RoleEnum;
 import clubbook.backend.model.enumClasses.WeekDayEnum;
+import clubbook.backend.responses.ResponseMessages;
+import clubbook.backend.responses.ResponseWrapper;
 import clubbook.backend.service.ClassGroupService;
 import clubbook.backend.service.SeasonService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -143,6 +148,9 @@ class ClassGroupControllerTest {
 
         when(this.classGroupService.getAllClassGroups()).thenReturn(this.classGroups);
         assertEquals(HttpStatus.OK, this.classGroupController.getAllClassGroups().getStatusCode());
+
+        when(this.classGroupService.getAllClassGroups()).thenReturn(null);
+        assertEquals(HttpStatus.NOT_FOUND, this.classGroupController.getAllClassGroups().getStatusCode());
     }
 
     @Test
@@ -154,6 +162,9 @@ class ClassGroupControllerTest {
 
         when(this.classGroupService.getClassGroup(1)).thenReturn(this.classGroups.get(0));
         assertEquals(HttpStatus.OK, this.classGroupController.getClassGroup(1).getStatusCode());
+
+        when(this.classGroupService.getClassGroup(1)).thenReturn(null);
+        assertEquals(HttpStatus.NOT_FOUND, this.classGroupController.getClassGroup(1).getStatusCode());
     }
 
     @Test
@@ -225,4 +236,32 @@ class ClassGroupControllerTest {
         assertEquals(HttpStatus.OK, this.classGroupController.addNewStudentsClassGroup(1, List.of(s1.getId(), s3.getId())).getStatusCode());
 
     }
+
+    @Test
+    void seasonNotStarted() {
+        SecurityContext securityContext = mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+
+        when(this.seasonService.seasonStarted()).thenReturn(false);
+
+        GrantedAuthority teacherAuthority = mock(GrantedAuthority.class);
+        when(teacherAuthority.getAuthority()).thenReturn("ROLE_TEACHER");
+        when(authentication.getAuthorities()).thenReturn((Collection) List.of(teacherAuthority));
+
+        ResponseEntity<ResponseWrapper<List<ClassGroup>>> allClassGroups = this.classGroupController.getAllClassGroups();
+        assertEquals(HttpStatus.BAD_REQUEST, allClassGroups.getStatusCode());
+        assertEquals(ResponseMessages.SEASON_NOT_STARTED, allClassGroups.getBody().getMessage());
+        assertNull(allClassGroups.getBody().getData());
+
+        ResponseEntity<ResponseWrapper<ClassGroup>> classGroup = this.classGroupController.getClassGroup(1);
+        assertEquals(HttpStatus.BAD_REQUEST, classGroup.getStatusCode());
+        assertEquals(ResponseMessages.SEASON_NOT_STARTED, classGroup.getBody().getMessage());
+        assertNull(classGroup.getBody().getData());
+
+        SecurityContextHolder.clearContext();
+    }
+
 }

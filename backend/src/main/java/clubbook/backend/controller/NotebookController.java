@@ -28,7 +28,7 @@ import java.util.Set;
 public class NotebookController {
 
     private final SeasonService seasonService;
-    private NotebookService notebookService;
+    private final NotebookService notebookService;
 
     @Autowired
     public NotebookController(SeasonService seasonService, NotebookService notebookService) {
@@ -135,7 +135,7 @@ public class NotebookController {
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<NotebookEntry>> generateEntry(@PathVariable("id") Integer id, @RequestParam LocalDate date) throws Exception {
         if (!seasonService.seasonStarted()) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(new ResponseWrapper<>(ResponseMessages.SEASON_NOT_STARTED, null));
         }
 
         NotebookEntry entry = this.notebookService.generateEntry(id, date);

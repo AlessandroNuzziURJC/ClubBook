@@ -84,10 +84,6 @@ public class UserService {
         return userRepository.findAllStudentsWithoutClassGroup();
     }
 
-    public List<User> addNewStudentsClassGroup() {
-        return null;
-    }
-
     public List<User> findUserBornBetween(LocalDate birthYearStart, LocalDate birthYearEnd, Role role) {
         return this.userRepository.findAllUsersBornBetweenWithRole(birthYearStart, birthYearEnd, role.getName().name());
     }
