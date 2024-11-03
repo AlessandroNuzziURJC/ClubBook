@@ -1,16 +1,42 @@
 package clubbook.backend.dtos;
 
+/**
+ * Data Transfer Object used to update the configuration of a notebook.
+ * It includes the notebook ID, sport type, and skill level.
+ */
 public class NotebookUpdateConfigDto {
 
+    /**
+     * The unique identifier of the notebook.
+     */
     private int id;
-    private String sport, level;
 
+    /**
+     * The type of sport associated with the notebook.
+     */
+    private String sport;
+
+    /**
+     * The skill level for the sport.
+     */
+    private String level;
+
+    /**
+     * Constructs a NotebookUpdateConfigDto with the specified ID, sport, and level.
+     *
+     * @param id the unique identifier of the notebook
+     * @param sport the type of sport associated with the notebook
+     * @param level the skill level for the sport
+     */
     public NotebookUpdateConfigDto(int id, String sport, String level) {
         this.id = id;
         this.sport = sport;
         this.level = level;
     }
 
+    /**
+     * Default constructor for creating an empty NotebookUpdateConfigDto.
+     */
     public NotebookUpdateConfigDto() {
 
     }

@@ -18,6 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
+/**
+ * Controller for managing class groups, including retrieving, creating,
+ * updating, and deleting class groups and managing students within them.
+ */
 @Validated
 @RestController()
 public class ClassGroupController {
@@ -25,13 +29,23 @@ public class ClassGroupController {
     private final ClassGroupService classGroupService;
     private final SeasonService seasonService;
 
-
+    /**
+     * Constructs a ClassGroupController with the specified services.
+     *
+     * @param classGroupService the service for handling class group operations.
+     * @param seasonService     the service for handling season-related operations.
+     */
     @Autowired
     public ClassGroupController(ClassGroupService classGroupService, SeasonService seasonService) {
         this.classGroupService = classGroupService;
         this.seasonService = seasonService;
     }
 
+    /**
+     * Retrieves all class groups. Accessible to users with roles 'ADMINISTRATOR' or 'TEACHER'.
+     *
+     * @return a ResponseEntity containing a response wrapper with the list of class groups.
+     */
     @GetMapping("/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<ResponseWrapper<List<ClassGroup>>> getAllClassGroups() {
@@ -50,6 +64,12 @@ public class ClassGroupController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, classGroupList));
     }
 
+    /**
+     * Retrieves a specific class group by its ID. Accessible to users with roles 'ADMINISTRATOR' or 'TEACHER'.
+     *
+     * @param id the ID of the class group to retrieve.
+     * @return a ResponseEntity containing a response wrapper with the class group data.
+     */
     @GetMapping("/{id}/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<ResponseWrapper<ClassGroup>> getClassGroup(@PathVariable int id) {
@@ -67,6 +87,12 @@ public class ClassGroupController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, classGroup));
     }
 
+    /**
+     * Creates a new class group. Accessible only to users with the role 'ADMINISTRATOR'.
+     *
+     * @param registerClassGroupDto the DTO containing the class group registration data.
+     * @return a ResponseEntity containing a response wrapper with the created class group data.
+     */
     @PostMapping("/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ResponseWrapper<ClassGroup>> createClassGroup(@Valid @RequestBody RegisterClassGroupDto registerClassGroupDto) {
@@ -74,13 +100,26 @@ public class ClassGroupController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.CORRECT_REGISTER, classGroup));
     }
 
+    /**
+     * Deletes a class group by its ID. Accessible only to users with the role 'ADMINISTRATOR'.
+     *
+     * @param id the ID of the class group to delete.
+     * @return a ResponseEntity with no content (HTTP 200).
+     */
     @DeleteMapping("/{id}/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
-    public ResponseEntity deleteClassGroup(@PathVariable int id) {
+    public ResponseEntity<Void> deleteClassGroup(@PathVariable int id) {
         classGroupService.delete(id);
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Modifies an existing class group. Accessible only to users with the role 'ADMINISTRATOR'.
+     *
+     * @param classGroupDto the DTO containing the new class group data.
+     * @param id           the ID of the class group to modify.
+     * @return a ResponseEntity containing the updated class group data.
+     */
     @PutMapping("/{id}/classGroup")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ClassGroup> modifyClassGroup(@Valid @RequestBody RegisterClassGroupDto classGroupDto, @PathVariable int id) {
@@ -89,6 +128,13 @@ public class ClassGroupController {
         return ResponseEntity.ok(newClassGroup);
     }
 
+    /**
+     * Adds new students to a class group. Accessible only to users with the role 'ADMINISTRATOR'.
+     *
+     * @param id          the ID of the class group to which students will be added.
+     * @param studentsIds the list of IDs of students to add.
+     * @return a ResponseEntity containing the list of added students.
+     */
     @PostMapping("/{id}/addStudents")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<User>> addNewStudentsClassGroup(@PathVariable int id, @RequestBody List<Integer> studentsIds) {
@@ -96,6 +142,13 @@ public class ClassGroupController {
         return ResponseEntity.ok(users);
     }
 
+    /**
+     * Removes students from a class group. Accessible only to users with the role 'ADMINISTRATOR'.
+     *
+     * @param id          the ID of the class group from which students will be removed.
+     * @param studentsIds the list of IDs of students to remove.
+     * @return a ResponseEntity containing the list of remaining students.
+     */
     @PutMapping("/{id}/removeStudents")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<User>> removeStudentsClassGroup(@PathVariable int id, @RequestBody List<Integer> studentsIds) {

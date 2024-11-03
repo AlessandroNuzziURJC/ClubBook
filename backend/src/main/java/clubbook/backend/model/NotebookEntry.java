@@ -9,31 +9,61 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Represents an entry in a notebook containing exercises for a specific date.
+ */
 @Entity
 @Table(name = "T_Entry")
 public class NotebookEntry {
 
+    /**
+     * The unique identifier of the notebook entry.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /**
+     * The list of warm-up exercises.
+     */
     @Convert(converter = StringListConverter.class)
     private List<String> warmUpExercises;
 
+    /**
+     * The list of specific exercises.
+     */
     @Convert(converter = StringListConverter.class)
     private List<String> specificExercises;
 
+    /**
+     * The list of final exercises.
+     */
     @Convert(converter = StringListConverter.class)
     private List<String> finalExercises;
 
+    /**
+     * The associated notebook for this entry.
+     */
     @ManyToOne
     @JoinColumn(name = "notebook_id")
     @JsonIgnore
     private Notebook notebook;
 
+    /**
+     * The date of the notebook entry.
+     */
     private LocalDate date;
 
+    /**
+     * Constructs a new NotebookEntry with specified parameters.
+     *
+     * @param id               the unique identifier of the notebook entry
+     * @param warmUpExercises  the list of warm-up exercises
+     * @param specificExercises the list of specific exercises
+     * @param finalExercises   the list of final exercises
+     * @param notebook         the associated notebook for this entry
+     * @param date             the date of the notebook entry
+     */
     public NotebookEntry(int id, List<String> warmUpExercises, List<String> specificExercises, List<String> finalExercises, Notebook notebook, LocalDate date) {
         this.id = id;
         this.warmUpExercises = warmUpExercises;
@@ -43,10 +73,19 @@ public class NotebookEntry {
         this.date = date;
     }
 
+    /**
+     * Default constructor for NotebookEntry.
+     */
     public NotebookEntry() {
 
     }
 
+    /**
+     * Constructs a new NotebookEntry from a JSON string.
+     *
+     * @param json the JSON string representing the notebook entry
+     * @param date the date of the notebook entry
+     */
     public NotebookEntry(String json, LocalDate date) {
         JSONObject jsonObject = new JSONObject(json);
 
@@ -56,6 +95,12 @@ public class NotebookEntry {
         this.date = date;
     }
 
+    /**
+     * Converts a JSONArray to a List of Strings.
+     *
+     * @param jsonArray the JSONArray to convert
+     * @return a List of Strings containing the elements of the JSONArray
+     */
     private List<String> jsonArrayToList(JSONArray jsonArray) {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -112,6 +157,11 @@ public class NotebookEntry {
         this.date = date;
     }
 
+    /**
+     * Generates a string representation of the exercises data for this entry.
+     *
+     * @return a string representation of the exercises data
+     */
     public String generateExercisesData() {
         StringBuilder sb = new StringBuilder();
         sb.append("- La clase de la fecha ").append(this.getDate().toString()).append(": {");

@@ -14,7 +14,10 @@ import java.util.List;
 
 import static com.theokanning.openai.utils.TikTokensUtil.ModelEnum.GPT_3_5_TURBO;
 
-
+/**
+ * Service for interacting with the OpenAI GPT-3.5 model.
+ * This service is responsible for generating exercise routines based on the provided prompt.
+ */
 @Service
 public class GPTService {
 
@@ -22,11 +25,21 @@ public class GPTService {
     private String token;
     private OpenAiService openAiService;
 
+    /**
+     * Initializes the OpenAiService instance after the properties have been injected.
+     */
     @PostConstruct
     public void init() {
         this.openAiService = new OpenAiService(token);
     }
 
+    /**
+     * Generates a JSON response containing exercise routines based on the provided prompt.
+     *
+     * @param prompt The prompt that specifies the context for generating exercises.
+     * @return A string containing the JSON response formatted as specified in the prompt.
+     * @throws Exception If there is an error during the API call or response processing.
+     */
     public String generateResponse(String prompt) throws Exception {
         List<ChatMessage> messages = new ArrayList<>();
         String promptJsonFormat = "Devuelve únicamente un objeto JSON en español en el siguiente formato y sin ningún texto adicional ni caracteres especiales: " +

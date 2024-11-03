@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Controller for notebooks.
+ * Provides endpoints for creating, editing, retrieving, and deleting notebooks and notebook entries.
+ */
 @Validated
 @RestController
 @RequestMapping("/notebook")
@@ -36,6 +40,11 @@ public class NotebookController {
         this.notebookService = notebookService;
     }
 
+    /**
+     * Retrieves all class groups (notebooks) for teachers.
+     *
+     * @return ResponseEntity containing a list of NotebookPrincipalInfoDto objects
+     */
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<List<NotebookPrincipalInfoDto>>> getAllClassGroups() {
@@ -50,6 +59,12 @@ public class NotebookController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, notebookPrincipalInfoDtos));
     }
 
+    /**
+     * Retrieves a specific notebook by its ID.
+     *
+     * @param id the ID of the notebook to retrieve
+     * @return ResponseEntity containing the Notebook object
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<Notebook>> getNotebookById(@PathVariable("id") Integer id) {
@@ -60,6 +75,12 @@ public class NotebookController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, notebookService.getNotebook(id)));
     }
 
+    /**
+     * Retrieves today's notebook entry for a specific notebook by its ID.
+     *
+     * @param id the ID of the notebook to retrieve the entry for
+     * @return ResponseEntity containing the NotebookEntry object for today
+     */
     @GetMapping("/entry/today/{id}")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<NotebookEntry>> getNotebookEntryTodayById(@PathVariable("id") Integer id) {
@@ -70,6 +91,12 @@ public class NotebookController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, notebookService.getNotebookEntryToday(id)));
     }
 
+    /**
+     * Updates the configuration of a notebook.
+     *
+     * @param notebookUpdateConfigDto the configuration details to update
+     * @return ResponseEntity indicating success or failure of the update operation
+     */
     @PutMapping("/config")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<Boolean>> updateNotebookConfig(@Valid @RequestBody NotebookUpdateConfigDto notebookUpdateConfigDto) {
@@ -81,6 +108,13 @@ public class NotebookController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, output));
     }
 
+    /**
+     * Adds a new entry to a notebook.
+     *
+     * @param notebookEntryDto the details of the notebook entry to add
+     * @param id the ID of the notebook to add the entry to
+     * @return ResponseEntity containing the added NotebookEntry object
+     */
     @PostMapping("/entry/{id}")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<NotebookEntry>> addNotebookEntry(@Valid @RequestBody NotebookEntryDto notebookEntryDto, @PathVariable("id") Integer id) {
@@ -92,6 +126,14 @@ public class NotebookController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, notebookEntryOutput));
     }
 
+    /**
+     * Retrieves paginated notebook entries for a specific notebook by its ID.
+     *
+     * @param id the ID of the notebook to retrieve entries for
+     * @param pageNumber the page number to retrieve (default is 0)
+     * @param pageSize the number of entries per page (default is 10)
+     * @return ResponseEntity containing a page of NotebookEntry objects
+     */
     @GetMapping("/entry/{id}")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<Page<NotebookEntry>>> getEntriesPaged(@PathVariable("id") int id,
@@ -104,12 +146,24 @@ public class NotebookController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.notebookService.getEntries(id, pageNumber, pageSize)));
     }
 
+    /**
+     * Deletes a notebook entry by its ID.
+     *
+     * @param id the ID of the entry to delete
+     * @return ResponseEntity indicating success or failure of the delete operation
+     */
     @DeleteMapping("/entry/{id}")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<Boolean>> deleteNotebookEntry(@PathVariable("id") Integer id) {
         return  ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.notebookService.deleteEntry(id)));
     }
 
+    /**
+     * Edits an existing notebook entry.
+     *
+     * @param notebookEntry the NotebookEntry object containing updated details
+     * @return ResponseEntity containing the updated NotebookEntry object
+     */
     @PutMapping("/entry")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<NotebookEntry>> editNotebookEntry(@Valid @RequestBody NotebookEntry notebookEntry) {
@@ -121,6 +175,12 @@ public class NotebookController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, notebookEntryOutput));
     }
 
+    /**
+     * Retrieves all invalid dates for a specific notebook by its ID.
+     *
+     * @param id the ID of the notebook to retrieve invalid dates for
+     * @return ResponseEntity containing a set of invalid LocalDate objects
+     */
     @GetMapping("/invalidDates/{id}")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<Set<LocalDate>> getInvalidDates(@PathVariable("id") int id) {
@@ -131,6 +191,14 @@ public class NotebookController {
         return ResponseEntity.ok(this.notebookService.getAllDates(id));
     }
 
+    /**
+     * Generates a notebook entry for a specific date.
+     *
+     * @param id the ID of the notebook to generate the entry for
+     * @param date the date for which to generate the entry
+     * @return ResponseEntity containing the generated NotebookEntry object
+     * @throws Exception if there is an error generating the entry
+     */
     @GetMapping("/generateEntry/{id}")
     @PreAuthorize("hasAnyRole('TEACHER')")
     public ResponseEntity<ResponseWrapper<NotebookEntry>> generateEntry(@PathVariable("id") Integer id, @RequestParam LocalDate date) throws Exception {

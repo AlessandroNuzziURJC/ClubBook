@@ -12,8 +12,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Global exception handler for the application, responsible for
+ * handling various exceptions and returning appropriate HTTP responses.
+ * This class uses Spring's @RestControllerAdvice annotation to
+ * catch exceptions thrown by any controller and map them to
+ * a standardized error response.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * Handles exceptions thrown by controllers and returns a
+     * ProblemDetail with the corresponding HTTP status and message.
+     *
+     * @param exception the exception that was thrown
+     * @return a ProblemDetail containing the HTTP status and error message
+     */
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleSecurityException(Exception exception) {
         ProblemDetail errorDetail = null;

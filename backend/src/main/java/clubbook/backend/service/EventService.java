@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Service class for managing events.
+ */
 @Service
 public class EventService {
 
@@ -32,6 +35,14 @@ public class EventService {
     private final UserService userService;
     private final NotificationService notificationService;
 
+    /**
+     * Constructor of EventService.
+     * @param eventRepository
+     * @param eventTypeRepository
+     * @param eventAttendanceService
+     * @param userService
+     * @param notificationService
+     */
     @Autowired
     public EventService(EventRepository eventRepository, EventTypeRepository eventTypeRepository, EventAttendanceService eventAttendanceService, UserService userService, NotificationService notificationService) {
         this.eventRepository = eventRepository;
@@ -41,14 +52,30 @@ public class EventService {
         this.notificationService = notificationService;
     }
 
+    /**
+     * Retrieves all available event types.
+     *
+     * @return a list of event types.
+     */
     public List<EventType> getEventTypes() {
         return eventTypeRepository.findAll();
     }
 
+    /**
+     * Saves a new event type.
+     *
+     * @param eventType the event type to save.
+     */
     public void saveEventType(EventType eventType) {
         this.eventTypeRepository.save(eventType);
     }
 
+    /**
+     * Saves a new event based on the provided data transfer object.
+     *
+     * @param newEventDto the data transfer object containing event details.
+     * @return true if the event was saved successfully, false otherwise.
+     */
     public Boolean save(NewEventDto newEventDto) {
         if (newEventDto.getDate().isBefore(LocalDate.now())) {
             return false;
@@ -72,6 +99,12 @@ public class EventService {
         return true;
     }
 
+    /**
+     * Updates an existing event based on the provided data transfer object.
+     *
+     * @param editEventDto the data transfer object containing updated event details.
+     * @return true if the event was updated successfully, false otherwise.
+     */
     public Boolean saveEdited(EventDto editEventDto) {
         if (editEventDto.getDate().isBefore(LocalDate.now())) {
             return false;
@@ -97,11 +130,21 @@ public class EventService {
         return true;
     }
 
+    /**
+     * Finds all future events.
+     *
+     * @return a list of data transfer objects for future events.
+     */
     public List<EventDto> findAllFutureEvents() {
         List<Event> futureEvents = this.eventRepository.findAllByDateGreaterThanEqualOrderByDate(LocalDate.now());
         return generateListEventDtos(futureEvents);
     }
 
+    /**
+     * Finds the next upcoming event.
+     *
+     * @return a data transfer object for the next event, or null if no upcoming events exist.
+     */
     public EventDto findNextEvent() {
         Event event = this.eventRepository.findFirstByDateGreaterThanEqualOrderByDateAsc(LocalDate.now());
         if (event != null)
@@ -109,6 +152,11 @@ public class EventService {
         return null;
     }
 
+    /**
+     * Deletes an event and sends notifications to attendees.
+     *
+     * @param eventId the ID of the event to delete.
+     */
     public void deleteEvent(Integer eventId) {
         Event event = this.eventRepository.findById(eventId).orElseThrow();
         for(EventAttendance eventAttendance : event.getAttendances()) {
@@ -119,11 +167,21 @@ public class EventService {
         this.eventRepository.deleteById(eventId);
     }
 
+    /**
+     * Finds all past events.
+     *
+     * @return a list of data transfer objects for past events.
+     */
     public List<EventDto> findAllPastEvents() {
         List<Event> futureEvents = this.eventRepository.findAllByDateBeforeOrderByDateAsc(LocalDate.now());
         return generateListEventDtos(futureEvents);
     }
 
+    /**
+     * Converts Event list to EventDto list.
+     * @param futureEvents
+     * @return
+     */
     private List<EventDto> generateListEventDtos(List<Event> futureEvents) {
         List<EventDto> eventDtos = new ArrayList<>(futureEvents.size());
         EventDto eventDto;
@@ -134,10 +192,20 @@ public class EventService {
         return eventDtos;
     }
 
+    /**
+     * Deletes all events.
+     */
     public void deleteAll() {
         this.eventRepository.deleteAll();
     }
 
+    /**
+     * Finds events occurring in the current month.
+     *
+     * @param monthValue the month value (1-12).
+     * @param year the year.
+     * @return a map of day of the month to a list of event data transfer objects.
+     */
     public Map<Integer, List<EventDto>> findActualMonthEvents(int monthValue, int year) {
         List<Event> futureEvents = this.eventRepository.findAllByCurrentMonth(monthValue, year);
         Map<Integer, List<EventDto>> map = new HashMap<>(futureEvents.size());
@@ -149,10 +217,22 @@ public class EventService {
         return map;
     }
 
+    /**
+     * Finds a specific event by its ID.
+     *
+     * @param eventId the ID of the event to find.
+     * @return the found event.
+     */
     public Event findEvent(int eventId) {
         return this.eventRepository.findById(eventId).orElseThrow();
     }
 
+    /**
+     * Finds future events that a specific student can attend.
+     *
+     * @param userId the ID of the student.
+     * @return a list of data transfer objects for future events that the student can attend.
+     */
     public List<EventDto> findStudentFutureEvents(int userId) {
         User user = this.userService.findById(userId);
         List<Event> allEventsThatAdmit = this.eventRepository.findAllEventsThatAdmit(user.getBirthday());
@@ -164,12 +244,26 @@ public class EventService {
         return output;
     }
 
+    /**
+     * Finds the next event that a specific student can attend.
+     *
+     * @param userId the ID of the student.
+     * @return a data transfer object for the next event that the student can attend.
+     */
     public EventDto findNextEventStudent(int userId) {
         User user = this.userService.findById(userId);
         Event nextEvent = this.eventRepository.findNextEventThatAdmit(user.getBirthday());
         return new EventDto(nextEvent);
     }
 
+    /**
+     * Finds events for a specific student in the current month.
+     *
+     * @param monthValue the month value (1-12).
+     * @param year the year.
+     * @param userId the ID of the student.
+     * @return a map of day of the month to a list of event data transfer objects.
+     */
     public Map<Integer, List<EventDto>> findActualMonthEventsStudent(int monthValue, int year, int userId) {
         User user = this.userService.findById(userId);
         List<Event> futureEvents = this.eventRepository.findAllByCurrentMonthForStudent(monthValue, year, user.getBirthday());
@@ -182,6 +276,9 @@ public class EventService {
         return map;
     }
 
+    /**
+     * Sends notification Event Reminder.
+     */
     @Transactional
     @Scheduled(cron = "0 0 12 * * ?")
     public void scheduleEventReminderNotifications() {
@@ -195,6 +292,9 @@ public class EventService {
         }
     }
 
+    /**
+     * Sends notification Event Reminder Attendance.
+     */
     @Transactional
     @Scheduled(cron = "0 0 11 * * ?")
     public void scheduleEventReminderAttendanceNotifications() {
@@ -210,6 +310,9 @@ public class EventService {
         }
     }
 
+    /**
+     * Sends notification Finish Inscription.
+     */
     @Transactional
     @Scheduled(cron = "0 1 0 * * ?")
     public void scheduleEventFinishInscriptionNotifications() {
@@ -241,6 +344,12 @@ public class EventService {
 
     }
 
+    /**
+     * Generates a PDF containing the details of events.
+     *
+     * @return a byte array representing the PDF document.
+     * @throws DocumentException if an error occurs while creating the PDF document.
+     */
     public byte[] generatePdf(int eventId) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4);
