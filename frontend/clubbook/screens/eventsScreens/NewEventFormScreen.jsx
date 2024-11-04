@@ -4,6 +4,11 @@ import EventForm from "./EventForm";
 import NewEventDto from "../../dto/NewEventDto";
 import ServerRequests from "../../serverRequests/ServerRequests";
 
+/**
+ * Screen component for creating a new event.
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const NewEventFormScreen = () => {
 
     return (

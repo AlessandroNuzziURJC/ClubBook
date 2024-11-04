@@ -2,14 +2,34 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 
+/**
+ * AttendanceSelector is a component that allows selecting attendance status for a list of users.
+ * It displays each user with the option to mark them as present or absent.
+ * 
+ * @param {Object} props - Component properties
+ * @param {Array} props.users - List of users to display
+ * @param {boolean} props.usersError - Indicates if there's an error in the user list
+ * @param {function} props.handleSelectUser - Function to handle user selection
+ * @returns {JSX.Element} - JSX element for the attendance selector
+ */
 const AttendanceSelector = ({ users, usersError, handleSelectUser }) => {
 
+    /**
+     * Marks the user as present.
+     * 
+     * @param {Object} user - User object to be marked as present
+     */
     const handleCheck = (user) => {
-        handleSelectUser(user.id, true);  // Notifica al componente padre que el usuario está presente
+        handleSelectUser(user.id, true);
     };
 
+    /**
+     * Marks the user as absent.
+     * 
+     * @param {Object} user - User object to be marked as absent
+     */
     const handleCross = (user) => {
-        handleSelectUser(user.id, false);  // Notifica al componente padre que el usuario está ausente
+        handleSelectUser(user.id, false); 
     };
 
     return (

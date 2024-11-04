@@ -3,13 +3,22 @@ import { View, StyleSheet, TouchableOpacity, Text, Alert, FlatList } from "react
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import ServerRequest from "../../serverRequests/ServerRequests";
 
-
+/**
+ * NotebookMainScreen is a React component that displays a list of available notebooks.
+ * Users can tap on a notebook to navigate to its corresponding ClassGroupAgendaScreen.
+ *
+ * @component
+ */
 const NotebookMainScreen = () => {
     const navigation = useNavigation();
     const [season, setSeason] = useState(true);
     const [message, setMessage] = useState('');
     const [notebooks, setNotebooks] = useState([]);
 
+    /**
+     * Fetches the list of notebooks from the server and updates the state.
+     * If the response indicates that the season has not started, it updates the message.
+     */
     const getFromServer = async () => {
         const response = await ServerRequest.getNotebooks();
         const result = await response.json();
@@ -32,6 +41,12 @@ const NotebookMainScreen = () => {
         }, [])
     );
 
+    /**
+     * Renders a class group button for the FlatList.
+     *
+     * @param {Object} item - The notebook item to be rendered.
+     * @returns {JSX.Element} A TouchableOpacity component for the class group.
+     */
     const renderClassgroup = ({ item }) => (
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ClassGroupAgendaScreen", { notebookBasicInfo: item})}>
             <Text style={styles.buttonText}>{item.classGroupName}</Text>

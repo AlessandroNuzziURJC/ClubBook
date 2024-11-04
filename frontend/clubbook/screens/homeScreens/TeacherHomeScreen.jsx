@@ -3,6 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
+/**
+ * Teacher Home Screen component that provides navigation options for teachers.
+ * Allows access to attendance control, notebook (agenda), and events.
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const TeacherHomeScreen = () => {
     const navigation = useNavigation();
 

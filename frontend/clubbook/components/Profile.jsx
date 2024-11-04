@@ -4,6 +4,22 @@ import EditProfileButton from "./EditProfileButton";
 import CloseSessionButton from "./CloseSession";
 import Functions from "../functions/Functions";
 
+/**
+ * Profile Component.
+ *
+ * Displays user profile information including profile picture, personal details, and edit/logout buttons.
+ * Also supports pull-to-refresh functionality.
+ * 
+ * @component
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.editButton - Controls the visibility of edit and logout buttons.
+ * @param {Function} props.onEditPress - Callback function triggered when the edit button is pressed.
+ * @param {boolean} props.refreshing - Indicates if the profile is currently refreshing.
+ * @param {Function} props.onRefresh - Function to call to refresh the profile information.
+ * @param {Object} props.profilePicture - The user's profile picture (URI or local resource).
+ * @param {Object} props.user - User data containing details like first name, last name, ID, address, phone, email, birthday, etc.
+ * @returns {JSX.Element} - Rendered Profile component.
+ */
 const Profile = ({ editButton, onEditPress, refreshing, onRefresh, profilePicture, user }) => {
     return (
         <ScrollView style={styles.container} refreshControl={

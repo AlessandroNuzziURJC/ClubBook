@@ -5,6 +5,11 @@ import { Ionicons } from "@expo/vector-icons";
 import EventCard from "./EventCard";
 import ServerRequests from "../../serverRequests/ServerRequests";
 
+/**
+ * Screen component to display a list of events.
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const EventListScreen = () => {
     const [events, setEvents] = useState([]);
     const navigation = useNavigation();
@@ -14,14 +19,27 @@ const EventListScreen = () => {
     const [message, setMessage] = useState("");
     const [showMessage, setShowMessage] = useState(false);
 
+    /**
+     * Determines which event fetch function to use based on route parameters.
+     * @type {Function}
+     */
     const fetchEvents = fetchFutureEvents
         ? ServerRequests.getAllFutureEvents
         : ServerRequests.getAllPastEvents;
 
+    /**
+     * Page title based on event type (upcoming or past).
+     * @type {string}
+     */
     const title = fetchFutureEvents
         ? "Próximos eventos"
         : "Eventos pasados";
 
+    /**
+     * Fetches events from the server and updates the event list.
+     * Displays an error message if the request fails.
+     * @async
+     */
     const getFromServer = async () => {
         const response = await fetchEvents();
         const result = await response.json();
@@ -37,6 +55,9 @@ const EventListScreen = () => {
         }
     }
 
+    /**
+     * Refreshes the event list by re-fetching data from the server.
+     */
     const refreshData = () => {
         setRefreshing(true);
         setTimeout(() => {
@@ -45,6 +66,7 @@ const EventListScreen = () => {
         }, 500);
     };
 
+    
     useFocusEffect(
         useCallback(() => {
             setEvents([]);
@@ -52,9 +74,14 @@ const EventListScreen = () => {
         }, [])
     );
 
+    /**
+     * Renders each event item in the list.
+     * @param {Object} item - The event item data.
+     * @returns {JSX.Element} Event card component.
+     */
     const renderItem = ({ item }) => {
         return (
-            <EventCard editAndDelete={editAndDelete} data={item} updateScreenWhenDelete={refreshData}/>
+            <EventCard editAndDelete={editAndDelete} data={item} updateScreenWhenDelete={refreshData} />
         );
     }
 

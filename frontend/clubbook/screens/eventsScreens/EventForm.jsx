@@ -9,6 +9,16 @@ import ServerRequests from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 import Toast from "../../components/Toast";
 
+/**
+ * EventForm component for creating or editing an event.
+ * 
+ * @param {Object} props - Component properties.
+ * @param {boolean} props.edit - Whether the form is in edit mode.
+ * @param {Object} props.eventReceived - The event data to be edited (if in edit mode).
+ * @param {function} props.saveFunction - Function to save the event.
+ * @param {function} props.recharge - Function to refresh the event list.
+ * @returns {JSX.Element} EventForm component.
+ */
 const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
     const navigation = useNavigation();
 
@@ -33,6 +43,10 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
 
     const [isToastVisible, setIsToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+
+    /**
+     * Displays a toast message temporarily.
+     */
     const showToast = () => {
         setIsToastVisible(true);
         setTimeout(() => {
@@ -40,35 +54,35 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
         }, 1000);
     };
 
+    /**
+     * Validates form fields and sets errors if any are found.
+     * 
+     * @returns {boolean} - Whether all fields are valid.
+     */
     const validateFields = () => {
         let isValid = true;
         const newErrors = { title: false, address: false, date: false, deadline: false, type: false, birthYearStart: false, birthYearEnd: false };
 
-        // Validar el nombre
         if (!event.title) {
             newErrors.title = true;
             isValid = false;
         }
 
-        // Validar la dirección
         if (!event.address) {
             newErrors.address = true;
             isValid = false;
         }
 
-        // Validar la fecha del evento
         if (!event.date || event.date <= new Date()) {
             newErrors.date = true;
             isValid = false;
         }
 
-        // Validar la fecha límite de inscripción
         if (!event.deadline || event.deadline < new Date() || event.deadline > event.date) {
             newErrors.deadline = true;
             isValid = false;
         }
 
-        // Validar tipo de evento
         if (!event.type) {
             newErrors.type = true;
             isValid = false;
@@ -86,7 +100,6 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
             isValid = false;
         }
 
-        // Validar años de nacimiento
         if (initYear >= endYear) {
             newErrors.birthYearStart = true;
             newErrors.birthYearEnd = true;
@@ -97,6 +110,9 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
         return isValid;
     };
 
+    /**
+     * Handles the save operation after validating fields.
+     */
     const handleSave = async () => {
         if (validateFields()) {
             const response = await saveFunction(event);
@@ -112,40 +128,73 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
         }
     };
 
+    /**
+     * Shows the date picker modal for selecting an event date.
+     */
     const showDatePicker = () => {
         setDatePickerVisibility(true);
     };
 
+    /**
+     * Hides the date picker modal.
+     */
     const hideDatePicker = () => {
         setDatePickerVisibility(false);
     };
 
+    /**
+     * Sets the selected event date.
+     * 
+     * @param {Date} date - Selected date for the event.
+     */
     const handleConfirm = (date) => {
         setEvent({ ...event, date: date });
         hideDatePicker();
     };
 
+    /**
+     * Shows the deadline picker modal for selecting a registration deadline.
+     */
     const showDeadlinePicker = () => {
-        setDeadlinePickerVisibility(true); // Mostrar el picker para la fecha límite de inscripción
+        setDeadlinePickerVisibility(true);
     };
 
+    /**
+     * Hides the deadline picker modal.
+     */
     const hideDeadlinePicker = () => {
-        setDeadlinePickerVisibility(false); // Ocultar el picker para la fecha límite de inscripción
+        setDeadlinePickerVisibility(false);
     };
 
+    /**
+     * Sets the selected deadline date.
+     * 
+     * @param {Date} date - Selected deadline date.
+     */
     const handleDeadlineConfirm = (date) => {
-        setEvent({ ...event, deadline: date }); // Guardar la fecha límite de inscripción
+        setEvent({ ...event, deadline: date });
         hideDeadlinePicker();
     };
 
+    /**
+     * Shows the event type picker modal.
+     */
     const showTypePicker = () => {
         setTypePickerVisibility(true);
     };
 
+    /**
+     * Hides the event type picker modal.
+     */
     const hideTypePicker = () => {
         setTypePickerVisibility(false);
     };
 
+    /**
+     * Handles the selection of an event type.
+     * 
+     * @param {Object} type - Selected event type object.
+     */
     const handleTypeSelect = (type) => {
         setSelectedType(Functions.translateEventTypes(type.name));
         if (edit)
@@ -155,6 +204,9 @@ const EventForm = ({ edit, eventReceived, saveFunction, recharge }) => {
         hideTypePicker();
     };
 
+    /**
+     * Fetches event types from the server and sets initial years if in edit mode.
+     */
     const getFromServer = async () => {
         if (edit) {
             setInitYear(event.birthYearStart.substring(0, 4));

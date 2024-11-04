@@ -6,18 +6,27 @@ import Schedule from "../../entities/Schedule";
 import { Ionicons } from "@expo/vector-icons";
 import ServerRequests from "../../serverRequests/ServerRequests";
 
+/**
+ * ClassInfo component displays detailed information about a class group,
+ * including its general information, schedule, and a list of students.
+ * It allows editing and deleting the class group if the `editAndDelete` prop is true.
+ *
+ * @component
+ */
 const ClassInfo = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { item, editAndDelete } = route.params;
     const [classGroupId, setClassGroupId] = useState(item);
     const [classGroup, setClassGroup] = useState(null);
-    const [isContentExpanded, setIsContentExpanded] = useState(false); // Inicialmente cerrado
+    const [isContentExpanded, setIsContentExpanded] = useState(false);
     const animatedHeight = useRef(new Animated.Value(0)).current;
 
     const [emptyMessage, setEmptyMessage] = useState('');
 
-    // Function to toggle content expansion
+    /**
+     * Toggles the expansion of the content section.
+     */
     const toggleContent = () => {
         const toValue = isContentExpanded ? 0 : 1;
         Animated.timing(animatedHeight, {
@@ -41,6 +50,10 @@ const ClassInfo = () => {
         getFromServer();
     }, []);
 
+    /**
+     * Fetches class group data from the server.
+     * Sets the class group state or displays an alert message if there's an error.
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.getClassGroup(classGroupId);
@@ -73,12 +86,22 @@ const ClassInfo = () => {
             : [180, 180] // Valor por defecto si classGroup es null
     });
 
-    // Handle edit action
+    /**
+     * Handles the edit action for the class group.
+     * Navigates to the EditClassGroup screen.
+     *
+     * @param {Object} item - The class group item to edit.
+     */
     const handleEdit = (item) => {
         navigation.navigate('EditClassGroup', { item });
     };
 
-    // Handle delete action
+    /**
+     * Handles the delete action for the class group.
+     * Shows a confirmation alert and deletes the class if confirmed.
+     *
+     * @param {Object} item - The class group item to delete.
+     */
     const handleDelete = (item) => {
         Alert.alert(
             "Confirmar eliminación",
@@ -109,7 +132,12 @@ const ClassInfo = () => {
         );
     };
 
-    // Handle add student action
+    /**
+     * Handles modifying the student list for the class group.
+     * Navigates to the ModifyClassGroupStudent screen.
+     *
+     * @param {Object} item - The class group item to modify.
+     */
     const handleModifyStudent = (item) => {
         navigation.navigate('ModifyClassGroupStudent', { item });
     };

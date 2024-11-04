@@ -8,6 +8,13 @@ import Functions from '../../functions/Functions';
 import ServerRequest from '../../serverRequests/ServerRequests';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
+/**
+ * AgendaScreen component represents the screen to manage and display agenda entries.
+ * Users can add, edit, delete, and view entries for a specific date, divided into
+ * warm-up, specific phase, and final phase tasks.
+ * 
+ * @returns {JSX.Element} The rendered AgendaScreen component.
+ */
 const AgendaScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -31,6 +38,12 @@ const AgendaScreen = () => {
     const [taskTextSpecificPhase, setTaskTextSpecificPhase] = useState('');
     const [taskTextFinalPhase, setTaskTextFinalPhase] = useState('');
 
+    /**
+    * Checks if the given date is after today.
+    * 
+    * @param {Date} dateValue - The date to check.
+    * @returns {boolean} True if the date is today or after, false otherwise.
+    */
     const dateAfterToday = (dateValue) => {
         const dateUsed = new Date(dateValue);
         const today = new Date();
@@ -40,14 +53,25 @@ const AgendaScreen = () => {
         return dateUsed >= today;
     }
 
+    /**
+     * Shows the date picker modal.
+     */
     const showDatePicker = () => {
         setDatePickerVisibility(true);
     };
 
+    /**
+     * Hides the date picker modal.
+     */
     const hideDatePicker = () => {
         setDatePickerVisibility(false);
     };
 
+    /**
+     * Handles the confirmation of the date selection in the date picker.
+     * 
+     * @param {Date} dateMod - The selected date.
+     */
     const handleConfirm = (dateMod) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -62,6 +86,11 @@ const AgendaScreen = () => {
         hideDatePicker();
     };
 
+    /**
+     * Deletes a specified entry from the server and updates the entry list.
+     * 
+     * @param {Object} item - The entry to delete.
+     */
     const handleDelete = async (item) => {
         const response = await ServerRequest.deleteEntry(item.id);
         if (response.ok) {
@@ -74,6 +103,11 @@ const AgendaScreen = () => {
         }
     }
 
+    /**
+     * Prepares an entry for editing by setting it in the edit mode.
+     * 
+     * @param {Object} item - The entry to edit.
+     */
     const handleEdit = async (item) => {
         setId(item.id);
         setDate(item.date);
@@ -83,6 +117,9 @@ const AgendaScreen = () => {
         setEditEntryView(true);
     }
 
+    /**
+     * Saves the edited entry to the server.
+     */
     const handleSaveEdit = async () => {
         if (validate()) {
             const editEntry = {
@@ -107,6 +144,11 @@ const AgendaScreen = () => {
         }
     }
 
+    /**
+     * Fetches notebook entries from the server based on the page number.
+     * 
+     * @param {number} pageNumber - The page number to fetch.
+     */
     const fetchEntries = async (pageNumber) => {
         const response = await ServerRequest.getNotebookEntries(notebook.id, pageNumber);
         const result = await response.json();
@@ -145,10 +187,15 @@ const AgendaScreen = () => {
             setPage(0);
             return () => {
                 setPage(-1);
-        };
+            };
         }, [])
     );
 
+    /**
+     * Validates the form fields for adding or editing an entry.
+     * 
+     * @returns {boolean} True if all fields are valid, false otherwise.
+     */
     const validate = () => {
         if (!date) {
             Alert.alert("Por favor, selecciona una fecha.");
@@ -161,6 +208,9 @@ const AgendaScreen = () => {
         return true;
     }
 
+    /**
+     * Saves a new entry to the server if valid and date is available.
+     */
     const handleSave = async () => {
         const formIsValid = validate();
         if (formIsValid & !datesSet.has(Functions.convertDateSpaToEng(date))) {
@@ -188,6 +238,13 @@ const AgendaScreen = () => {
         }
     };
 
+    /**
+     * Adds a task to the specified task list.
+     * 
+     * @param {string} text - The task text to add.
+     * @param {Function} setTasks - State setter function for the task list.
+     * @param {Function} restoreInput - Function to reset the input field.
+     */
     const handleAddTask = (text, setTasks, restoreInput) => {
         if (text.trim()) {
             setTasks((prevTasks) => [...prevTasks, text]);
@@ -195,16 +252,28 @@ const AgendaScreen = () => {
         }
     };
 
+    /**
+     * Removes a task from the specified task list.
+     * 
+     * @param {number} index - The index of the task to remove.
+     * @param {Function} setTasks - State setter function for the task list.
+     */
     const handleRemoveTask = (index, setTasks) => {
         setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
     };
 
+    /**
+     * Loads more entries when the user scrolls to the end of the list.
+     */
     const loadMoreEntries = () => {
         if (hasMore) {
             setPage((prevPage) => prevPage + 1);
         }
     };
 
+    /**
+     * Generates a new entry for the specified date by calling the server.
+     */
     const generateEntry = async () => {
         if (date === null) {
             Alert.alert("Indica la fecha para la que deseas generar la clase");
@@ -278,7 +347,7 @@ const AgendaScreen = () => {
                                     </View>
                                 </View>
                             )}
-                            keyExtractor={(item) => item.id.toString()} // Asegúrate de que el id sea una cadena
+                            keyExtractor={(item) => item.id.toString()}
                             onEndReached={loadMoreEntries}
                             onEndReachedThreshold={0.1}
                             style={styles.flatList}
@@ -351,7 +420,6 @@ const AgendaScreen = () => {
 
                             </View>
 
-                            {/* Repite el mismo patrón para Fase Específica y Fase Final */}
                             <View style={styles.phaseContainer}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={styles.phaseTitle}>Fase Específica</Text>
@@ -472,7 +540,6 @@ const AgendaScreen = () => {
 
                             </View>
 
-                            {/* Repite el mismo patrón para Fase Específica y Fase Final */}
                             <View style={styles.phaseContainer}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={styles.phaseTitle}>Fase Específica</Text>

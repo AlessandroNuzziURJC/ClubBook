@@ -1,11 +1,19 @@
-
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
 import { useRoute, useNavigation } from '@react-navigation/native';
 import UserCheckboxList from "../../components/UserCheckboxList";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import FormFooter from "../../components/FormFooter";
 
+/**
+ * Screen component for deleting students from a class group.
+ * 
+ * This component allows users to select students to remove from a specific class group.
+ * It fetches the list of students currently in the class group and provides a checkbox
+ * list for selecting which students to remove.
+ *
+ * @returns {JSX.Element} The rendered component.
+ */
 const ClassGroupDeleteStudentScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -13,6 +21,11 @@ const ClassGroupDeleteStudentScreen = () => {
     const [classGroup, setClassGroup] = useState(item);
     const [totalStudents, setTotalStudents] = useState([]);
 
+    /**
+     * Handles the selection and deselection of students in the checkbox list.
+     * 
+     * @param {number} id - The ID of the student to select or deselect.
+     */
     const handleSelectStudent = (id) => {
         setTotalStudents(prev =>
             prev.map(student => {
@@ -25,6 +38,12 @@ const ClassGroupDeleteStudentScreen = () => {
             }));
     };
 
+    /**
+     * Saves the changes made by removing selected students from the class group.
+     * 
+     * It sends a request to the server to remove the selected students from the class group
+     * and updates the local state accordingly.
+     */
     const handleSave = async () => {
         const newStudents = totalStudents.filter(item => item.selected);
 

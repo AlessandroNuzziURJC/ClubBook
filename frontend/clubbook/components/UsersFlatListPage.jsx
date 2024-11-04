@@ -5,10 +5,26 @@ import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
 import Functions from '../functions/Functions';
 
+/**
+ * UsersFlatList component displays a list of users with their profile pictures, names, and phone numbers.
+ *
+ * @param {Object} props - Component props.
+ * @param {Array} props.users - Array of user objects to be displayed.
+ * @param {number} props.maxUsers - Maximum number of users to load in the list.
+ * @param {function} props.loadMoreUsers - Function to call when the end of the list is reached to load more users.
+ *
+ * @returns {JSX.Element} A FlatList component displaying the users.
+ */
 const UsersFlatList = ({ users, maxUsers, loadMoreUsers}) => {
     const navigation = useNavigation();
     const [userImages, setUserImages] = useState(Array(maxUsers).fill(require('../assets/loading.gif')));
 
+    /**
+     * Fetches the user's photo from the server and updates the userImages state.
+     *
+     * @param {string} id - The user's ID.
+     * @param {number} index - The index of the user in the users array.
+     */
     const getImage = async (id, index) => {
         const response = await ServerRequests.getUserPhoto(id);
         if (response.ok) {
@@ -36,6 +52,14 @@ const UsersFlatList = ({ users, maxUsers, loadMoreUsers}) => {
         });
     }, [users]);
 
+    /**
+     * Renders a user item in the FlatList.
+     *
+     * @param {Object} param0 - The item and index.
+     * @param {Object} param0.item - The user object.
+     * @param {number} param0.index - The index of the user in the users array.
+     * @returns {JSX.Element} A View containing the user's image, name, and phone number.
+     */
     const renderUser = ({ item, index }) => {
         return (
             <View style={styles.column}>

@@ -5,6 +5,13 @@ import { Picker } from '@react-native-picker/picker';
 import FormFooter from '../../components/FormFooter';
 import ServerRequest from '../../serverRequests/ServerRequests';
 
+/**
+ * VirtualAssistantConfigFormScreen is a screen component for configuring the 
+ * virtual assistant settings for a specific notebook. It allows the user to 
+ * input the sport being taught and the level of the class.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 const VirtualAssistantConfigFormScreen = () => {
   const route = useRoute();
   const { notebook } = route.params;
@@ -15,6 +22,11 @@ const VirtualAssistantConfigFormScreen = () => {
   const [levelError, setLevelError] = useState(false);
   const navigation = useNavigation();
 
+  /**
+   * Validates the form data to ensure all required fields are filled.
+   * 
+   * @returns {boolean} True if valid, otherwise false.
+   */
   const validateFormData = () => {
     let isValid = true;
 
@@ -35,6 +47,10 @@ const VirtualAssistantConfigFormScreen = () => {
     return isValid;
   };
 
+  /**
+   * Handles the save action for the form. Validates the data and sends 
+   * it to the server if valid.
+   */
   const handleSave = async () => {
     if (validateFormData()) {
       const formData = {
@@ -67,7 +83,7 @@ const VirtualAssistantConfigFormScreen = () => {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Deporte que se imparte</Text>
           <TextInput
-            style={[styles.input, sportError && styles.inputError]} // Aplicar borde rojo si hay error
+            style={[styles.input, sportError && styles.inputError]}
             placeholder="Introduce el deporte"
             value={sport}
             onChangeText={setSport}
@@ -76,7 +92,7 @@ const VirtualAssistantConfigFormScreen = () => {
 
         <Text style={styles.label}>Nivel de la clase</Text>
         <TouchableOpacity
-          style={[styles.pickerContainer, levelError && styles.inputError]} // Aplicar borde rojo si hay error
+          style={[styles.pickerContainer, levelError && styles.inputError]}
           onPress={() => setIsModalVisible(!isModalVisible)}
         >
           <Text style={styles.pickerInput}>
@@ -177,7 +193,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   inputError: {
-    borderColor: 'red', // Borde rojo en caso de error
+    borderColor: 'red',
   },
   pickerContainer: {
     backgroundColor: '#f5f5f5',

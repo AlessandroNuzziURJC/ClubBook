@@ -1,8 +1,13 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import ServerRequest from "../../serverRequests/ServerRequests";
 
+/**
+ * UserListSelector component allows navigation to either the teacher or student user lists.
+ *
+ * @component
+ * @returns {JSX.Element} The UserListSelector component.
+ */
 const UserListSelector = () => {
     const navigation = useNavigation();
 

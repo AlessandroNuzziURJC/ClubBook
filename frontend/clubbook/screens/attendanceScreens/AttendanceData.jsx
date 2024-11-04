@@ -2,21 +2,30 @@ import React, { useState, useRef, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useRoute } from '@react-navigation/native';
-import { useNavigation } from "@react-navigation/native";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
+/**
+ * AttendanceData component displays attendance records for a selected class group.
+ * It allows users to select a month, view attendance data, and download it as a PDF.
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 const AttendanceData = () => {
-    const navigation = useNavigation();
+
     const route = useRoute();
     const { item } = route.params;
     const [dates, setDates] = useState([]);
     const [classGroup, setClassGroup] = useState(item);
     const [students, setStudents] = useState([]);
-
     const [emptyMessage, setEmptyMessage] = useState('');
 
+    /**
+     * Retrieves the current month value.
+     * 
+     * @returns {number} The current month as a number (1-12).
+     */
     const getActualMonthValue = () => {
         const actualDate = new Date();
         const month = actualDate.getMonth();
@@ -40,6 +49,12 @@ const AttendanceData = () => {
         { label: 'Diciembre', value: 12 },
     ]);
 
+    /**
+     * Truncates a student's name if it exceeds a specified length.
+     * 
+     * @param {string} name - The name to be truncated.
+     * @returns {string} The adapted name.
+     */
     const adaptNameView = (name) => {
         if (name.length >= 18)
             return name.substring(0, 16) + '...'
@@ -50,6 +65,10 @@ const AttendanceData = () => {
         getFromServer();
     }, [monthsValue]);
 
+    /**
+     * Fetches attendance data from the server based on the selected month and class group.
+     * Handles server responses and updates state accordingly.
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.getAttendances(monthsValue, classGroup.id);
@@ -73,13 +92,14 @@ const AttendanceData = () => {
         }
     };
 
+    /**
+     * Handles the PDF download process, saving it to the device and sharing it if possible.
+     */
     const handleDownload = async () => {
         try {
-            // Descargar el PDF
             const response = await ServerRequests.downloadPdf(classGroup.id);
             const blobData = await response.blob();
             
-            // Guardar el archivo en el sistema
             const path = `${FileSystem.documentDirectory}attendance_${classGroup.id}.pdf`;
             const reader = new FileReader();
     
@@ -89,7 +109,6 @@ const AttendanceData = () => {
                     encoding: FileSystem.EncodingType.Base64,
                 });
     
-                // Compartir o abrir el archivo PDF
                 if (await Sharing.isAvailableAsync()) {
                     await Sharing.shareAsync(path);
                 } else {
@@ -228,7 +247,7 @@ const styles = StyleSheet.create({
     tableCell: {
         padding: 10,
         textAlign: 'center',
-        minWidth: 40, // Min width for cells
+        minWidth: 40,
     },
     headerCell: {
         backgroundColor: '#1162BF',
@@ -237,14 +256,14 @@ const styles = StyleSheet.create({
     },
     nameCell: {
         backgroundColor: '#1162BF',
-        width: 150, // Fixed width for the name column
+        width: 150,
         color: 'white',
     },
     evenRow: {
-        backgroundColor: '#c1deff', // Color for even rows
+        backgroundColor: '#c1deff',
     },
     oddRow: {
-        backgroundColor: '#FFFFFF', // Color for odd rows
+        backgroundColor: '#FFFFFF',
     },
     button: {
         backgroundColor: 'white',
@@ -277,6 +296,6 @@ const styles = StyleSheet.create({
     emptyMessage: {
         fontSize: 18,
         textAlign: 'center',
-        color: '#888', // Gris claro para el mensaje
+        color: '#888',
     },
 });

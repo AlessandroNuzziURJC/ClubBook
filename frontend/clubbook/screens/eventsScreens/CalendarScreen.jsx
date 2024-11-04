@@ -1,11 +1,18 @@
 import Calendar from "./Calendar";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import EventCard from "./EventCard";
 import ServerRequests from "../../serverRequests/ServerRequests";
 
+/**
+ * CalendarScreen component displays the calendar and the next event.
+ * Allows navigation to create a new event or view all future events.
+ * 
+ * @component
+ * @returns {JSX.Element} Rendered CalendarScreen component.
+ */
 const CalendarScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -13,6 +20,11 @@ const CalendarScreen = () => {
     const [nextEvent, setNextEvent] = useState(null);
     const [message, setMessage] = useState("");
 
+    /**
+     * Fetches the next event from the server.
+     * Updates nextEvent state with event data if successful.
+     * Sets message to display if no event is found or there's an error.
+     */
     const getFromServer = async () => {
         const response = await ServerRequests.getNextEvent();
         const result = await response.json();     
@@ -24,6 +36,9 @@ const CalendarScreen = () => {
         setMessage(result.message);
     }
 
+    /**
+     * useFocusEffect hook fetches the next event data each time the screen is focused.
+     */
     useFocusEffect(
         React.useCallback(() => {
             const getData = async () => {

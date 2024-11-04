@@ -7,6 +7,13 @@ import ServerRequests from "../../serverRequests/ServerRequests";
 import ClassGroup from "../../entities/ClassGroup";
 import Schedule from "../../entities/Schedule";
 
+/**
+ * ClassListSelector component for displaying and managing a list of class groups.
+ * 
+ * This component allows users to view, edit, delete, and add class groups. 
+ * It fetches the class groups from the server and handles the state of the 
+ * list, including refreshing and displaying messages when there are no classes available.
+ */
 const ClassListSelector = () => {
     const [classes, setClasses] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -37,12 +44,22 @@ const ClassListSelector = () => {
         }
     }, [route.params?.classGroup]);
 
+    /**
+     * Navigates to the EditClassGroup screen with the selected item.
+     * 
+     * @param {Object} item - The selected class group to edit.
+     */
     const handleEdit = (item) => {
         navigation.navigate('EditClassGroup', {
             item
         });
     };
 
+    /**
+    * Navigates to the ClassGroupInfo screen to view more details about the selected item.
+    * 
+    * @param {Object} item - The selected class group to view.
+    */
     const handleViewMore = (item) => {
         navigation.navigate('ClassGroupInfo', {
             item,
@@ -50,6 +67,12 @@ const ClassListSelector = () => {
         });
     };
 
+    /**
+     * Displays an alert to confirm deletion of the selected class group.
+     * If confirmed, it calls the deleteClassGroup function from ServerRequests.
+     * 
+     * @param {Object} item - The selected class group to delete.
+     */
     const handleDelete = (item) => {
         Alert.alert(
             "Confirmar eliminación",
@@ -81,6 +104,10 @@ const ClassListSelector = () => {
         );
     };
 
+    /**
+     * Refreshes the class groups by fetching them from the server.
+     * Sets the refreshing state to show the refresh control.
+     */
     const refreshClasses = () => {
         setRefreshing(true);
         setTimeout(() => {
@@ -89,6 +116,10 @@ const ClassListSelector = () => {
         }, 500);
     };
 
+    /**
+     * Fetches class groups from the server and updates the state.
+     * Displays an empty message if no classes are found.
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.getClassGroups();
@@ -114,10 +145,21 @@ const ClassListSelector = () => {
         }
     };
 
+    /**
+     * Updates a class group in the list with the provided updated class.
+     * 
+     * @param {Object} updatedClass - The class group object with updated data.
+     */
     const updateClassInList = (updatedClass) => {
         setClasses(classes.map(cls => (cls.id === updatedClass.id ? updatedClass : cls)));
     };
 
+    /**
+     * Renders a single class group item in the list.
+     * 
+     * @param {Object} param0 - Contains the item to be rendered.
+     * @returns {JSX.Element} - The rendered class group item.
+     */
     const renderItem = ({ item }) => (
         <View style={styles.classItem}>
             <View style={styles.classDetails}>

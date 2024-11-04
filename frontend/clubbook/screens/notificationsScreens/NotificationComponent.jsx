@@ -3,9 +3,27 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Functions from "../../functions/Functions";
 
+/**
+ * A functional component that displays a notification.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.data - The notification data.
+ * @param {string} props.data.title - The title of the notification.
+ * @param {string} props.data.content - The content of the notification.
+ * @param {string} props.data.createdAt - The timestamp when the notification was created.
+ * @param {string} props.data.date - The date to be converted and displayed.
+ * @returns {JSX.Element} The rendered notification component.
+ */
 const Notification = ({ data }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
+    /**
+     * Calculates the number of days remaining until the notification can be deleted.
+     *
+     * @param {string} timestamp - The timestamp of when the notification was created.
+     * @returns {number} The number of days remaining until the notification can be deleted.
+     */
     const calculateTimeRemaining = (timestamp) => {
         const now = new Date();
         const notificationDate = new Date(timestamp.split('T')[0]);
@@ -53,12 +71,12 @@ export default Notification;
 const styles = StyleSheet.create({
     notificationContainer: {
         flexDirection: 'column',
-        backgroundColor: '#f5f5f5', // Fondo gris claro
+        backgroundColor: '#f5f5f5',
         borderRadius: 8,
         marginVertical: 5,
         padding: 15,
         borderLeftWidth: 8,
-        borderLeftColor: '#1162BF', // Barra lateral azul
+        borderLeftColor: '#1162BF',
         borderTopWidth: 8,
         borderBottomWidth: 8,
         borderTopColor: '#f5f5f5',
@@ -74,18 +92,18 @@ const styles = StyleSheet.create({
     notificationTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333', // Color del título
+        color: '#333',
         marginBottom: 5,
     },
     notificationContent: {
         fontSize: 16,
-        color: '#555', // Color del contenido
+        color: '#555',
         marginBottom: 10,
-        overflow: 'hidden', // Oculta el texto que excede el contenedor
+        overflow: 'hidden',
     },
     notificationTimestamp: {
         fontSize: 14,
-        color: '#888', // Color gris claro para el timestamp
+        color: '#888',
     },
     clockContainer: {
         flexDirection: 'row',
@@ -94,7 +112,7 @@ const styles = StyleSheet.create({
     },
     timeRemainingText: {
         fontSize: 14,
-        color: '#C8102E', // Color del texto del reloj
+        color: '#C8102E',
         marginLeft: 5,
     },
     centerButton: {

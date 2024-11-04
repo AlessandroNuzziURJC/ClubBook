@@ -26,6 +26,11 @@ import AgendaScreen from "../notebookScreens/AgendaScreen";
 
 const HomeStack = createNativeStackNavigator();
 
+/**
+ * Navigator stack for home-related screens.
+ * Includes screens for teacher home, attendance control, calendar, and event details.
+ * @returns {React.Component} HomeStackNavigator component.
+ */
 const HomeStackNavigator = () => {
     return (
         <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
@@ -48,6 +53,11 @@ const HomeStackNavigator = () => {
 
 const NotificationsStack = createNativeStackNavigator();
 
+/**
+ * Navigator stack for notifications.
+ * Provides navigation for viewing notifications.
+ * @returns {React.Component} NotificationsStackNavigator component.
+ */
 const NotificationsStackNavigator = () => {
     return (
         <NotificationsStack.Navigator screenOptions={{
@@ -60,6 +70,11 @@ const NotificationsStackNavigator = () => {
 
 const ClassStack = createNativeStackNavigator();
 
+/**
+ * Navigator stack for class group-related screens.
+ * Includes screens for class group lists, details, and user profile.
+ * @returns {React.Component} ClassGroupNavigator component.
+ */
 const ClassGroupNavigator = () => {
     return (
         <ClassStack.Navigator screenOptions={{
@@ -74,6 +89,11 @@ const ClassGroupNavigator = () => {
 
 const UsersStack = createNativeStackNavigator();
 
+/**
+ * Navigator stack for user-related screens.
+ * Provides navigation for user list, profile, and search functionality.
+ * @returns {React.Component} UsersStackNavigator component.
+ */
 const UsersStackNavigator = () => {
     return (
         <UsersStack.Navigator screenOptions={{
@@ -89,6 +109,11 @@ const UsersStackNavigator = () => {
 
 const ProfileStack = createNativeStackNavigator();
 
+/**
+ * Navigator stack for profile-related screens.
+ * Provides navigation for viewing and editing user profile.
+ * @returns {React.Component} ProfileStackNavigator component.
+ */
 const ProfileStackNavigator = () => {
     return (
         <ProfileStack.Navigator screenOptions={{
@@ -100,8 +125,11 @@ const ProfileStackNavigator = () => {
     );
 };
 
-
-
+/**
+ * Main screen for teacher role, providing bottom tab navigation.
+ * Includes tabs for home, notifications, class groups, users, and profile.
+ * @returns {React.Component} TeacherMainScreen component.
+ */
 const TeacherMainScreen = () => {
     const Tab = createBottomTabNavigator();
     return (

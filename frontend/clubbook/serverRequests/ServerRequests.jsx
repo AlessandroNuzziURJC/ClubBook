@@ -1,6 +1,9 @@
 import Configuration from '../config/Configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+/**
+ * Contains functions that need an answer from the server.
+ */
 const ServerRequest = {
 
     /*checkPushNotificationToken: async (pushToken) => {

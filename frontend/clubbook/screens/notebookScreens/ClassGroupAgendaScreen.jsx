@@ -5,6 +5,10 @@ import { Ionicons } from "@expo/vector-icons";
 import ServerRequest from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 
+/**
+ * ClassGroupAgendaScreen component renders the agenda and class group information for a specific class notebook.
+ * Displays virtual assistant settings, today's agenda entry, and provides options to view all entries.
+ */
 const ClassGroupAgendaScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -14,6 +18,10 @@ const ClassGroupAgendaScreen = () => {
     const [season, setSeason] = useState(true);
     const [entry, setEntry] = useState(null);
 
+    /**
+     * Fetches notebook and entry information from the server.
+     * Sets the notebook and entry data, and checks if the configuration is missing.
+     */
     const getFromServer = async () => {
         const response = await ServerRequest.getNotebookById(notebookBasicInfo.notebookId);
         const result = await response.json();
@@ -40,6 +48,9 @@ const ClassGroupAgendaScreen = () => {
         }
     };
 
+    /**
+     * Navigates to the Agenda screen, passing the notebook as a parameter.
+     */
     const openAgenda = () => {
         navigation.navigate('AgendaScreen', { notebook: notebook });
     };

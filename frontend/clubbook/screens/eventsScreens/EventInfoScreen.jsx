@@ -4,6 +4,13 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-nati
 import Functions from "../../functions/Functions";
 import AttendanceEventSelector from "./AttendanceEventSelector";
 
+/**
+ * EventInfoScreen component displays detailed information about an event,
+ * including attendance options and deadlines based on the user's role (admin, teacher, or attendee).
+ * 
+ * @component
+ * @returns {JSX.Element} JSX code for rendering the event information screen.
+ */
 const EventInfoScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -11,6 +18,12 @@ const EventInfoScreen = () => {
     const admin = route.params.admin;
     const teacher = route.params.teacher;
 
+    /**
+     * Calculates the number of days remaining until the event deadline.
+     * 
+     * @param {string} timestamp - The deadline timestamp in string format.
+     * @returns {number} The number of days remaining until the deadline.
+     */
     const calculateTimeRemaining = (timestamp) => {
         const now = new Date();
         const notificationDate = new Date(timestamp);
@@ -18,6 +31,11 @@ const EventInfoScreen = () => {
         return daysRemaining;
     };
 
+    /**
+     * Checks if the event's registration deadline has passed.
+     * 
+     * @returns {boolean} True if the deadline has passed, otherwise false.
+     */
     const isDeadline = () => {
         return calculateTimeRemaining(event.deadline) < 0;
     }

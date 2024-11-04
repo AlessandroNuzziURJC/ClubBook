@@ -5,12 +5,27 @@ import { useRoute } from '@react-navigation/native';
 import ServerRequest from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 
+/**
+ * ProfileScreen component displays the user's profile information and allows
+ * for refreshing the profile picture.
+ *
+ * @component
+ * @returns {JSX.Element} The ProfileScreen component.
+ */
 const ProfileScreen = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [profilePicture, setProfilePicture] = useState(null);
     const route = useRoute();
     const [userdata, setUser] = useState(route.params.item);
 
+    /**
+     * Fetches the user's profile picture from the server and updates the state.
+     * If there's an error while fetching, it displays an alert message.
+     *
+     * @async
+     * @function getFromServer
+     * @returns {Promise<void>} A promise that resolves when the fetch operation is complete.
+     */
     const getFromServer = async () => {
         try {
 
@@ -29,6 +44,13 @@ const ProfileScreen = () => {
         }
     };
 
+    /**
+     * Handles the refresh action, setting the refreshing state to true 
+     * and calling getFromServer to update the profile picture.
+     * 
+     * @function onRefresh
+     * @returns {void}
+     */
     const onRefresh = () => {
         setRefreshing(true);
         setTimeout(() => {

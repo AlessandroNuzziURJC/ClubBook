@@ -1,13 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from '@react-navigation/native';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Alert, Image, TextInput } from "react-native";
+import { View, Text, StyleSheet, FlatList, RefreshControl, Alert, Image, TextInput } from "react-native";
 import Checkbox from 'expo-checkbox';
 import ServerRequests from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 import ServerRequest from "../../serverRequests/ServerRequests";
 import FormFooter from "../../components/FormFooter";
 
+/**
+ * DeleteUsersListScreen component allows administrators to delete users (students, teachers, or administrators) from the app.
+ * It fetches user data from the server, displays a list of users with checkboxes for selection, and allows for user deletion.
+ */
 const DeleteUsersListScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -24,6 +28,10 @@ const DeleteUsersListScreen = () => {
     const [hasMore, setHasMore] = useState(true);
     const [debounceTimeout, setDebounceTimeout] = useState(null);
 
+    /**
+     * Gets the title of the screen based on the user role.
+     * @returns {string} Title for the screen.
+     */
     const getTitle = () => {
         switch (role) {
             case 'administrator':
@@ -37,6 +45,9 @@ const DeleteUsersListScreen = () => {
         }
     };
 
+    /**
+     * Fetches user data from the server based on the user role and current page.
+     */
     const getFromServer = async () => {
         const selectFunction = {
             student: ServerRequest.getStudentsPage,
@@ -56,6 +67,11 @@ const DeleteUsersListScreen = () => {
         });
     }
 
+    /**
+     * Fetches the profile picture for a specific user.
+     * @param {number} id - The user's ID.
+     * @param {number} index - The index of the user in the user list.
+     */
     const getProfilePicture = async (id, index) => {
         const response = await ServerRequests.getUserPhoto(id);
         if (response.ok) {
@@ -87,6 +103,9 @@ const DeleteUsersListScreen = () => {
         }
     };
 
+    /**
+     * Refreshes the user data by resetting the state and fetching data from the server.
+     */
     const refreshData = () => {
         setRefreshing(true);
         setCurrentPage(-1);
@@ -108,6 +127,9 @@ const DeleteUsersListScreen = () => {
         }
     }, [currentPage]);
 
+    /**
+     * Loads more users when the user reaches the end of the list.
+     */
     const loadMoreUsers = () => {
         if (hasMore) {
             setCurrentPage(prevPage => prevPage + 1);
@@ -127,6 +149,10 @@ const DeleteUsersListScreen = () => {
         return () => clearTimeout(timeout);
     }, [searchTerm]);
 
+    /**
+     * Handles the search functionality for users.
+     * It fetches users based on the search term.
+     */
     const handleSearch = async () => {
         if (searchTerm.trim() === '') {
             setFilteredUsers([]);
@@ -151,6 +177,10 @@ const DeleteUsersListScreen = () => {
         }
     };
 
+    /**
+     * Handles the saving of deleted users.
+     * It sends delete requests for each selected user.
+     */
     const handleSave = () => {
         checkedUsers.forEach(async (item) => {
             const response = await ServerRequest.deleteUser(item.id);
@@ -174,6 +204,10 @@ const DeleteUsersListScreen = () => {
         
     }
 
+    /**
+     * Handles the selection of users with checkboxes.
+     * @param {object} item - The user item that is checked or unchecked.
+     */
     const handleCheckBox = (item) => {
         setCheckedUsers((prevChecked) => {
             if (prevChecked.find(checkedUser => checkedUser.id === item.id)) {
@@ -184,6 +218,11 @@ const DeleteUsersListScreen = () => {
         });
     };
 
+    /**
+     * Renders a single user item in the FlatList.
+     * @param {object} param - The object containing item and index.
+     * @returns {JSX.Element} The rendered user item.
+     */
     const renderItem = ({ item, index }) => {
         return (
             <View style={styles.card}>

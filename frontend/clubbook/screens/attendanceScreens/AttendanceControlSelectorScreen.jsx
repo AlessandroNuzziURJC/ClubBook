@@ -4,6 +4,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import ClassGroup from "../../entities/ClassGroup";
 
+/**
+ * AttendanceControlSelector component for displaying and managing attendance records for classes.
+ *
+ * This component fetches class groups from the server and allows navigation to attendance data or checklist views.
+ * It displays a list of classes and provides options to view attendance data or pass a checklist.
+ *
+ * @component
+ */
 const AttendanceControlSelector = () => {
     const [classes, setClasses] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -17,7 +25,12 @@ const AttendanceControlSelector = () => {
 
     const [emptyMessage, setEmptyMessage] = useState('');
     
-
+    /**
+     * Fetches class groups from the server.
+     *
+     * Handles various response statuses and updates state accordingly.
+     * Displays alerts for errors and manages the empty message state.
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.getClassGroups();
@@ -45,11 +58,22 @@ const AttendanceControlSelector = () => {
         }
     };
 
+    /**
+     * Refreshes the class groups by re-fetching from the server.
+     *
+     * Triggered when the user pulls down to refresh the FlatList.
+     */
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         getFromServer();
     }, []);
 
+    /**
+     * Renders a single item in the FlatList.
+     *
+     * @param {Object} item - The class group item to render.
+     * @returns {JSX.Element} The rendered class group item.
+     */
     const renderItem = ({ item }) => (
         <View style={styles.classItem}>
             <View style={styles.className}>

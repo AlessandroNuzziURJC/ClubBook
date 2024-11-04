@@ -5,6 +5,12 @@ import { Ionicons } from "@expo/vector-icons";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 
+/**
+ * A screen component that displays a list of administrators and allows 
+ * for the deletion of an administrator.
+ *
+ * @component
+ */
 const AdministratorListScreen = () => {
     const [administrators, setAdministrators] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -12,6 +18,10 @@ const AdministratorListScreen = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredAdministrators, setFilteredAdministrators] = useState([]);
 
+    /**
+     * Fetches the list of administrators from the server.
+     * Sets the administrators and their profile pictures in the state.
+     */
     const getFromServer = async () => {
         const response = await ServerRequests.getAllAdministrators();
         const result = await response.json();
@@ -27,6 +37,12 @@ const AdministratorListScreen = () => {
         }
     };
 
+    /**
+     * Fetches the profile picture of a specific administrator.
+     *
+     * @param {string} id - The ID of the administrator.
+     * @param {number} index - The index of the administrator in the list.
+     */
     const getProfilePicture = async (id, index) => {
         const response = await ServerRequests.getUserPhoto(id);
         if (response.ok) {
@@ -48,6 +64,9 @@ const AdministratorListScreen = () => {
         }
     };
 
+    /**
+     * Refreshes the list of administrators by fetching data from the server.
+     */
     const refreshData = () => {
         setRefreshing(true);
         setTimeout(() => {
@@ -56,6 +75,11 @@ const AdministratorListScreen = () => {
         }, 500);
     };
 
+    /**
+     * Prompts the user to confirm the deletion of an administrator.
+     *
+     * @param {string} adminId - The ID of the administrator to delete.
+     */
     const confirmDelete = (adminId) => {
         Alert.alert(
             "Confirmación",
@@ -67,6 +91,11 @@ const AdministratorListScreen = () => {
         );
     };
 
+    /**
+     * Handles the deletion of an administrator from the server.
+     *
+     * @param {string} adminId - The ID of the administrator to delete.
+     */
     const handleDelete = async (adminId) => {
         const response = await ServerRequests.deleteUser(adminId);
         const result = await response.json();
@@ -85,6 +114,11 @@ const AdministratorListScreen = () => {
         }, [])
     );
 
+    /**
+     * Filters the list of administrators based on the search term.
+     *
+     * @param {string} text - The search term entered by the user.
+     */
     const handleSearch = (text) => {
         setSearchTerm(text);
         const filtered = administrators.filter(admin =>
@@ -94,6 +128,14 @@ const AdministratorListScreen = () => {
         setFilteredAdministrators(filtered);
     };
 
+    /**
+     * Renders each administrator item in the list.
+     *
+     * @param {Object} param0 - The item object.
+     * @param {Object} param0.item - The administrator item to render.
+     * @param {number} param0.index - The index of the item in the list.
+     * @returns {JSX.Element} The rendered administrator item.
+     */
     const renderItem = ({ item, index }) => {
         return (
             <View style={styles.card}>
