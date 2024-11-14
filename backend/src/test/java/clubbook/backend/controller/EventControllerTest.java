@@ -5,9 +5,7 @@ import clubbook.backend.dtos.NewEventDto;
 import clubbook.backend.model.Event;
 import clubbook.backend.model.EventType;
 import clubbook.backend.model.enumClasses.EventTypeEnum;
-import clubbook.backend.model.notification.DeleteEventNotificationFactory;
 import clubbook.backend.model.notification.Notification;
-import clubbook.backend.model.notification.NotificationFactory;
 import clubbook.backend.repository.EventRepository;
 import clubbook.backend.repository.EventTypeRepository;
 import clubbook.backend.responses.ResponseWrapper;
@@ -19,8 +17,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDate;
 import java.util.*;

@@ -2,26 +2,19 @@ package clubbook.backend.controller;
 
 import clubbook.backend.dtos.NotebookEntryDto;
 import clubbook.backend.dtos.NotebookUpdateConfigDto;
-import clubbook.backend.model.Notebook;
 import clubbook.backend.model.NotebookEntry;
-import clubbook.backend.responses.ResponseMessages;
-import clubbook.backend.service.NotebookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

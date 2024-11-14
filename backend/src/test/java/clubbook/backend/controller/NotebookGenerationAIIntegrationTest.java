@@ -1,7 +1,6 @@
 package clubbook.backend.controller;
 
 import clubbook.backend.model.NotebookEntry;
-import clubbook.backend.responses.ResponseMessages;
 import clubbook.backend.service.NotebookService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest

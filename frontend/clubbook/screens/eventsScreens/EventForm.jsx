@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, FlatList, Alert } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import FormFooter from "../../components/FormFooter";
-import NewEventDto from "../../dto/NewEventDto";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 import Toast from "../../components/Toast";

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useRoute } from '@react-navigation/native';
