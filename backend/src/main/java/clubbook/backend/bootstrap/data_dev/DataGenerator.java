@@ -52,7 +52,7 @@ public class DataGenerator {
      */
     @PostConstruct
     public void init() throws IOException {
-        if (roleRepository.count() != 0) {
+        /*if (roleRepository.count() != 0) {
             return ;
         }
 
@@ -82,5 +82,6 @@ public class DataGenerator {
         authenticationService.signup(new RegisterUserDto("admindefault@clubbook.com", "abcd", "administrator",
                 "Administrator Default", "Default default", "000000000",
                 LocalDate.of(2000, 1, 1), "Admin", "000000000A", false, imageBytes));
+         */
     }
 }

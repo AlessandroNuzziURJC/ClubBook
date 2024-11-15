@@ -40,7 +40,7 @@ public class NotebookGenerationAIIntegrationTest {
             "  \"finalExercises\": [\"Juego de equipo\",\"Estiramientos basicos\"]\n" +
             "}\n";
 
-    private String output = "{\"message\":\"\",\"data\":{\"id\":0,\"warmUpExercises\":[\"Caminata ligera\",\"Saltos en el lugar\",\"Estiramientos de brazos\"],\"specificExercises\":[\"Tecnica de caida (Ukemi)\",\"Posturas fundamentales (Kamae)\",\"Movimientos de piernas\"],\"finalExercises\":[\"Juego de equipo\",\"Estiramientos basicos\"],\"date\":\"2024-11-03\"}}";
+    private String output = "{\"message\":\"\",\"data\":{\"id\":0,\"warmUpExercises\":[\"Caminata ligera\",\"Saltos en el lugar\",\"Estiramientos de brazos\"],\"specificExercises\":[\"Tecnica de caida (Ukemi)\",\"Posturas fundamentales (Kamae)\",\"Movimientos de piernas\"],\"finalExercises\":[\"Juego de equipo\",\"Estiramientos basicos\"],\"date\":\"" + LocalDate.now() + "\"}}";
 
 
     @Transactional
