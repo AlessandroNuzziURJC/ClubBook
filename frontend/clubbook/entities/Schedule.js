@@ -1,4 +1,17 @@
+/**
+ * Represents a schedule for a specific class or event.
+ */
 class Schedule {
+
+    /**
+     * Creates an instance of Schedule from a JSON object.
+     *
+     * @param {Object} json - The JSON object containing schedule information.
+     * @param {string} json.id - The unique identifier for the schedule.
+     * @param {string} json.weekDay - The day of the week (in Spanish).
+     * @param {string} json.init - The start time of the schedule in HH:MM format.
+     * @param {number} json.duration - The duration of the schedule in minutes.
+     */
     constructor(json) {
         if (typeof json === 'object') {
             this.id = json.id;
@@ -8,6 +21,11 @@ class Schedule {
         } 
     }
 
+    /**
+     * Calculates the end time of the schedule based on the start time and duration.
+     *
+     * @returns {string} The end time in HH:MM format.
+     */
     calculateEndTime() {
         const [hours, minutes] = this.init.split(':').map(Number);
         const totalMinutes = hours * 60 + minutes + Number(this.duration);
@@ -17,6 +35,12 @@ class Schedule {
         return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
     }
 
+    /**
+     * Translates the given weekday name from Spanish to English.
+     *
+     * @param {string} weekDayName - The name of the weekday in Spanish.
+     * @returns {string} The translated weekday name in English.
+     */
     static translate(weekDayName) {
         switch (weekDayName) {
             case 'Lunes': return 'MONDAY';
@@ -31,6 +55,12 @@ class Schedule {
 
     }
 
+    /**
+     * Reverses the translation of the given weekday name from English to Spanish.
+     *
+     * @param {string} weekDayName - The name of the weekday in English.
+     * @returns {string} The translated weekday name in Spanish.
+     */
     static reverseTranslate(weekDayName) {
         switch (weekDayName) {
             case 'MONDAY': return 'Lunes';

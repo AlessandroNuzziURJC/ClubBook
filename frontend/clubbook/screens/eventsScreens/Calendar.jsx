@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
-import { useFocusEffect,} from "@react-navigation/native";
+import { useFocusEffect, } from "@react-navigation/native";
 import Functions from "../../functions/Functions";
 import EventCard from "./EventCard";
 import { Ionicons } from "@expo/vector-icons";
 import ServerRequests from "../../serverRequests/ServerRequests";
 
+/**
+ * Calendar component that displays a monthly calendar and a modal to show events on selected days.
+ * @component
+ */
 const Calendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [calendarTable, setCalendarTable] = useState([]);
@@ -14,6 +18,10 @@ const Calendar = () => {
     const [events, setEvents] = useState({});
     const weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
+    /**
+     * Fetches events from the server for the current month and year.
+     * @async
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.getMonthEvents(currentDate.getMonth() + 1, currentDate.getFullYear());
@@ -31,13 +39,13 @@ const Calendar = () => {
             const getData = async () => {
                 await getFromServer();
             };
-    
+
             getData();
 
             return () => {
 
             };
-        }, []) 
+        }, [])
     );
 
     useEffect(() => {
@@ -45,11 +53,13 @@ const Calendar = () => {
             generateCalendar();
             await getFromServer();
         };
-    
+
         fetchEventsAndGenerateCalendar();
     }, [currentDate]);
-    
 
+    /**
+    * Generates the calendar layout based on the current date, accounting for days and weeks.
+    */
     const generateCalendar = () => {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
@@ -74,24 +84,39 @@ const Calendar = () => {
         setCalendarTable(weeks);
     };
 
+    /**
+     * Changes the displayed month in the calendar.
+     * @param {number} direction - The direction to change the month, either -1 for previous or 1 for next month.
+     */
     const changeMonth = (direction) => {
         setEvents({});
         const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1);
         setCurrentDate(newDate);
     };
 
+    /**
+     * Displays the modal with events for a selected day.
+     * @param {number} day - The selected day to display events for.
+     */
     const showEvents = (day) => {
         setSelectedDay(day);
         setModalVisible(true);
     };
 
+    /**
+     * Closes the event modal and clears the selected day.
+     */
     const closeModal = () => {
         setModalVisible(false);
         setSelectedDay(null);
     };
 
+    /**
+     * Renders each event card in the modal.
+     * @param {Object} item - The event item data to be rendered.
+     */
     const renderEventCard = ({ item }) => (
-        <EventCard editAndDelete={false} data={item} onCloseModal={closeModal}/>
+        <EventCard editAndDelete={false} data={item} onCloseModal={closeModal} />
     );
 
     const monthName = currentDate.toLocaleString("default", { month: "long" });
@@ -121,8 +146,8 @@ const Calendar = () => {
                                     style={[
                                         styles.dayButton,
                                         day === today && currentDate.getMonth() === new Date().getMonth() && currentDate.getFullYear() === new Date().getFullYear()
-                                                ? styles.currentDayContainer
-                                                : null,
+                                            ? styles.currentDayContainer
+                                            : null,
                                         hasEvents ? styles.eventDay : null  // Aplicar fondo rojo si hay eventos
                                     ]}
                                 >
@@ -251,7 +276,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     eventDay: {
-        backgroundColor: "#ffc459", 
+        backgroundColor: "#ffc459",
         borderRadius: 40,
     },
     eventDayText: {

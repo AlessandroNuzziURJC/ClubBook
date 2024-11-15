@@ -2,6 +2,19 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+/**
+ * AttendanceEventStatusComponent displays the attendance status of a user for a specific event.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Object} props.data - The data object containing user and attendance status information.
+ * @param {Object} props.data.user - The user associated with the attendance status.
+ * @param {string} props.data.user.firstName - The first name of the user.
+ * @param {string} props.data.user.lastName - The last name of the user.
+ * @param {Object} props.data.user.role - The role object of the user.
+ * @param {string} props.data.user.role.name - The role name of the user (e.g., 'TEACHER' or 'STUDENT').
+ * @param {boolean|null} props.data.status - The attendance status (true for present, false for absent, null for undecided).
+ * @returns {JSX.Element} The rendered component.
+ */
 const AttendanceEventStatusComponent = ({ data }) => {
 
     const backgroundTeacher = { backgroundColor: '#ddeeff' }; 

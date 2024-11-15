@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +11,11 @@ import FormFooter from "../../components/FormFooter";
 import NewUserDto from "../../dto/RegisterUserDto";
 import ServerRequest from "../../serverRequests/ServerRequests";
 
+/**
+ * NewUserFormScreen is a React component for creating a new user.
+ * It handles user input for different roles (administrator, teacher, student) 
+ * and validates the input before sending it to the server.
+ */
 const NewUserFormScreen = () => {
     const navigation = useNavigation();
     const [firstName, setFirstName] = useState('');
@@ -33,6 +38,10 @@ const NewUserFormScreen = () => {
     const [addressError, setAddressError] = useState(false);
     const [birthdayError, setBirthdayError] = useState(false);
 
+    /**
+     * Returns the title based on the user role.
+     * @returns {string} The title for the form.
+     */
     const getTitle = () => {
         switch (role) {
             case 'administrator':
@@ -48,6 +57,10 @@ const NewUserFormScreen = () => {
 
     const [isToastVisible, setIsToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+
+    /**
+     * Shows a toast message for feedback.
+     */
     const showToast = () => {
         setIsToastVisible(true);
         setTimeout(() => {
@@ -55,6 +68,11 @@ const NewUserFormScreen = () => {
         }, 1000);
     };
 
+    /**
+     * Checks if the user is over 18 based on the given date.
+     * @param {Date} date - The date to check.
+     * @returns {boolean} True if over 18, false otherwise.
+     */
     const isOver18 = (date) => {
         const today = new Date();
         const birthDate = new Date(date);
@@ -68,6 +86,10 @@ const NewUserFormScreen = () => {
         return age >= 18;
     };
 
+    /**
+     * Handles the date confirmation from the date picker.
+     * @param {Date} date - The selected date.
+     */
     const handleConfirm = (date) => {
         const today = new Date();
 
@@ -89,10 +111,17 @@ const NewUserFormScreen = () => {
         setDatePickerVisibility(false);
     };
 
+    /**
+     * Hides the date picker modal.
+     */
     const hideDatePicker = () => {
         setDatePickerVisibility(false);
     };
 
+    /**
+     * Validates the form data before submission.
+     * @returns {boolean} True if all fields are valid, false otherwise.
+     */
     const validateFormData = () => {
         let valid = true;
 
@@ -152,6 +181,9 @@ const NewUserFormScreen = () => {
         return valid;
     };
 
+    /**
+     * Handles the save action for creating a new user.
+     */
     const handleSave = async () => {
         if (validateFormData()) {
             const newUser = new NewUserDto(firstName, lastName, email, phoneNumber, Functions.convertDateSpaToEng(birthday), role, address, idCard, isPartner);

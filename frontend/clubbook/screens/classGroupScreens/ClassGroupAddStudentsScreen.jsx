@@ -1,10 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
 import { useRoute, useNavigation } from '@react-navigation/native';
 import UserCheckboxList from "../../components/UserCheckboxList";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import FormFooter from "../../components/FormFooter";
 
+/**
+ * ClassGroupAddStudents component allows the user to add students to a specific class group.
+ *
+ * This component retrieves a list of students without a class group from the server and allows
+ * the user to select multiple students to add to a specified class group. 
+ *
+ * @returns {JSX.Element} The rendered component.
+ */
 const ClassGroupAddStudents = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -12,6 +20,11 @@ const ClassGroupAddStudents = () => {
     const [classGroup, setClassGroup] = useState(item);
     const [totalStudents, setTotalStudents] = useState([]);
 
+    /**
+     * Toggles the selection state of a student based on their ID.
+     *
+     * @param {number} id - The ID of the student to toggle.
+     */
     const handleSelectStudent = (id) => {
         setTotalStudents(prev =>
             prev.map(student => {
@@ -24,6 +37,10 @@ const ClassGroupAddStudents = () => {
             }));
     };
 
+    /**
+    * Fetches the list of students without a class group from the server.
+    * This function is called on component mount to populate the student list.
+    */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.getAllStudentsWithoutClassGroup();
@@ -40,6 +57,12 @@ const ClassGroupAddStudents = () => {
         }
     }
 
+    /**
+     * Handles saving the selected students to the class group.
+     *
+     * This function filters the selected students and sends them to the server
+     * to be added to the class group.
+     */
     const handleSave = async () => {
         const newStudents = totalStudents.filter(item => item.selected);
 

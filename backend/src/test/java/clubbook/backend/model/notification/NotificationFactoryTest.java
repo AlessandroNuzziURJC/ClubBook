@@ -5,7 +5,6 @@ import clubbook.backend.model.User;
 import clubbook.backend.model.enumClasses.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 

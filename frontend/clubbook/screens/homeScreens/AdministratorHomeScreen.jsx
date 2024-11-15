@@ -3,6 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
+/**
+ * Administrator Home Screen component providing navigation to different administrative features.
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const AdministratorHomeScreen = () => {
     const navigation = useNavigation();
 

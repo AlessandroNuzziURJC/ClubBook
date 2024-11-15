@@ -9,6 +9,13 @@ import ServerRequest from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 import NewUserDto from "../../dto/RegisterUserDto";
 
+/**
+ * UserManagementScreen is a component that allows for user management within the application.
+ * It provides functionalities to add new users, either individually or in bulk via a CSV file, and to delete existing users.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const UserManagementScreen = () => {
     const navigation = useNavigation();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -22,15 +29,24 @@ const UserManagementScreen = () => {
         student: 'https://forms.gle/c1cSETNn1U19fW99A'
     };
 
+    /**
+     * Opens the modal to add a user of a specified role.
+     * @param {string} roleName - The role of the user to be added (e.g., 'teacher', 'student').
+     */
     const openModal = (roleName) => {
         setRole(roleName); // Guardar el rol
         setIsModalVisible(true);
     };
 
+    /** Closes the modal for adding users. */
     const closeModal = () => {
         setIsModalVisible(false);
     };
 
+    /**
+     * Opens the registration link for the selected role.
+     * @async
+     */
     const openLink = async () => {
         const supported = await Linking.canOpenURL(link[role]);
         if (supported) {
@@ -40,6 +56,7 @@ const UserManagementScreen = () => {
         }
     };
 
+    /** Adds a single user by navigating to the NewUserFormScreen with the selected role. */
     const addSingleUser = () => {
         if (role) {
             closeModal();
@@ -47,6 +64,10 @@ const UserManagementScreen = () => {
         }
     };
 
+    /**
+     * Handles the process of adding users from a CSV file.
+     * @async
+     */
     const addCsvFile = async () => {
         try {
             const res = await DocumentPicker.getDocumentAsync({
@@ -268,11 +289,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         marginVertical: 10,
         width: '80%',
-        backgroundColor: '#28a745', // Verde
-        elevation: 2, // Sombra
+        backgroundColor: '#28a745',
+        elevation: 2,
     },
     buttonText: {
-        color: '#fff', // Texto blanco
+        color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
         flex: 1,
@@ -286,7 +307,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#28a745',
     },
     delete: {
-        backgroundColor: '#dc3545', // Rojo
+        backgroundColor: '#dc3545',
     },
     modalContainer: {
         flex: 1,
@@ -320,11 +341,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         marginBottom: 20,
-        overflow: 'hidden', // Evita que el enlace desborde
+        overflow: 'hidden',
     },
     linkTextContainer: {
-        flex: 1, // Permitir que el texto ocupe el espacio restante
-        marginLeft: 10, // Espacio entre el ícono y el texto
+        flex: 1,
+        marginLeft: 10,
     },
     linkText: {
         fontSize: 16,

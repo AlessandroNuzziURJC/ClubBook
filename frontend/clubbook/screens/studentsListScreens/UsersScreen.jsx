@@ -1,11 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { ScrollView, View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import UsersFlatList from '../../components/UsersFlatListPage';
 import ServerRequest from "../../serverRequests/ServerRequests";
 
+/**
+ * UsersScreen component that displays a list of users (students or teachers)
+ * and allows for pagination and searching.
+ *
+ * @component
+ * @returns {JSX.Element} The UsersScreen component.
+ */
 const UsersScreen = () => {
     const [userList, setUserList] = useState([]);
     const [page, setPage] = useState(0);
@@ -17,13 +24,21 @@ const UsersScreen = () => {
 
     const [emptyMessage, setEmptyMessage] = useState('');
 
+    // Mapping user type to corresponding server request function
     const serverFunctionMap = {
         student: ServerRequest.getStudentsPage,
         teacher: ServerRequest.getTeachersPage
     };
 
+    /**
+     * Fetches users from the server based on the current page and user type.
+     * Updates the user list and handles empty responses and errors.
+     *
+     * @async
+     * @function getUsers
+     * @returns {Promise<void>} A promise that resolves when the fetch operation is complete.
+     */
     const getUsers = async () => {
-
         try {
             const response = await serverFunctionMap[key](page);
 
@@ -47,6 +62,12 @@ const UsersScreen = () => {
         }
     };
 
+    /**
+     * Resets the user list and pagination state when the screen is focused.
+     *
+     * @function useFocusEffect
+     * @returns {void}
+     */
     useFocusEffect(
         useCallback(() => {
             setUserList([]);
@@ -65,6 +86,12 @@ const UsersScreen = () => {
         }
     }, [page]);
 
+    /**
+     * Loads more users by incrementing the page state if more users are available.
+     *
+     * @function loadMoreUsers
+     * @returns {void}
+     */
     const loadMoreUsers = () => {
         if (hasMore) {
             setPage(prevPage => prevPage + 1);

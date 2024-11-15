@@ -5,10 +5,24 @@ import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
 import Functions from '../functions/Functions';
 
+/**
+ * UsersFlatListNotPaged component displays a list of users with their profile images, names, and phone numbers.
+ * Each user can be selected to navigate to their profile.
+ *
+ * @param {Array} users - An array of user objects containing id, firstName, lastName, and phoneNumber.
+ * @returns {JSX.Element} The rendered flat list of users.
+ */
 const UsersFlatListNotPaged = ({ users }) => {
     const navigation = useNavigation();
     const [userImages, setUserImages] = useState(Array(users.length).fill(require('../assets/loading.gif')));
 
+    /**
+     * Fetches the user's photo from the server and updates the userImages state.
+     *
+     * @param {string} id - The user's ID.
+     * @param {number} index - The index of the user in the users array.
+     * @returns {Promise<void>}
+     */
     const getImage = async (id, index) => {
         const response = await ServerRequests.getUserPhoto(id);
         if (response.ok) {
@@ -36,6 +50,13 @@ const UsersFlatListNotPaged = ({ users }) => {
         });
     }, [users]);
 
+    /**
+     * Renders a single user item in the flat list.
+     *
+     * @param {Object} item - The user object containing user details.
+     * @param {number} index - The index of the user in the users array.
+     * @returns {JSX.Element} The rendered user item.
+     */
     const renderUser = ({ item, index }) => {
         return (
             <View style={styles.column}>

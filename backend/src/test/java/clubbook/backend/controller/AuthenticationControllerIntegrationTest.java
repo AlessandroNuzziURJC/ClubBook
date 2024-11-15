@@ -4,6 +4,7 @@ import clubbook.backend.model.enumClasses.RoleEnum;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,9 +14,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -190,5 +193,38 @@ public class AuthenticationControllerIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Transactional
+    @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
+    public void testLoginDeletedUserCorrect() throws Exception {
+        String userJson = "{"
+                + "\"email\": \"student@prueba.com\","
+                + "\"password\": \"password\","
+                + "\"role\": \"" + RoleEnum.STUDENT.name() + "\","
+                + "\"firstName\": \"Marty\","
+                + "\"lastName\": \"McFly\","
+                + "\"phoneNumber\": \"767676767\","
+                + "\"birthday\": \"1968-06-09\","
+                + "\"address\": \"Calla del Olvido, 1\","
+                + "\"idCard\": \"123123123X\","
+                + "\"partner\": \"true\""
+                + "}";
+
+        ResultActions resultActions = mockMvc.perform(post("/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().isOk());
+
+        JSONObject jsonObject = new JSONObject(resultActions.andReturn().getResponse().getContentAsString());
+        int id = jsonObject.getJSONObject("data").getInt("id");
+
+        mockMvc.perform(delete("/user/" + id)).andExpect(status().isOk());;
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().is4xxClientError());
     }
 }

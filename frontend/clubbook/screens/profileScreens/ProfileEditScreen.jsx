@@ -10,6 +10,10 @@ import FormFooter from "../../components/FormFooter";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import Functions from "../../functions/Functions";
 
+/**
+ * EditProfile component allows users to edit their profile information.
+ * It includes fields for name, surname, ID number, address, phone number, and profile picture.
+ */
 const EditProfile = () => {
     const [profilePicture, setProfilePicture] = useState(null);
     const navigation = useNavigation();
@@ -17,6 +21,11 @@ const EditProfile = () => {
     const { user: initialUser } = route.params;
     const [user, setUser] = useState(initialUser);
 
+    /**
+     * Converts a Blob to a Base64 string.
+     * @param {Blob} blob - The Blob object to convert.
+     * @returns {Promise<string>} - A promise that resolves with the Base64 string.
+     */
     const blobToBase64 = (blob) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -28,10 +37,18 @@ const EditProfile = () => {
         });
     };
 
+    /**
+     * Checks if all fields in the user object are not empty.
+     * @returns {boolean} - Returns true if no fields are empty, otherwise false.
+     */
     const checkNotEmpty = () => {
         return Object.values(user).every(value => String(value).trim() !== '');
     }
 
+    /**
+     * Validates the user data for specific formats.
+     * @returns {boolean} - Returns true if all fields are valid, otherwise false.
+     */
     const dataValid = () => {
         const phoneRegex = /^[0-9]+$/;
         const dniNieRegex = /^[0-9A-Z]+$/;
@@ -62,6 +79,10 @@ const EditProfile = () => {
         return true;
     }
 
+    /**
+     * Sends updates to the user profile to the server.
+     * Validates the data before making the request.
+     */
     const sendUpdates = async () => {
         const empty = checkNotEmpty();
         const valid = dataValid();
@@ -88,6 +109,11 @@ const EditProfile = () => {
         }
     }
 
+    /**
+     * Fetches the user's profile picture from the server.
+     * @param {Object} data - The object containing the user's token and ID.
+     * @returns {Promise<Response>} - The response from the fetch request.
+     */
     const getUserPhoto = async (data) => {
         return await fetch(`${Configuration.API_URL}/${data.id}/profilePicture`, {
             method: 'GET',
@@ -97,6 +123,10 @@ const EditProfile = () => {
         });
     }
 
+    /**
+     * Updates the screen data with the fetched user information.
+     * @param {Object} result - The user data fetched from the server.
+     */
     const updateScreenData = async (result) => {
         const userData = {
             email: result.email,
@@ -112,6 +142,10 @@ const EditProfile = () => {
         setUser(userData);
     }
 
+    /**
+     * Saves user data in AsyncStorage.
+     * @param {Object} result - The user data to save.
+     */
     const saveInAsyncStorage = async (result) => {
         await AsyncStorage.setItem('firstName', result.firstName);
         await AsyncStorage.setItem('lastName', result.lastName);
@@ -122,6 +156,9 @@ const EditProfile = () => {
         await AsyncStorage.setItem('partner', result.partner);
     }
 
+    /**
+     * Retrieves old user data from AsyncStorage and updates the screen.
+     */
     const getOldData = async () => {
         try {
             const data = {
@@ -162,6 +199,11 @@ const EditProfile = () => {
         getOldData();
     }, []);
 
+    /**
+     * Handles input changes for user data fields.
+     * @param {string} field - The field name to update.
+     * @param {string} value - The new value for the field.
+     */
     const handleInputChange = (field, value) => {
         setUser({
             ...user,
@@ -172,14 +214,24 @@ const EditProfile = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [datePickerVisible, setDatePickerVisible] = useState(false);
 
+    /**
+     * Shows the date picker.
+     */
     const showDatePicker = () => {
         setDatePickerVisible(true);
     };
 
+    /**
+     * Hides the date picker.
+     */
     const hideDatePicker = () => {
         setDatePickerVisible(false);
     };
 
+    /**
+     * Handles the date selected from the date picker.
+     * @param {Date} date - The selected date.
+     */
     const handleConfirm = (date) => {
         setSelectedDate(date);
         hideDatePicker();
@@ -196,6 +248,9 @@ const EditProfile = () => {
         handleInputChange("birthday", dateValid);
     };
 
+    /**
+     * Allows the user to select an image from the image library.
+     */
     const selectImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -362,7 +417,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)', // Filtro gris transparente
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 100,
@@ -396,14 +451,14 @@ const styles = StyleSheet.create({
     },
     partnerContainer: {
         justifyContent: 'center',
-        marginBottom: 0 // Modificación: Eliminado el marginBottom
+        marginBottom: 0
     },
     partner: {
         fontSize: 18,
         fontWeight: '600'
     },
     infoContainer: {
-        marginBottom: 0 // Modificación: Eliminado el marginBottom
+        marginBottom: 0
     },
     labelDataContainer: {
         marginBottom: 15

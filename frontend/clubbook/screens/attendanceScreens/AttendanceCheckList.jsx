@@ -9,6 +9,13 @@ import AttendanceDto from "../../dto/AttendanceDto";
 import ServerRequests from "../../serverRequests/ServerRequests";
 import Toast from "../../components/Toast";
 
+/**
+ * AttendanceCheckList component for managing student attendance for a specific class.
+ * It allows the user to select a date and mark the attendance for students in the class.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const AttendanceCheckList = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -20,6 +27,10 @@ const AttendanceCheckList = () => {
 
     const [isToastVisible, setIsToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+
+    /**
+     * Shows the toast message for a brief period.
+     */
     const showToast = () => {
         setIsToastVisible(true);
         setTimeout(() => {
@@ -31,6 +42,10 @@ const AttendanceCheckList = () => {
         getFromServer();
     }, []);
 
+    /**
+     * Fetches the class group data and students from the server.
+     * Handles server responses and error states.
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.getClassGroup(item.id);
@@ -53,6 +68,12 @@ const AttendanceCheckList = () => {
         }
     }
 
+    /**
+     * Handles the selection of a student and updates their attendance status.
+     * 
+     * @param {number} id - The ID of the student.
+     * @param {boolean|null} selectedStatus - The attendance status of the student.
+     */
     const handleSelectStudent = (id, selectedStatus) => {
         setStudents(prevStudents =>
             prevStudents.map(student =>
@@ -63,6 +84,11 @@ const AttendanceCheckList = () => {
         );
     };
 
+    /**
+     * Returns the formatted current date as a string.
+     * 
+     * @returns {string} The formatted date string (DD/MM/YYYY).
+     */
     const getFormattedDateToday = () => {
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
@@ -76,18 +102,33 @@ const AttendanceCheckList = () => {
     const [selectedDate, setSelectedDate] = useState(getFormattedDateToday());
     const [datePickerVisible, setDatePickerVisible] = useState(false);
 
+    /**
+     * Shows the date picker modal.
+     */
     const showDatePicker = () => {
         setDatePickerVisible(true);
     };
 
+    /**
+     * Hides the date picker modal.
+     */
     const hideDatePicker = () => {
         setDatePickerVisible(false);
     };
 
+    /**
+     * Alerts the user that the selected date is invalid.
+     */
     const handlerWrongDate = () => {
         Alert.alert('La fecha no puede ser posterior al día actual.');
     }
 
+    /**
+     * Handles the confirmation of a date selection.
+     * Validates the selected date against the current date.
+     * 
+     * @param {Date} date - The selected date.
+     */
     const handleConfirm = (date) => {
         const today = new Date();
         if (date.getFullYear() > today.getFullYear()) {
@@ -118,12 +159,22 @@ const AttendanceCheckList = () => {
         setSelectedDate(dateFormatted);
     };
 
+    /**
+     * Converts a date string from DD/MM/YYYY format to YYYY-MM-DD format.
+     * 
+     * @param {string} dateStr - The date string in DD/MM/YYYY format.
+     * @returns {string} The formatted date string in YYYY-MM-DD format.
+     */
     const convertDateFormat = (dateStr) => {
         const [day, month, year] = dateStr.split('/');
         const formattedDate = `${year}-${month}-${day}`;
         return formattedDate;
     }
 
+    /**
+     * Validates the attendance data and saves it to the server.
+     * Alerts the user if there are validation errors or if the server responds with an error.
+     */
     const validateAndSave = async () => {
         if (students.filter(item => item.selected === null).length > 0) {
             Alert.alert('Hay usuarios sin especificar su asistencia.');
@@ -264,6 +315,6 @@ const styles = StyleSheet.create({
     emptyMessage: {
         fontSize: 18,
         textAlign: 'center',
-        color: '#888', // Gris claro para el mensaje
+        color: '#888',
     },
 });

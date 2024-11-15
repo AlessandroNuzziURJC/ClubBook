@@ -3,6 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
+/**
+ * Student Home Screen component providing navigation to student-specific features.
+ * Currently, it only allows access to the events calendar.
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const StudentHomeScreen = () => {
     const navigation = useNavigation();
 

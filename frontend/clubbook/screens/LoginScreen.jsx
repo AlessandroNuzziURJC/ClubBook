@@ -5,9 +5,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import ServerRequests from '../serverRequests/ServerRequests';
 import PushNotificationConfiguration from '../functions/PushNotifications';
-
 import Toast from '../components/Toast';
 
+/**
+ * LogIn component provides a login form where users can input their email and password,
+ * authenticate, and navigate to different screens based on their role.
+ *
+ * @component
+ * @returns {JSX.Element} The LogIn component.
+ */
 export default function LogIn() {
     const [email, onChangeEmail] = React.useState('');
     const [password, onChangePassword] = React.useState('');
@@ -19,6 +25,10 @@ export default function LogIn() {
 
     const [isToastVisible, setIsToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+
+    /**
+     * Displays a toast message for a brief period.
+     */
     const showToast = () => {
         setIsToastVisible(true);
         setTimeout(() => {
@@ -26,6 +36,11 @@ export default function LogIn() {
         }, 1000);
     };
 
+    /**
+     * Handles the submission of login credentials.
+     * Validates the email format, then sends credentials to the server.
+     * Upon successful login, stores user information in AsyncStorage and navigates to the respective screen.
+     */
     const handleSubmit = async () => {
         if (!emailRegex.test(email)) {
             setIsValidEmail(false);
@@ -118,6 +133,10 @@ export default function LogIn() {
         }
     };
 
+    /**
+     * Sends the push notification token to the server.
+     * Activates notifications if the user opts in.
+     */
     const sendNotificationTokenToServer = async () => {
         /* Enviar token y usuario al servidor */
         console.log("Notificaciones activadas.");
@@ -156,7 +175,7 @@ export default function LogIn() {
                     placeholder="Introduce tu contraseña"
                     secureTextEntry
                 />
-                <Text style={styles.passwordForgotten}>Haz clic aqui para reestablecer la contraseña</Text>
+                {/*<Text style={styles.passwordForgotten}>Haz clic aqui para reestablecer la contraseña</Text>*/}
                 <View>
                     <Button
                         title="Iniciar sesión"

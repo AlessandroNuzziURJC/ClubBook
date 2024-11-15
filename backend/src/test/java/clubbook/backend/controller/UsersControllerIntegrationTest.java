@@ -491,4 +491,50 @@ class UsersControllerIntegrationTest {
     void getStudentsWithoutClassGroupAdministrator() throws Exception {
         mockMvc.perform(get("/studentsWithoutClassGroup")).andExpect(status().isOk());
     }
+
+    @Test
+    void deleteUserNotLogged() throws Exception {
+        mockMvc.perform(delete("/user/{id}", 68)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "student", roles = {"STUDENT"})
+    void deleteUserStudent() throws Exception {
+        mockMvc.perform(delete("/user/{id}", 68)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void deleteUserTeacher() throws Exception {
+        mockMvc.perform(delete("/user/{id}", 68)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
+    void deleteUserAdministrator() throws Exception {
+        mockMvc.perform(delete("/user/{id}", 68)).andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllAdministratorsNotLogged() throws Exception {
+        mockMvc.perform(get("/administrator/all/" + 73)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "student", roles = {"STUDENT"})
+    void getAllAdministratorsStudent() throws Exception {
+        mockMvc.perform(get("/administrator/all/" + 73)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "teacher", roles = {"TEACHER"})
+    void getAllAdministratorsTeacher() throws Exception {
+        mockMvc.perform(get("/administrator/all/" + 73)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "administrator", roles = {"ADMINISTRATOR"})
+    void getAllAdministratorsAdministrator() throws Exception {
+        mockMvc.perform(get("/administrator/all/" + 73)).andExpect(status().isOk());
+    }
 }

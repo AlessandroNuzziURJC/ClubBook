@@ -6,29 +6,51 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
+/**
+ * Represents a type of event in the system.
+ */
 @Entity
 @Table(name = "T_Event_Type")
 public class EventType {
 
+    /**
+     * The unique identifier of the event type.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Integer eventTypeId;
 
+    /**
+     * The name of the event type. Can't be null.
+     */
     @Column(unique = true, nullable = false)
     @Enumerated(EnumType.STRING)
     private EventTypeEnum name;
 
+    /**
+     * The creation timestamp of the event type.
+     */
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
 
+    /**
+     * Constructs a new EventType with specified parameters.
+     *
+     * @param eventTypeId the unique identifier of the event type
+     * @param name        the name of the event type
+     * @param createdAt   the creation timestamp of the event type
+     */
     public EventType(Integer eventTypeId, EventTypeEnum name, Date createdAt) {
         this.eventTypeId = eventTypeId;
         this.name = name;
         this.createdAt = createdAt;
     }
 
+    /**
+     * Default constructor for EventType.
+     */
     public EventType() {
     }
 

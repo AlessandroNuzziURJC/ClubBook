@@ -4,6 +4,13 @@ import ServerRequest from '../serverRequests/ServerRequests';
 import UsersFlatListNotPaged from './UsersFlatListNotPaged';
 import { useRoute } from '@react-navigation/native';
 
+/**
+ * SearchUser component allows users to search for either students or teachers based on input text.
+ * It performs a debounced server-side search query and displays matching results in a flat list.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered component for searching users.
+ */
 const SearchUser = () => {
     const [text, setSearchText] = useState('');
     const [debounceTimeout, setDebounceTimeout] = useState(null);
@@ -13,11 +20,17 @@ const SearchUser = () => {
     const { key } = route.params;
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
+    /**
+     * Triggers the fade-in animation and focuses the search input field on component mount.
+     */
     useEffect(() => {
         fadeIn();
         inputRef.current.focus();
     }, []);
 
+    /**
+     * Debounces the search input and triggers the search function after a delay.
+     */
     useEffect(() => {
         if (debounceTimeout) {
             clearTimeout(debounceTimeout);
@@ -25,6 +38,12 @@ const SearchUser = () => {
         setDebounceTimeout(setTimeout(handleSearch, 500));
     }, [text]);
 
+    /**
+     * Executes a search request to the server based on the input text and user type.
+     * Updates the users state with the fetched results.
+     * 
+     * @async
+     */
     const handleSearch = async () => {
         const serverFunctionMap = {
             student: ServerRequest.getStudentsSearchPage,
@@ -40,6 +59,9 @@ const SearchUser = () => {
         }
     };
 
+    /**
+     * Triggers a fade-in animation effect for the component.
+     */
     const fadeIn = () => {
         Animated.timing(fadeAnim, {
             toValue: 1,

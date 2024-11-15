@@ -7,6 +7,14 @@ import ServerRequest from "../../serverRequests/ServerRequests";
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
+/**
+ * AttendanceEventListScreen component displays a list of attendance records for an event.
+ * It fetches data for both teachers and students, allows refreshing the list,
+ * and provides functionality to download attendance as a PDF.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const AttendanceEventListScreen = () => {
     const route = useRoute();
     const { eventId } = route.params;
@@ -14,12 +22,22 @@ const AttendanceEventListScreen = () => {
     const [users, setUsers] = useState({ students: [], teachers: [] });
     const [refreshing, setRefreshing] = useState(false);
 
+    /**
+     * Handles the refresh action to reload attendance data from the server.
+     *
+     * @returns {Promise<void>}
+     */
     const handleRefresh = useCallback(async () => {
         setRefreshing(true);
         await getFromServer();
         setRefreshing(false);
     }, []);
 
+    /**
+     * Fetches attendance data for students and teachers from the server.
+     *
+     * @returns {Promise<void>}
+     */
     const getFromServer = async () => {
         const usersData = { students: [], teachers: [] };
 
@@ -48,6 +66,12 @@ const AttendanceEventListScreen = () => {
         }, [])
     );
 
+    /**
+     * Categorizes users into sections for the SectionList.
+     *
+     * @param {Object} users - The users object containing students and teachers.
+     * @returns {Array} The categorized users for rendering.
+     */
     const categorizeUsers = (users) => {
         return [
             { title: 'Asistencia de profesores', data: users.teachers || [] },
@@ -55,10 +79,22 @@ const AttendanceEventListScreen = () => {
         ];
     };
 
+    /**
+     * Renders an individual item in the SectionList.
+     *
+     * @param {Object} item - The item to render.
+     * @returns {JSX.Element} The rendered AttendanceEventStatusComponent.
+     */
     const renderItem = ({ item }) => (
         <AttendanceEventStatusComponent data={item} />
     );
 
+    /**
+     * Renders the section header for the SectionList.
+     *
+     * @param {Object} section - The section to render.
+     * @returns {JSX.Element} The rendered section header.
+     */
     const renderSectionHeader = ({ section: { title } }) => (
         <View style={styles.sectionHeaderContainer}>
             <View style={styles.sectionHeaderLine} />
@@ -67,6 +103,11 @@ const AttendanceEventListScreen = () => {
         </View>
     );
 
+    /**
+     * Handles the download of the attendance report as a PDF.
+     *
+     * @returns {Promise<void>}
+     */
     const handleDownload = async () => {
         try {
             const response = await ServerRequest.downloadPdfEventAttendance(eventId);

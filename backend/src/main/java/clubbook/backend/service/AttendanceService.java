@@ -20,6 +20,11 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for handling attendance-related operations.
+ * This includes saving attendance records, generating attendance reports,
+ * and managing attendance notifications.
+ */
 @Service
 public class AttendanceService {
 
@@ -29,6 +34,15 @@ public class AttendanceService {
     private final SeasonService seasonService;
     private final NotificationService notificationService;
 
+    /**
+     * Constructs an AttendanceService with the specified dependencies.
+     *
+     * @param attendanceRepository the repository for attendance records
+     * @param userService the service for user-related operations
+     * @param classGroupService the service for class group-related operations
+     * @param seasonService the service for season-related operations
+     * @param notificationService the service for managing notifications
+     */
     @Autowired
     public AttendanceService(AttendanceRepository attendanceRepository, UserService userService, ClassGroupService classGroupService, SeasonService seasonService, NotificationService notificationService) {
         this.attendanceRepository = attendanceRepository;
@@ -38,7 +52,13 @@ public class AttendanceService {
         this.notificationService = notificationService;
     }
 
-
+    /**
+     * Saves attendance records for a given attendance DTO.
+     *
+     * @param attendanceDto the attendance data transfer object containing attendance information
+     * @return the saved attendance DTO
+     * @throws RuntimeException if some users in the class group are not accounted for in the attendance records
+     */
     public AttendanceDto saveAll(AttendanceDto attendanceDto) {
         User user;
         Attendance attendance;
@@ -73,23 +93,13 @@ public class AttendanceService {
         return attendanceDto;
     }
 
-    public Attendance saveAttendance(Attendance attendance) {
-        this.attendanceRepository.save(attendance);
-        return attendance;
-    }
-
-    private List<UserAttendanceDto> getUserAttendanceDtos(int year, int month, int classGroup) {
-        List<Object[]> results = attendanceRepository.findAllUserAttendanceDtoRaw(year, month, classGroup);
-        return results.stream().map(result ->
-                new UserAttendanceDto(
-                        (Integer) result[0],
-                        (String) result[1],
-                        (String) result[2],
-                        Arrays.asList((Boolean[]) result[3])
-                )
-        ).collect(Collectors.toList());
-    }
-
+    /**
+     * Retrieves class dates for a specified month and class group.
+     *
+     * @param month the month for which class dates are requested
+     * @param classGroup the ID of the class group
+     * @return a list of LocalDate objects representing class dates
+     */
     private List<LocalDate> getClassDates(int month, int classGroup) {
         List<java.sql.Date> sqlDates = attendanceRepository.getClassDates(month, classGroup);
         return sqlDates.stream()
@@ -97,6 +107,13 @@ public class AttendanceService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves the attendance status of a user for a specific date.
+     *
+     * @param userId the ID of the user
+     * @param date the date for which attendance is being checked
+     * @return Boolean indicating attendance status (true for attended, false for not attended, null if not found)
+     */
     private Boolean getUserAttendance(int userId, LocalDate date) {
         Attendance attendance = this.attendanceRepository.findAttendance(userId, date);
         if (attendance == null) {
@@ -105,6 +122,13 @@ public class AttendanceService {
         return attendance.isAttended();
     }
 
+    /**
+     * Gets the attendance records for a class group for a specified year and month.
+     *
+     * @param month the month for which attendance records are requested
+     * @param classGroupId the ID of the class group
+     * @return a ClassGroupAttendanceDto containing the attendance records
+     */
     public ClassGroupAttendanceDto getClassGroupAttendanceWithYearAndMonth(int month, int classGroupId) {
         List<LocalDate> dates = this.getClassDates(month, classGroupId);
         ClassGroup classGroup = classGroupService.findById(classGroupId);
@@ -122,7 +146,12 @@ public class AttendanceService {
         return new ClassGroupAttendanceDto(dates, userAttendanceDtoList);
     }
 
-
+    /**
+     * Returns the name of the month in Spanish based on the month position.
+     *
+     * @param monthPosition the zero-based index of the month (0 for January, 1 for February, etc.)
+     * @return the name of the month in Spanish
+     */
     private String getSpanishMonth(int monthPosition){
         String[] months = {
                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -131,6 +160,12 @@ public class AttendanceService {
         return months[monthPosition];
     }
 
+    /**
+     * Generates a PDF report of attendance for a specific class group.
+     *
+     * @param classGroupId the ID of the class group for which the report is generated
+     * @return a byte array containing the PDF data
+     */
     public byte[] generatePdf(int classGroupId) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4.rotate());
@@ -158,6 +193,15 @@ public class AttendanceService {
         return out.toByteArray();
     }
 
+    /**
+     * Generates data for a specific month and adds it to the provided PDF document.
+     *
+     * @param classGroupId the ID of the class group for which data is generated
+     * @param document the PDF document to which the data will be added
+     * @param month the month for which data is generated (0-based index)
+     * @param year the year for which data is generated
+     * @throws DocumentException if an error occurs while adding data to the document
+     */
     private void generateDataForMonth(int classGroupId, Document document, int month, int year) throws DocumentException {
         document.newPage();
 
@@ -222,6 +266,10 @@ public class AttendanceService {
         }
     }
 
+    /**
+     * Deletes all attendance records from the repository.
+     * This method is typically used for data cleanup or resetting attendance data.
+     */
     public void deleteAll() {
         this.attendanceRepository.deleteAll();
     }

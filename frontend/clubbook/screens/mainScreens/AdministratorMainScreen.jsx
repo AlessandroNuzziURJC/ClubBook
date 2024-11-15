@@ -33,6 +33,12 @@ import DeleteUsersListScreen from "../administratorUserManagement/DeleteUsersLis
 
 const HomeStack = createNativeStackNavigator();
 
+/**
+ * Home stack navigator for the administrator's main screen.
+ * Contains screens for season control, attendance, events, and user management.
+ * @component
+ * @returns {JSX.Element} The HomeStackNavigator component.
+ */
 const HomeStackNavigator = () => {
     return (
         <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
@@ -57,6 +63,11 @@ const HomeStackNavigator = () => {
 
 const NotificationsStack = createNativeStackNavigator();
 
+/**
+ * Notifications stack navigator for handling notification-related screens.
+ * @component
+ * @returns {JSX.Element} The NotificationsStackNavigator component.
+ */
 const NotificationsStackNavigator = () => {
     return (
         <NotificationsStack.Navigator screenOptions={{
@@ -69,6 +80,11 @@ const NotificationsStackNavigator = () => {
 
 const ClassStack = createNativeStackNavigator();
 
+/**
+ * Class group stack navigator for managing class group screens, such as adding students and editing groups.
+ * @component
+ * @returns {JSX.Element} The ClassGroupNavigator component.
+ */
 const ClassGroupNavigator = () => {
     return (
         <ClassStack.Navigator screenOptions={{
@@ -88,6 +104,11 @@ const ClassGroupNavigator = () => {
 
 const UsersStack = createNativeStackNavigator();
 
+/**
+ * Users stack navigator for user-related screens, including user lists and profile views.
+ * @component
+ * @returns {JSX.Element} The UsersStackNavigator component.
+ */
 const UsersStackNavigator = () => {
     return (
         <UsersStack.Navigator screenOptions={{
@@ -103,6 +124,11 @@ const UsersStackNavigator = () => {
 
 const ProfileStack = createNativeStackNavigator();
 
+/**
+ * Profile stack navigator for profile-related screens, including profile viewing and editing.
+ * @component
+ * @returns {JSX.Element} The ProfileStackNavigator component.
+ */
 const ProfileStackNavigator = () => {
     return (
         <ProfileStack.Navigator screenOptions={{
@@ -113,6 +139,12 @@ const ProfileStackNavigator = () => {
     );
 };
 
+/**
+ * Main screen for the administrator, containing a bottom tab navigator
+ * with tabs for home, notifications, class groups, users, and profile.
+ * @component
+ * @returns {JSX.Element} The AdministratorMainScreen component.
+ */
 const AdministratorMainScreen = () => {
     const Tab = createBottomTabNavigator();
     return (

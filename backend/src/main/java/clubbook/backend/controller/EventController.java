@@ -2,13 +2,10 @@ package clubbook.backend.controller;
 
 import clubbook.backend.dtos.EventDto;
 import clubbook.backend.dtos.NewEventDto;
-import clubbook.backend.model.ClassGroup;
 import clubbook.backend.model.Event;
-import clubbook.backend.model.EventAttendance;
 import clubbook.backend.model.EventType;
 import clubbook.backend.responses.ResponseMessages;
 import clubbook.backend.responses.ResponseWrapper;
-import clubbook.backend.service.EventAttendanceService;
 import clubbook.backend.service.EventService;
 import clubbook.backend.service.SeasonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller to manage events.
+ * Provides endpoints for creating, editing, retrieving, and deleting events,
+ * as well as generating PDF reports for events.
+ */
 @Validated
 @RequestMapping("/event")
 @RestController
@@ -38,12 +40,23 @@ public class EventController {
         this.seasonService = seasonService;
     }
 
+    /**
+     * Retrieves the list of event types.
+     *
+     * @return A response entity containing the list of event types.
+     */
     @GetMapping("/types")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<List<EventType>> getEventTypes() {
         return ResponseEntity.ok(this.eventService.getEventTypes());
     }
 
+    /**
+     * Saves a new event based on the provided event data.
+     *
+     * @param newEventDto The data transfer object containing the new event information.
+     * @return A response indicating whether the new event was successfully registered.
+     */
     @PostMapping("/new")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ResponseWrapper<Boolean>> saveNewEvent(@RequestBody NewEventDto newEventDto) {
@@ -53,6 +66,12 @@ public class EventController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.NEW_EVENT_REGISTERED_CORRECT, output));
     }
 
+    /**
+     * Edits an existing event based on the provided event data.
+     *
+     * @param editEventDto The data transfer object containing the edited event information.
+     * @return A response indicating whether the event was successfully edited.
+     */
     @PutMapping("/edit")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ResponseWrapper<Boolean>> editEvent(@RequestBody EventDto editEventDto) {
@@ -62,6 +81,12 @@ public class EventController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.EDIT_EVENT_REGISTERED_CORRECT, output));
     }
 
+    /**
+     * Retrieves all future events for a specific user based on their role.
+     *
+     * @param userId The ID of the user for whom to retrieve events.
+     * @return A response containing the list of future events.
+     */
     @GetMapping("/all/{userId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<ResponseWrapper<List<EventDto>>> getAllEvents(@PathVariable int userId) {
@@ -90,7 +115,14 @@ public class EventController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, events));
     }
 
-
+    /**
+     * Retrieves events for a specific month and year for a user based on their role.
+     *
+     * @param monthValue The month for which to retrieve events.
+     * @param year      The year for which to retrieve events.
+     * @param userId    The ID of the user for whom to retrieve events.
+     * @return A response containing a map of days to events for the specified month.
+     */
     @GetMapping("/month/{monthValue}/{year}/{userId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<ResponseWrapper<Map<Integer,List<EventDto>>>> getMonthEvents(@PathVariable int monthValue, @PathVariable int year, @PathVariable int userId) {
@@ -117,12 +149,23 @@ public class EventController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, events));
     }
 
+    /**
+     * Retrieves all past events.
+     *
+     * @return A response containing the list of past events.
+     */
     @GetMapping("/past")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER')")
     public ResponseEntity<ResponseWrapper<List<EventDto>>> getAllPastEvents() {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, this.eventService.findAllPastEvents()));
     }
 
+    /**
+     * Retrieves the next event for a specific user based on their role.
+     *
+     * @param userId The ID of the user for whom to retrieve the next event.
+     * @return A response containing the next event.
+     */
     @GetMapping("/next/{userId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'TEACHER', 'STUDENT')")
     public ResponseEntity<ResponseWrapper<EventDto>> getNextEvent(@PathVariable int userId) {
@@ -151,16 +194,25 @@ public class EventController {
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.OK, eventDto));
     }
 
+    /**
+     * Deletes an event with the specified ID.
+     *
+     * @param eventId The ID of the event to be deleted.
+     * @return A response indicating whether the event was successfully deleted.
+     */
     @DeleteMapping("/{eventId}")
     @PreAuthorize("hasAnyRole('ADMINISTRATOR')")
     public ResponseEntity<ResponseWrapper<Boolean>> deleteEvent(@PathVariable Integer eventId) {
-        boolean output = this.eventService.deleteEvent(eventId);
-        if (!output) {
-            return ResponseEntity.badRequest().body(new ResponseWrapper<>(ResponseMessages.EVENT_NOT_FOUND, false));
-        }
+        this.eventService.deleteEvent(eventId);
         return ResponseEntity.ok(new ResponseWrapper<>(ResponseMessages.EVENT_DELETED_SUCCESS, true));
     }
 
+    /**
+     * Generates a PDF report for the specified event.
+     *
+     * @param eventId The ID of the event for which to generate the PDF.
+     * @return A response entity containing the generated PDF report.
+     */
     @GetMapping("/generatepdf/{eventId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMINISTRATOR')")
     public ResponseEntity<byte[]> generatePdf(@PathVariable String eventId) {

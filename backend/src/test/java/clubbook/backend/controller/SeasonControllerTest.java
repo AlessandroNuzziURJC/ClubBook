@@ -39,6 +39,12 @@ class SeasonControllerTest {
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private ClassGroupService classGroupService;
+
+    @Mock
+    private NotebookService notebookService;
+
     @InjectMocks
     private SeasonService seasonService; //Done
 

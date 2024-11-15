@@ -9,6 +9,14 @@ import ClassGroup from "../entities/ClassGroup";
 import UserCheckboxList from "./UserCheckboxList";
 import FormFooter from "./FormFooter";
 
+/**
+ * ClassGroupForm component for creating or editing a class group.
+ *
+ * @param {Object} props - The component props.
+ * @param {ClassGroup} props.classGroup - The class group object to be edited.
+ * @param {Function} props.sendClassGroupBack - Callback to send the class group data back.
+ * @returns {JSX.Element} The rendered ClassGroupForm component.
+ */
 const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
     const navigation = useNavigation();
 
@@ -56,6 +64,11 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         fetchData();
     }, []);
 
+    /**
+     * Fetches the list of teachers from the server.
+     * 
+     * @returns {Promise<Array>} An array of teacher objects.
+     */
     const getTeachers = async () => {
         const response = await ServerRequests.getAllTeachers();
         if (!response.ok) {
@@ -67,6 +80,11 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         return result.data;
     };
 
+    /**
+     * Generates the schedule for each day of the week.
+     * 
+     * @returns {Array} An array of schedule objects for each day of the week.
+     */
     const getSchedules = () => {
         return [
             { weekDay: 'Lunes', selected: false, init: '', duration: '' },
@@ -79,6 +97,11 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         ];
     };
 
+    /**
+     * Handles the selection of a teacher by toggling its `selected` status.
+     * 
+     * @param {number} id - The ID of the teacher to select or deselect.
+     */
     const handleSelectProfessor = (id) => {
         setTeachers(prevTeachers =>
             prevTeachers.map(teacher =>
@@ -89,21 +112,41 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         );
     };
 
+    /**
+     * Updates a specific field of the schedule for a given day.
+     * 
+     * @param {number} index - The index of the day in the schedule array.
+     * @param {string} field - The field to update (e.g., 'init' or 'duration').
+     * @param {string} value - The new value for the field.
+     */
     const handleScheduleChange = (index, field, value) => {
         const updatedSchedule = [...schedule];
         updatedSchedule[index][field] = value;
         setSchedule(updatedSchedule);
     };
 
+    /**
+     * Displays the time picker for selecting the start time of a class.
+     * 
+     * @param {number} index - The index of the day in the schedule array.
+     */
     const showTimePicker = (index) => {
         setSelectedDayIndex(index);
         setStartTimePickerVisible(true);
     };
 
+    /**
+     * Hides the time picker.
+     */
     const hideTimePicker = () => {
         setStartTimePickerVisible(false);
     };
 
+    /**
+     * Handles the confirmation of a selected time from the time picker.
+     * 
+     * @param {Date} time - The selected time.
+     */
     const handleConfirm = (time) => {
         const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         if (selectedDayIndex !== null) {
@@ -112,6 +155,9 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         hideTimePicker();
     };
 
+    /**
+     * Handles the save action, creating a new ClassGroup object and passing it back.
+     */
     const handleSave = () => {
         const selectedTeachers = teachers.filter(teacher => teacher.selected)
             .map(item => item.id);
@@ -131,6 +177,11 @@ const ClassGroupForm = ({ classGroup, sendClassGroupBack }) => {
         sendClassGroupBack(newClassGroup);
     };
 
+    /**
+     * Validates the form fields before submission.
+     * 
+     * @returns {boolean} Returns true if the form is valid; otherwise, false.
+     */
     const validForm = () => {
         let valid = true;
         setNameError(false);

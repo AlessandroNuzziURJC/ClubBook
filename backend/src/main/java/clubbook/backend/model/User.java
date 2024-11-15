@@ -16,50 +16,104 @@ import java.util.Objects;
 @Table(name = "T_User")
 public class User implements UserDetails {
 
+    /**
+     * The unique identifier for user.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /**
+     * The first name of the user. Can't be null.
+     */
     @Column(nullable = false)
     private String firstName;
 
+    /**
+     * The last name of the user. Can't be null.
+     */
     @Column(nullable = false)
     private String lastName;
 
+    /**
+     * The email of the user. Can't be null. It's unique.
+     */
     @Column(nullable = false, unique = true)
     private String email;
 
+    /**
+     * The password of the user. Can't be null.
+     */
     @Column(nullable = false)
     @JsonIgnore
     private String password;
 
+    /**
+     * The phone number of the user. Can't be null.
+     */
     @Column(nullable = false, length = 20)
     private String phoneNumber;
 
+    /**
+     * The birthday of the user. Can't be null.
+     */
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private LocalDate birthday;
 
+    /**
+     * The address of the user. Can't be null.
+     */
     @Column(nullable = false)
     private String address;
 
+    /**
+     * The id card of the user. Can't be null.
+     */
     @Column(nullable = false)
     private String idCard;
 
+    /**
+     * The role of the user. Can't be null.
+     */
     @ManyToOne
     @JoinColumn(name = "role_fk_id", referencedColumnName = "roleId", nullable = false)
     private Role role;
 
+    /**
+     * User is partner or not. Can't be null.
+     */
     @Column(nullable = false)
     private boolean partner;
 
+    /**
+     * User has access to the system. Can't be null.
+     */
     @Column(nullable = false)
     private boolean allowedAccess = true;
 
+    /**
+     * User's profile picture. Can't be null.
+     */
     @JsonIgnore
     @Column(name = "profile_picture", columnDefinition="BYTEA", nullable = false)
     private byte[] profilePicture;
 
+    /**
+     * Constructs a User with specified parameters.
+     *
+     * @param firstName the first name of the user
+     * @param lastName the last name of the user
+     * @param email the email address of the user
+     * @param password the password for the user account
+     * @param phoneNumber the phone number of the user
+     * @param birthday the birth date of the user
+     * @param role the role assigned to the user
+     * @param address the address of the user
+     * @param idCard the identification card number of the user
+     * @param partner whether the user is a partner
+     * @param profilePicture the profile picture of the user as a byte array
+     */
     public User(String firstName, String lastName, String email, String password, String phoneNumber, LocalDate birthday, Role role, String address, String idCard, boolean partner, byte[] profilePicture) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -74,6 +128,9 @@ public class User implements UserDetails {
         this.profilePicture = profilePicture;
     }
 
+    /**
+     * Default constructor for User.
+     */
     public User() {}
 
     public int getId() {

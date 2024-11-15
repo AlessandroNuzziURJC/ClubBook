@@ -6,6 +6,12 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Functions from "../../functions/Functions";
 import ServerRequest from "../../serverRequests/ServerRequests";
 
+/**
+ * ProfileScreen component displays the user's profile information.
+ * It allows the user to refresh their profile data and navigate to the profile edit screen.
+ *
+ * @returns {JSX.Element} The ProfileScreen component.
+ */
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const [refreshing, setRefreshing] = useState(false);
@@ -22,6 +28,11 @@ const ProfileScreen = () => {
         partner: ''
     });
 
+    /**
+     * Updates the user state with data fetched from the server.
+     * 
+     * @param {Object} result - The user data retrieved from the server.
+     */
     const updateScreenData = (result) => {
         const userData = {
             email: result.email,
@@ -37,6 +48,11 @@ const ProfileScreen = () => {
         setUser(userData);
     };
 
+    /**
+     * Saves user data into AsyncStorage for persistence.
+     * 
+     * @param {Object} result - The user data to be saved.
+     */
     const saveInAsyncStorage = async (result) => {
         await AsyncStorage.setItem('id', result.id.toString());
         await AsyncStorage.setItem('firstName', result.firstName);
@@ -48,6 +64,10 @@ const ProfileScreen = () => {
         await AsyncStorage.setItem('partner', result.partner.toString());
     };
 
+    /**
+     * Fetches user data and profile picture from the server.
+     * Handles errors and updates the screen state accordingly.
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequest.getUserData();
@@ -75,6 +95,9 @@ const ProfileScreen = () => {
         }
     };
 
+    /**
+     * Refreshes the profile data when called.
+     */
     const onRefresh = () => {
         setRefreshing(true);
         setTimeout(() => {
@@ -83,9 +106,11 @@ const ProfileScreen = () => {
         getFromServer();
     };
 
+    
     useEffect(() => {
         getFromServer();
     }, []);
+
 
     useFocusEffect(
         useCallback(() => {
@@ -93,6 +118,9 @@ const ProfileScreen = () => {
         }, [])
     );
 
+    /**
+     * Navigates to the ProfileEdit screen with the user data as parameters.
+     */
     const handleEditProfile = () => {
         navigation.navigate('ProfileEdit', { 'user': user });
     };

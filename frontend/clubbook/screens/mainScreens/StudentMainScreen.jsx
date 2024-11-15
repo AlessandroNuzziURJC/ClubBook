@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, BackHandler, Alert } from "react-native";
+import { BackHandler, Alert } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from "../profileScreens/ProfileScreen";
@@ -13,6 +13,10 @@ import EventInfoScreen from "../eventsScreens/EventInfoScreen";
 
 const HomeStack = createNativeStackNavigator();
 
+/**
+ * HomeStack Navigator for the student app, contains screens related to events and the home screen.
+ * @returns {JSX.Element} The stack navigator for the Home screen stack.
+ */
 const HomeStackScreen = () => {
     return (
         <HomeStack.Navigator screenOptions={{
@@ -29,6 +33,10 @@ const HomeStackScreen = () => {
 
 const NotificationsStack = createNativeStackNavigator();
 
+/**
+ * NotificationsStack Navigator for handling notifications in the student app.
+ * @returns {JSX.Element} The stack navigator for the Notifications screen.
+ */
 const NotificationsStackNavigator = () => {
     return (
         <NotificationsStack.Navigator screenOptions={{
@@ -41,6 +49,10 @@ const NotificationsStackNavigator = () => {
 
 const ProfileStack = createNativeStackNavigator();
 
+/**
+ * ProfileStack Navigator for managing user profile and profile editing screens.
+ * @returns {JSX.Element} The stack navigator for the Profile screen stack.
+ */
 const ProfileStackNavigator = () => {
     return (
         <ProfileStack.Navigator screenOptions={{
@@ -52,6 +64,11 @@ const ProfileStackNavigator = () => {
     );
 };
 
+/**
+ * Main tab navigator component for the student app. 
+ * Includes Home, Notifications, and Profile tabs.
+ * @returns {JSX.Element} The main tab navigator for the student app.
+ */
 const StudentMainScreen = () => {
     const Tab = createBottomTabNavigator();
 

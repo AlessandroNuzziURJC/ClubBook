@@ -3,6 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Alert } fro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ServerRequests from "../../serverRequests/ServerRequests";
 
+/**
+ * SeasonControlScreen component that allows the user to manage the start and end of a season.
+ * It includes options to initiate and finalize a season and prompts for email confirmation.
+ */
 const SeasonControlScreen = () => {
     const [seasonStatus, setSeasonStatus] = useState(false);
     const [startDate, setStartDate] = useState(null);
@@ -11,26 +15,40 @@ const SeasonControlScreen = () => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
 
+    /**
+     * Initiates the start season confirmation process.
+     */
     const handleStart = () => {
         setConfirmAction('start');
         setShowConfirm(true);
         
     };
 
+    /**
+     * Initiates the end season confirmation process.
+     */
     const handleEnd = () => {
         setConfirmAction('end');
         setShowConfirm(true);
         
     };
 
+    /**
+     * Gets the current date formatted as YYYY-MM-DD.
+     * @returns {string} The current date in YYYY-MM-DD format.
+     */
     const getCurrentDate = () => {
         const today = new Date();
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+        const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
 
+    /**
+     * Confirms the start or end of the season based on user email input.
+     * Validates the email against the stored email and updates the season status accordingly.
+     */
     const handleConfirm = async () => {
         const correctEmail = await AsyncStorage.getItem('email');
         if (email === correctEmail) {
@@ -52,6 +70,10 @@ const SeasonControlScreen = () => {
         }
     };
 
+    /**
+     * Fetches the current season status from the server.
+     * Updates the local state based on the server response.
+     */
     const getFromServer = async () => {
         try {
             const response = await ServerRequests.seasonStarted();
@@ -164,7 +186,7 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 16,
-        color: '#555',
+        color: '#666',
         marginBottom: 10,
     },
     startButton: {

@@ -20,6 +20,11 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Date;
 
+/**
+ * Service class for generating initial data for the application.
+ * This class populates the database with default roles, event types,
+ * and an initial administrator user upon application startup.
+ */
 @Service
 public class DataGenerator {
 
@@ -37,7 +42,15 @@ public class DataGenerator {
     @Autowired
     private AuthenticationService authenticationService;
 
-    /*@PostConstruct
+    /**
+     * Method to initialize data in the database.
+     * This method is called after the bean's properties have been set.
+     * It creates default roles, event types, and an initial administrator user
+     * if no roles exist in the database.
+     *
+     * @throws IOException if there is an issue reading the profile picture file.
+     */
+    @PostConstruct
     public void init() throws IOException {
         if (roleRepository.count() != 0) {
             return ;
@@ -69,5 +82,5 @@ public class DataGenerator {
         authenticationService.signup(new RegisterUserDto("admindefault@clubbook.com", "abcd", "administrator",
                 "Administrator Default", "Default default", "000000000",
                 LocalDate.of(2000, 1, 1), "Admin", "000000000A", false, imageBytes));
-    }*/
+    }
 }

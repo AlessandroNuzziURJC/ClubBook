@@ -1,10 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { View, ScrollView, StyleSheet, Text, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from "@react-navigation/native";
 import ClassGroupForm from "../../components/ClassGroupForm";
 import ServerRequests from "../../serverRequests/ServerRequests";
 
+/**
+ * EditClassGroup component allows users to edit an existing class group.
+ * It retrieves the class group data from the route parameters and provides
+ * a form for editing the class details.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const EditClassGroup = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -12,6 +20,13 @@ const EditClassGroup = () => {
     const [classGroup, setClassGroup] = useState(item);
     const [editedClassGroup, setEditedClassGroup] = useState(null);
 
+    /**
+     * Saves the edited class group data to the server.
+     *
+     * @async
+     * @param {Object} classGroupOutput - The output data from the class group form.
+     * @returns {Promise<void>}
+     */
     const saveData = async (classGroupOutput) => {
         if (!classGroupOutput.validate()) {
             Alert.alert('No se ha rellenado correctamente.');
@@ -33,6 +48,13 @@ const EditClassGroup = () => {
         }
     };
 
+    /**
+     * Updates the class group with the new data and saves it.
+     *
+     * @async
+     * @param {Object} classGroupOutput - The updated class group data.
+     * @returns {Promise<void>}
+     */
     const updateClassGroup = async (classGroupOutput) => {
         setEditedClassGroup(classGroupOutput);
 

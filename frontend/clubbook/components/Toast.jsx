@@ -1,7 +1,14 @@
-// Toast.js
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, Modal, StyleSheet } from 'react-native';
 
+/**
+ * Toast component displays a temporary message overlay on the screen.
+ *
+ * @param {boolean} visible - Indicates if the toast should be visible.
+ * @param {string} message - The message to display in the toast.
+ * @param {function} onClose - Callback function to close the toast.
+ * @returns {JSX.Element|null} The rendered toast component or null if not visible.
+ */
 const Toast = ({ visible, message, onClose }) => {
     if (!visible) return null;
 
@@ -24,29 +31,29 @@ const Toast = ({ visible, message, onClose }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'flex-end', // Alinea al final (parte inferior)
-        alignItems: 'center', // Centra horizontalmente
-        padding: 40, // Ajusta el padding si es necesario
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        padding: 40,
     },
     toast: {
-        backgroundColor: '#333', // Gris oscuro
+        backgroundColor: '#333',
         padding: 15,
-        borderRadius: 10, // Bordes más redondeados
+        borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         alignContent: 'center',
-        shadowColor: '#000', // Sombra para profundidad
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
-        elevation: 5, // Necesario para la sombra en Android
-        marginBottom: 60, // Espacio desde el borde inferior
+        elevation: 5,
+        marginBottom: 60,
     },
     message: {
-        color: '#fff', // Blanco para el texto
-        fontSize: 12, // Tamaño de fuente
-        flex: 'flex-start', // Ocupa el espacio disponible
+        color: '#fff',
+        fontSize: 12,
+        flex: 'flex-start',
     }
 });
 

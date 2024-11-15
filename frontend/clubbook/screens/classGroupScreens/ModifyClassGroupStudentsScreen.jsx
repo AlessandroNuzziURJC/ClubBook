@@ -2,7 +2,13 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { useRoute, useNavigation } from '@react-navigation/native';
 
-
+/**
+ * ModifyClassGroupStudent component allows users to modify students in a class group.
+ * It displays the class group name and provides options to add or remove students.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ */
 const ModifyClassGroupStudent = () => {
     const navigation = useNavigation();
     const route = useRoute();

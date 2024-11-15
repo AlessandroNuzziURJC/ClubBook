@@ -116,7 +116,9 @@ VALUES
     (7, 60, '17:00', 'MONDAY', 4),
     (8, 60, '17:00', 'WEDNESDAY', 4),
     (9, 60, '18:00', 'TUESDAY', 5),
-    (10, 60, '18:00', 'THURSDAY', 5);
+    (10, 60, '18:00', 'THURSDAY', 5),
+    (11, 60, '18:00', 'TUESDAY', 1),
+    (12, 60, '18:00', 'THURSDAY', 1);
 
 INSERT INTO t_attendance(id, attendance_date, user_id, attended)
 VALUES

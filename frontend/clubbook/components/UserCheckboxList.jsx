@@ -2,6 +2,14 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Checkbox from 'expo-checkbox';
 
+/**
+ * UserCheckboxList component displays a list of users with checkboxes to select them.
+ *
+ * @param {Array} users - An array of user objects, each containing an id, firstName, lastName, and selected state.
+ * @param {boolean} usersError - Indicates if there is an error related to users (for styling purposes).
+ * @param {function} handleSelectUser - Callback function to handle user selection, receiving the user id as an argument.
+ * @returns {JSX.Element} The rendered user checkbox list.
+ */
 const UserCheckboxList = ({ users, usersError, handleSelectUser }) => {
     return (
         <View style={styles.userlist}>
