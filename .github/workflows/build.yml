@@ -36,5 +36,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          TOKEN: ${{ secrets.TOKEN }}
+          token: ${{ secrets.TOKEN }}
         run: mvn -B verify -Dspring.profiles.active=test org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=AlessandroNuzziURJC_ClubBook
