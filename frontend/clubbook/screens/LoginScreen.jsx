@@ -175,7 +175,7 @@ export default function LogIn() {
                     placeholder="Introduce tu contraseña"
                     secureTextEntry
                 />
-                <Text style={styles.passwordForgotten}>Haz clic aqui para reestablecer la contraseña</Text>
+                {/*<Text style={styles.passwordForgotten}>Haz clic aqui para reestablecer la contraseña</Text>*/}
                 <View>
                     <Button
                         title="Iniciar sesión"
