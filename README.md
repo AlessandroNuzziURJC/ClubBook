@@ -1,6 +1,6 @@
 # ClubBook
 
-## Clubbook
+## Descripción
 
 **Clubbook** es una aplicación móvil desarrollada como **Trabajo de Fin de Grado (TFG)** con el objetivo de ofrecer una solución tecnológica accesible para la gestión de clubes deportivos, especialmente aquellos con recursos limitados que no pertenecen a disciplinas mayoritarias como el fútbol o el baloncesto.
 
