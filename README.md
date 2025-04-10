@@ -56,12 +56,61 @@ La persistencia de datos se ha gestionado con **PostgreSQL**, un sistema de gest
 
 Este conjunto de tecnologías permite ofrecer una experiencia de usuario fluida, mantener una arquitectura limpia y preparar el sistema para futuras mejoras o ampliaciones.
 
+## Repositorio del proyecto
 
-## Desarrollo
+Este repositorio contiene todo el código fuente y documentación del proyecto **Clubbook**. En él se incluye:
 
-## Repositorio
+- El frontend móvil, desarrollado con **React Native** y gestionado mediante **Expo**.
+- El backend, implementado con **Java** utilizando el framework **Spring Boot**.
+- La configuración de la base de datos relacional **PostgreSQL**.
+- Scripts, documentación y recursos necesarios para la instalación y despliegue del sistema.
 
-## Puesta en producción
+El repositorio está estructurado para facilitar la navegación entre los distintos componentes del sistema y permitir una rápida puesta en marcha del proyecto por parte de otros desarrolladores o interesados en su evolución.
 
-## Instalación
+## Instalación y ejecución del proyecto
+
+Este proyecto está compuesto por una aplicación móvil desarrollada con **React Native** y **Expo**, y un backend en **Java con Spring Boot**. A continuación se detallan los pasos necesarios para instalar y ejecutar ambos componentes.
+
+### Requisitos previos
+
+Antes de comenzar, asegúrate de tener instalados los siguientes elementos:
+
+- Node.js
+- React Native
+- https://git-scm.com/
+- Una cuenta gratuita en Expo
+- Java 17 o superior
+- PostgreSQL
+- Expo Go
+
+### Backend
+1. Instalar Java 17 o superior y Git.
+2. Instalar PostgreSQL y crear una base de datos para el proyecto.
+3. Configurar en application.properties la base de datos.
+```bash
+spring.datasource.url=<ruta a la base de datos>
+spring.datasource.username=<usuario>
+spring.datasource.password=<contraseña>
+```
+5. Ejecutar el proyecto Spring Boot.
+
+### Frontend
+1. Instalar Node.js.
+2. Clonar repositorio.
+3. Abre PowerShell o CMD y ejecuta el siguiente comando:
+```bash
+npm install -g react-native-cli
+npm install -g expo-cli
+```
+3. Una vez instalado Expo CLI y React Native, navega al directorio del proyecto (ClubBook) y ejecuta el siguiente comando para instalar las dependencias del proyecto:
+```bash
+npm install
+```
+4. Para iniciar el servidor de desarrollo de Expo, ejecuta:
+```bash
+expo start
+```
+5. Escanea el QR que aparece en la terminal para ejecutarlo en la aplicación Expo CLI.
+
+
 
