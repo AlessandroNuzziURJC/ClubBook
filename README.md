@@ -10,7 +10,7 @@ Clubbook permite digitalizar y simplificar las tareas administrativas y organiza
 
 - 👨‍💼 **Administradores**: gestión de usuarios, clases, temporadas y eventos.
 - 👩‍🏫 **Profesores**: control de asistencia, agenda de clases y acceso a información de eventos.
-- 👨‍👧‍👦 **Alumnos o tutores legales**: inscripción en eventos, recepción de notificaciones y alertas (como ausencias).
+- 🥇 **Alumnos o tutores legales**: inscripción en eventos, recepción de notificaciones y alertas (como ausencias).
 
 ## 🛠 Enfoque del proyecto
 
