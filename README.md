@@ -1,35 +1,61 @@
 # ClubBook
 
-## Clubbook 📱🏃‍♂️
+## Clubbook
 
 **Clubbook** es una aplicación móvil desarrollada como **Trabajo de Fin de Grado (TFG)** con el objetivo de ofrecer una solución tecnológica accesible para la gestión de clubes deportivos, especialmente aquellos con recursos limitados que no pertenecen a disciplinas mayoritarias como el fútbol o el baloncesto.
 
-## 📌 ¿Qué es Clubbook?
+### ¿Qué es Clubbook?
 
 Clubbook permite digitalizar y simplificar las tareas administrativas y organizativas de un club deportivo mediante una interfaz moderna y accesible. La app contempla tres tipos de usuarios, cada uno con funcionalidades específicas:
 
-- 👨‍💼 **Administradores**: gestión de usuarios, clases, temporadas y eventos.
-- 👩‍🏫 **Profesores**: control de asistencia, agenda de clases y acceso a información de eventos.
-- 🥇 **Alumnos o tutores legales**: inscripción en eventos, recepción de notificaciones y alertas (como ausencias).
+- **Administradores**: gestión de usuarios, clases, temporadas y eventos.
+- **Profesores**: control de asistencia, agenda de clases y acceso a información de eventos.
+- **Alumnos o tutores legales**: inscripción en eventos, recepción de notificaciones y alertas (como ausencias).
 
-## 🛠 Enfoque del proyecto
+### Enfoque del proyecto
 
 El desarrollo se ha llevado a cabo aplicando **metodologías ágiles**, con especial atención a la **usabilidad**, la **accesibilidad** y un enfoque **centrado en el usuario**. Además, se han realizado pruebas con usuarios reales para validar el funcionamiento de la app y detectar mejoras de cara a futuras versiones.
 
-## 🎯 Objetivos
+### Objetivos
 
 El objetivo principal de **Clubbook** es desarrollar un sistema que facilite la gestión de miembros en clubes deportivos y mejore la comunicación entre clubes, profesores y deportistas (o sus tutores legales).
 
 Para alcanzar este objetivo general, se han planteado los siguientes objetivos específicos:
 
-- ⚙️ **Desarrollar un servicio RESTful** que implemente toda la lógica del sistema, incluyendo la capa de persistencia de datos.
-- 📱 **Desarrollar una aplicación móvil multiplataforma** que consuma dicho servicio RESTful, prestando especial atención a la **usabilidad**, **accesibilidad**, **rendimiento** y **seguridad**.
-- 🔁 **Aplicar una metodología de desarrollo iterativa e incremental**, lo que permite mantener la flexibilidad del proyecto, adaptarse a cambios y entregar valor de manera continua.
+- **Desarrollar un servicio RESTful** que implemente toda la lógica del sistema, incluyendo la capa de persistencia de datos.
+- **Desarrollar una aplicación móvil multiplataforma** que consuma dicho servicio RESTful, prestando especial atención a la **usabilidad**, **accesibilidad**, **rendimiento** y **seguridad**.
+- **Aplicar una metodología de desarrollo iterativa e incremental**, lo que permite mantener la flexibilidad del proyecto, adaptarse a cambios y entregar valor de manera continua.
 
 Estos objetivos han guiado el diseño y la implementación de Clubbook, orientando el desarrollo hacia una solución robusta, funcional y centrada en las necesidades reales de los clubes deportivos.
 
 
 ## Tecnologías
+
+El desarrollo de Clubbook se ha basado en un stack tecnológico moderno que permite construir una solución robusta, escalable y multiplataforma. A continuación se detallan las tecnologías principales empleadas:
+
+### React Native + Expo
+Se ha utilizado **React Native** junto con **Expo** para el desarrollo de la aplicación móvil. Esta combinación permite:
+
+- Desarrollar una **app multiplataforma** (Android e iOS) desde una única base de código.
+- Acelerar el desarrollo gracias a herramientas como recarga en tiempo real y una comunidad muy activa.
+- Acceder a componentes nativos de forma sencilla a través del ecosistema de Expo.
+
+### Java con Spring Boot
+El backend del sistema está desarrollado en **Java** utilizando el framework **Spring Boot**, que permite:
+
+- Construir una **API RESTful** de forma sencilla, estructurada y segura.
+- Integrar fácilmente servicios, controladores, y mecanismos de seguridad.
+- Escalar la aplicación en entornos productivos de manera eficiente.
+
+### PostgreSQL
+La persistencia de datos se ha gestionado con **PostgreSQL**, un sistema de gestión de bases de datos relacional de código abierto que ofrece:
+
+- Alto rendimiento y fiabilidad.
+- Soporte completo para operaciones complejas y relaciones entre entidades.
+- Facilidad de integración con Spring Boot mediante JPA/Hibernate.
+
+Este conjunto de tecnologías permite ofrecer una experiencia de usuario fluida, mantener una arquitectura limpia y preparar el sistema para futuras mejoras o ampliaciones.
+
 
 ## Desarrollo
 
