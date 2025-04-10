@@ -62,8 +62,6 @@ Este repositorio contiene todo el código fuente y documentación del proyecto *
 
 - El frontend móvil, desarrollado con **React Native** y gestionado mediante **Expo**.
 - El backend, implementado con **Java** utilizando el framework **Spring Boot**.
-- La configuración de la base de datos relacional **PostgreSQL**.
-- Scripts, documentación y recursos necesarios para la instalación y despliegue del sistema.
 
 El repositorio está estructurado para facilitar la navegación entre los distintos componentes del sistema y permitir una rápida puesta en marcha del proyecto por parte de otros desarrolladores o interesados en su evolución.
 
@@ -73,11 +71,11 @@ Este proyecto está compuesto por una aplicación móvil desarrollada con **Reac
 
 ### Requisitos previos
 
-Antes de comenzar, asegúrate de tener instalados los siguientes elementos:
+Antes de comenzar, asegúrate de tener los siguientes elementos:
 
 - Node.js
 - React Native
-- https://git-scm.com/
+- Git
 - Una cuenta gratuita en Expo
 - Java 17 o superior
 - PostgreSQL
@@ -110,7 +108,7 @@ npm install
 ```bash
 expo start
 ```
-5. Escanea el QR que aparece en la terminal para ejecutarlo en la aplicación Expo CLI.
+5. Escanea el QR que aparece en la terminal para ejecutarlo en la aplicación Expo Go.
 
 
 
